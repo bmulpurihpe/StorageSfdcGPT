@@ -5,6 +5,8 @@ private class CaseApexRestControllerTest {
     static void testCaseCreation() {
         RestRequest req = new RestRequest();
         RestResponse res = new RestResponse();
+        //Bharath want to test  pipeline conflicts
+        system.debug('Test Pipeline');
         req.requestURI = '/caseSync/';
         req.httpMethod = 'POST';
         req.headers.put('Content-Type', 'application/json');
