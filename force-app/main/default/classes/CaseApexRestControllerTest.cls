@@ -98,7 +98,7 @@ private class CaseApexRestControllerTest {
         caseRec3.outageMinutes = '30';
         String requestBody3 = JSON.serialize(caseRec3);
         req.requestBody = Blob.valueOf(requestBody3); 
-        
+        //Bharath test pipeline for dev2 sbx
         RestContext.request = req;
         RestContext.response = res;
         Map<String, String> response1 = CaseApexRestController.caseCreation(caseRec);
@@ -106,11 +106,6 @@ private class CaseApexRestControllerTest {
         Map<String, String> response3 = CaseApexRestController.caseCreation(caseRec2);
         Map<String, String> response4 = CaseApexRestController.caseCreation(caseRec3);
         
-        // Assert the response
-        //  System.assertEquals('201', response.get('httpStatusCode'));
-        //  System.assertEquals('Case Record successfully created', response.get('message'));
-        // Assert that the caseId is not null
-        //System.assertNotEquals(null, response.get('caseId'));
     }
 
     @IsTest
