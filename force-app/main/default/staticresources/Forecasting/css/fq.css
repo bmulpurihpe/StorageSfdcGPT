@@ -1,0 +1,465 @@
+@charset "utf-8";
+.minW160 {
+    min-width: 160px;
+}
+.minW80 {
+    min-width: 80px;
+}
+
+.minW100 {
+    min-width: 100px;
+}
+.minW40 {
+    min-width: 40px;
+}
+.minW150 {
+    min-width: 150px;
+}
+.W80 {
+    width: 80px;
+}
+.W100 {
+    width: 100px;
+}
+.W120 {
+    width: 120px;
+}
+.W150 {
+    width: 150px;
+}
+.pointer {
+    cursor: pointer;
+}
+.customizedToolTip {
+    font-size: 12px !important;
+}
+.reportContainer {
+    height: auto;
+    max-height: 9999px;
+    overflow-y: hidden;
+    -webkit-transition: max-height 0.3s ease-out;
+    -o-transition: max-height 0.3s ease-out;
+    -ms-transition: max-height 0.3s ease-out;
+    -moz-transition: max-height 0.3s ease-out;
+    transition: max-height 0.3s ease;
+}
+.reportContainer.ng-hide
+{
+    max-height: 0;
+}
+.reportContainer.ng-hide-add, .reportContainer.ng-hide-remove {
+    display:block!important;
+}
+.fqTitleCon {
+	width:100%;
+	height:32px;
+	background:#474747;
+	text-shadow:#000 1px 1px 1px;
+	color:#fff;
+	font-size:14px;
+	line-height:32px;
+	font-family:Verdana, Geneva, sans-serif;
+	overflow:hidden;
+}
+.nowrap {
+	white-space: nowrap;
+}
+span.fqTitle {
+	margin:0 10px 0 20px;
+	float:left;
+	height:32px;
+	font-weight:bold;
+}
+span.fqNum {
+	margin:0 10px 0 5px;
+	float:left;
+	height:32px;
+	color:#fbb167;
+}
+a.fqBtn {
+	float:left;
+}
+a.fqBtn img {
+	margin:7px 3px;
+}
+span.userName {
+	margin:0 10px 0 10px;
+	float:right;
+	height:32px;
+	font-size:13px;
+}
+span.toolButtons {
+  /*margin-right: 4px;*/
+  /*float:right;*/
+  margin-left: 10px;
+}
+span.toolButtons .toolBtn {
+  margin: 3px 2px 2px 2px;
+  background-color: #c5c5c5;
+  border-radius: 5px;
+  width: 28px;
+  height: 28px;
+  font-size: 1.5em;
+  line-height: 28px;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
+  box-shadow: 1px 1px #747e96;
+}
+span.toolButtons .toolBtn:hover {
+  background-color: #f3f3ec;
+  text-shadow: #747e96 1px 1px 1px;
+}
+span.toolButtons .toolBtn.on {
+  background-color: #f3f3ec;
+  text-shadow: #747e96 1px 1px 1px;
+  box-shadow: -1px -1px #747e96;
+}
+span.displayUnits {
+    float: right;
+    font-size: 12px;
+    margin-right: 10px;
+}
+table.report
+ {
+    border-spacing: 1px;
+	padding: 0px;
+    border-collapse: collapse;
+}
+table.report .header
+ {
+	background-color: #CADBFF;
+	text-align:center;
+}
+table.report .header
+ .white {
+	background-color: #FFF;
+}
+table.report th
+ {
+	padding: 3px;
+	border-spacing: 1;
+	font-weight: bold;
+	text-align: center;
+}
+table.report th .highlight
+{
+    background-color: red;
+}
+table.report .line {
+	background-color: #FFFFFF;
+    transition: background-color .2s linear;
+}
+table.report .line2 {
+    background-color: #EEEEEE;
+    transition: background-color .2s linear;
+}
+table.report .line:hover, table.report .line.on, table.report .line2:hover, table.report .line2.on {
+    background-color: rgb(255, 255, 230);
+}
+table.report th, table.report td {
+    border: 1px solid #999999;
+}
+table.report .noBd {
+    border: none;
+    background-color: #F8F8F8;
+}
+table .borderReport, table .borderReport tr:last-child {
+    border-collapse: collapse;
+    border: 1px solid #999999;
+}
+table .borderReport .header {
+    border-bottom: 2px solid #999999;
+}
+table .borderReport .header th {
+    border-right: 1px solid #999999;
+}
+table.borderReport tr {
+    border-left: 1px solid #999999;
+    border-right: 1px solid #999999;
+}
+table.borderReport tr td {
+    border: none;
+}
+table .borderReport .line {
+    border-bottom: 1px solid #e3deb8;
+}
+table .borderReport .line2 {
+    border-bottom: 1px solid #e3deb8;
+}
+table.report .highlight1 {
+    background-color: rgb(252, 217, 143);
+}
+table.report .highlight2 {
+    background-color: orange;
+}
+table.report .highlight3 {
+    background-color: rgb(255, 103, 103);
+}
+table.report .highlight4 {
+    background-color: rgb(144, 238, 144);
+}
+table.report .highlight1:hover {
+    background-color: rgb(255, 201, 87);
+}
+table.report .highlight2:hover {
+    background-color: rgb(255, 136, 0);
+}
+table.report .highlight3:hover {
+    background-color: rgb(255, 31, 31);
+}
+table.report .highlight4:hover {
+    background-color: rgb(0, 255, 0);
+}
+
+table.report .editBtn {
+    display: none;
+    cursor:pointer;
+    float:left;
+    margin-top:2px;
+    margin-left:4px;
+    color:#3f3f3f;
+}
+table.report .line:hover .editBtn, table.report .line2:hover .editBtn {
+    display: block;
+}
+table.report .saveBtn {
+    cursor:pointer;
+    float:left;
+    margin-top:4px;
+    margin-left:1px;
+    color: green;
+}
+table.report .undoBtn {
+    cursor:pointer;
+    float:left;
+    margin-top:4px;
+    margin-left:2px;
+    color: red;
+}
+table.report .number {
+	text-align: right;
+}
+table.report td.edit {
+	padding-left: 5px;
+	padding-right: 5px;
+    font-size: 14px;
+    text-align:center;
+}
+table.report input.edit {
+	text-align: right;
+    width: 55px;
+    height: 11px;
+}
+table.report .edit .fa {
+    cursor: pointer;
+}
+table.report td
+ {
+	vertical-align: middle;
+	padding: 3px;
+}
+table.report .line .highlight, table.report .line2 .highlight
+{
+    background-color: rgb(219, 255, 251);
+}
+.list .dataRow .dataCell.redOpp {
+    color: #FC7123;
+    font-weight: bold;
+}
+.pageHeader {
+	background-image: url(/img/cal/header_bkgd.gif);
+	background-repeat: repeat-x;
+}
+ table.report .footer
+{
+	background-color: #4863A0;
+}
+.report .footer td
+{
+    color: #FFF;
+}
+table.report .f-bold {
+    font-weight: bold;
+}
+table.report .f-red {
+    color: #FF0000;
+}
+table.report .f-green {
+    color: #2E8B57;
+}
+table.report .void {
+    background-color: #999999;
+}
+table.report .historyBtn {
+    display: none;
+    cursor:pointer;
+    float:left;
+    margin-top:2px;
+    color:#3f3f3f;
+}
+table.report .line .number:hover .historyBtn, table.report .line2 .number:hover .historyBtn {
+    display: inline-block;
+}
+table.report .history-tooltip {
+    position: absolute;
+    font-size: 11px;
+    font-family: Arial;
+    padding: 5px;
+    color: #000000;
+    background: #FFFFCC;
+    display: none;
+    text-align: left;
+}
+
+.forecastBtn {
+    background: url('images/forecastBtns.png') no-repeat top left;
+    width: 26px;
+    height: 26px;
+    margin: 3px 3px auto auto;
+    font-size: 0px;
+    text-indent: -9999px;
+    float: left;
+}
+.forecastBtn.historyChart { background-position: 0px 0px;  }
+.forecastBtn.historyChart:hover { background-position: 0px -26px;  }
+.forecastBtn.pipelineChanges { background-position: 0px -52px;  }
+.forecastBtn.pipelineChanges:hover { background-position: 0px -78px;  }
+.forecastBtn.changeLog { background-position: 0px -104px;  }
+.forecastBtn.changeLog:hover { background-position: 0px -130px;  }
+.forecastBtn.forecastDashboard { background-position: 0px -156px;  }
+.forecastBtn.forecastDashboard:hover { background-position: 0px -182px;  }
+.forecastBtn.myPipeline { background-position: 0px -208px;  }
+.forecastBtn.myPipeline:hover { background-position: 0px -234px;  }
+.forecastBtn.targetAccounts { background-position: 0px -260px;  }
+.forecastBtn.targetAccounts:hover { background-position: 0px -286px;  }
+.forecastBtn.dealFlow { background-position: 0px -312px;  }
+.forecastBtn.dealFlow:hover { background-position: 0px -338px;  }
+.forecastBtn.overdue { background-position: 0px -364px;  }
+.forecastBtn.overdue:hover { background-position: 0px -390px;  }
+
+.sectionTitle {
+    font-size: 1.2em;
+    font-weight: bold;
+    font-family: Arial,Helvetica,sans-serif;
+    height: 16px;
+    padding: 7px 0px 5px 12px;
+}
+.sectionTitle .fa {
+    cursor: pointer;
+    font-weight: bold;
+    height: 15px;
+}
+.listCaption {
+    margin: 5px auto 5px 50px;
+    vertical-align: middle;
+    line-height: 16px;
+}
+.report .link {
+    text-decoration: underline;
+    cursor: auto;
+}
+.report .em {
+    color: #FC7123;
+    font-weight: bold;
+}
+.report .header .action {
+    margin-left: 2px;
+    margin-right: 2px;
+    cursor: pointer;
+    font-weight: normal;
+}
+.actionLink {
+    text-decoration: none;
+    cursor: pointer;;
+}
+.comment {
+    border: 0px solid black;
+    position: relative;
+}
+.comment:after {
+    content: "";
+    position: absolute;
+    left: calc(100% - 0.3em);
+    top: 0;
+    border-left: 0.4em solid transparent;
+    border-top: 0.4em solid red;
+}
+.left {
+	float:left;
+}
+.center {
+    text-align: center;
+}
+.clearfix:after {
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+.clearfix {
+	width:0px;
+	height:0px;
+	line-height:0px;
+	font-size:0px;
+	clear:both;
+	display: inline-block;
+}
+
+.custom-tooltip {
+    outline: none;
+}
+
+.custom-tooltip:hover .tooltips {
+    display: inline;
+}
+
+.custom-tooltip .tooltips {
+    position: absolute;
+    display: none;
+    background: #D7E7FC;
+    border-radius: 4px;
+    box-shadow: 0px 0px 8px 4px #999;
+}
+
+.custom-tooltip .margin-div {
+    margin-left: -170px;
+    margin-top: -50px;
+    width: 215px;
+    height: 33px;
+    line-height: 33px;
+}
+
+.custom-tooltip .tooltips span {
+    margin-left: 10px;
+}
+
+.custom-tooltip .tooltips .arrow {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    line-height: 0px;
+    border-width: 20px 15px 0;
+    border-style: solid dashed dashed dashed;
+    border-left-color: transparent;
+    border-right-color: transparent;
+}
+
+.custom-tooltip .tooltips .arrow-border {
+    color: #D7E7FC;
+    bottom: -20px;
+    right: 50%;
+}
+
+.custom-tooltip .tooltips .arrow-bg {
+    color: #D7E7FC;
+    bottom: -19px;
+    right: 50%;
+}
+
+        
+/* Hides from IE-mac \*/
+* html .clearfix {height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */

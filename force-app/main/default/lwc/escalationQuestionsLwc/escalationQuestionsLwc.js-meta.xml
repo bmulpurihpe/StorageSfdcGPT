@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="recordId" label="Record Id" type="String"/>
+            <property name="peakArea" label="Peak Area" type="String"/>
+            <property name="responses" label="Responses" type="String"/>
+            <property name="responseOutput" label="Response Array" type="String[]"/>
+            <property name="escalationType" label="Escalation Type" type="String"/>
+            <property name="escPriority" label="Escalation Priority" type="String"/>
+            <property name="escShortDescription" label="Short Problem Description" type="String"/>
+            <property name="formattedResponses" label="Formatted Responses" type="String"/>
+            <property name="escTypeDefDisplayName" label="Escalation Type Display Name" type="String"/>
+            <property name="isAddExecChecked" label="Add Executive Escalation" type="Boolean"/>
+            <property name="isAddMgmtChecked" label="Add Management Escalation" type="Boolean"/>
+            <property name="businessImpact" label="Business Impact" type="String"/>
+            <property name="nextSteps" label="Next Steps" type="String"/>
+            <property name="escJiraUrl" label="Escalation Jira URL" type="String"/>
+            <property name="systemStatus" label="System Status" type="String"/>
+            <property name="bugInfo" label="Bug Info" type="String"/>
+            <property name="selectedBugList" label="Bug List" type="String"/>
+            <property name="bugData" label="Bug Data" type="@salesforce/schema/Bug__c[]"/>
+            <property name="selectedBugIdOnlyList" label="Bug ID List" type="String"/>
+            <property name="mgmtEscExists" label="Management Escalation Exists" type="Boolean"/>
+            <property name="outageDataLoss" label="Data Loss" type="String"/>
+            <property name="outageDataInconsistency" label="Data Inconsistency" type="String"/>
+            <property name="outageDataUnavailability" label="Data Unavailability" type="String"/>
+    </targetConfig>
+ </targetConfigs>
+</LightningComponentBundle>

@@ -1,0 +1,53 @@
+<template>
+    <lightning-card 
+        title={title}
+        icon-name="standard:knowledge"
+        >
+        <lightning-button 
+            label="View" 
+            slot="actions"
+            onclick={viewArticleDetail}>
+        </lightning-button>
+        <p class="slds-p-horizontal_small">URL Name: {urlName}</p>
+        <p class="slds-p-horizontal_small">Article Type: {articleRecordType}</p>
+        <div class="slds-p-around_small">
+            <lightning-button
+                variant="base" 
+                icon-name="utility:chevronright" 
+                onclick={toggleArticleDetailSection}
+                label="Article Metadata">
+            </lightning-button>
+            <template if:true={showDetails}>
+                <lightning-record-view-form
+                    object-api-name="Knowledge__kav"
+                    record-id={articleId}
+                    density="auto">
+                    <lightning-output-field 
+                        field-name="Status__c"
+                        class="slds-form-element slds-form-element_readonly">
+                    </lightning-output-field>
+                    <lightning-output-field 
+                        field-name="KB_Summary__c"
+                        class="slds-form-element slds-form-element_readonly">
+                    </lightning-output-field>
+                    <lightning-output-field 
+                        field-name="Product_Support_Profile__c"
+                        class="slds-form-element slds-form-element_readonly">
+                    </lightning-output-field>
+                    <lightning-output-field 
+                        field-name="Technical_Skillset__c"
+                        class="slds-form-element slds-form-element_readonly">
+                    </lightning-output-field>
+                    <lightning-output-field 
+                        field-name="Software_Version__c"
+                        class="slds-form-element slds-form-element_readonly">
+                    </lightning-output-field>
+                    <lightning-output-field 
+                        field-name="Disclosure_Level__c"
+                        class="slds-form-element slds-form-element_readonly">
+                    </lightning-output-field>
+                </lightning-record-view-form>
+            </template>
+        </div>
+    </lightning-card>
+</template>

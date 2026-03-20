@@ -1,0 +1,84 @@
+<apex:component >
+<apex:attribute name="status" type="string" required="true" description="Partner Onboarding Status"/>
+<apex:outputPanel rendered="{!status == 'Targeted'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lQZ" alt="Targeted" height="50" />
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'First Meeting'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lQe" alt="First Meeting" height="50" />
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Contract Submitted'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lQo" alt="Contract Submitted" height="50" />
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Contract Signed'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lQt" alt="Contract Signed" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'SP Profiling'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lQy" alt="SP Profiling" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Business Plan Proposed'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lR3" alt="Business Plan Proposed" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Business Plan Approved'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lR3" alt="Business Plan Approved" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Marketing Event Planned'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="/servlet/servlet.FileDownload?file=015340000021lR8" alt="Marketing Event Planned" height="50" />
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'First Deal Booked'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img  src="/servlet/servlet.FileDownload?file=015340000021lRD" alt="First Deal Booked" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+</apex:component>

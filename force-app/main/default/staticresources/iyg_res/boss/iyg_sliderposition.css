@@ -1,0 +1,5 @@
+ ul {
+            display: grid !important; 
+            grid-template-columns: repeat(3, auto) !important;
+            /*justify-content: start !important;*/
+        }

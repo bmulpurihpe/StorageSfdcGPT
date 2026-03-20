@@ -1,0 +1,145 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <template if:false={hidePeakPicklist}>
+        <lightning-card>
+            <div class="slds-box slds-align_absolute-center slds-text-heading_medium hpe-aruba-orange-bg">
+                <span>JIRA Target Component</span>
+            </div>
+            <div class="slds-box slds-var-p-around_small">
+                <div>
+                    <lightning-combobox name="peakValues" label={peakOrRotLabel} value={peakArea} 
+                        options={allPeakOrRotValues} onchange={handlePeakChange}> 
+                    </lightning-combobox> 
+                </div>
+                <div class="slds-var-p-top_medium">
+                    <lightning-layout class="slds-var-p-bottom_medium">
+                        <lightning-layout-item size="2"><strong>{peakOrRotParam1Label}</strong></lightning-layout-item>
+                        <lightning-layout-item size="10"><p>{peakOrRotParam1}</p></lightning-layout-item>
+                    </lightning-layout>
+                    <lightning-layout>
+                        <lightning-layout-item size="2"><strong>{peakOrRotParam2Label}</strong></lightning-layout-item>
+                        <lightning-layout-item size="10"><p>{peakOrRotParam2}</p></lightning-layout-item>
+                    </lightning-layout>
+                    <lightning-layout>
+                        <lightning-layout-item size="2"><strong>{peakOrRotParam3Label}</strong></lightning-layout-item>
+                        <lightning-layout-item size="10"><p>{peakOrRotParam3}</p></lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </div>
+        </lightning-card>
+    </template>
+    <lightning-card>
+        <div class="slds-box slds-align_absolute-center slds-text-heading_medium hpe-darkblue-bg">
+            <span>{escalationType} Questions</span>
+        </div>
+        <div class="slds-box slds-var-p-around_small">
+            <template if:true={showAddExecCheckbox}>
+                <div class="slds-box slds-box_small slds-size_1-of-2 slds-theme_warning slds-var-m-top_medium">
+                    <lightning-input type="checkbox" label="Add Executive Escalation" data-id="addExecCheckbox"
+                                    onchange={handleExecEscFieldChange} checked={isAddExecChecked}> 
+                    </lightning-input>
+                    <p if:true={isAddExecChecked} class="slds-var-p-around_medium">
+                        <strong>Adding Executive Escalation will send an Executive email.</strong>
+                    </p>
+                </div>
+            </template>
+            <template if:true={showAddMgmtCheckbox}>
+                <div class="slds-box slds-box_small slds-size_1-of-2 slds-theme_warning slds-var-m-top_medium">
+                    <lightning-input type="checkbox" label="Add Management Escalation" data-id="addMgmtCheckbox"
+                                    onchange={handleMgmtEscFieldChange} checked={isAddMgmtChecked}> 
+                    </lightning-input>
+                    <p if:true={isAddMgmtChecked} class="slds-var-p-around_medium">
+                        <strong>Adding Management Escalation will require additional information and 
+                            will send an email with Management Escalation information.</strong>
+                    </p>
+                </div>
+            </template>
+            <template if:true={escalationQuestions}>
+                <template for:each={escalationQuestions} for:item="escQ">
+                    <template if:true={escQ.isText}>
+                        <c-fr-text-area-with-char-count-lwc
+                            key={escQ.name}
+                            data-id={escQ.name}
+                            data-name="inputField"
+                            label={escQ.description}
+                            required={escQ.required}
+                            value={escQ.response}
+                            read-only={readOnly}
+                            max-length={escQ.maxLength}
+                            class="slds-var-p-top_x-small slds-var-p-bottom_x-small"
+                        >
+                        </c-fr-text-area-with-char-count-lwc>
+                    </template>
+                    <template if:true={escQ.isPicklist}>
+                        <lightning-combobox 
+                                                label={escQ.description}
+                                                value={escQ.response}
+                                                options={escQ.options} 
+                                                required={escQ.required}
+                                                key={escQ.name}
+                                                onchange={handlePicklistChange}
+                                                data-name="inputField"
+                                                data-id={escQ.name}
+                                                read-only={readOnly}
+                                                class="slds-var-p-top_x-small slds-var-p-bottom_x-small"> 
+                        </lightning-combobox> 
+                    </template>
+                    <template if:true={escQ.isRadio}>
+                        <lightning-radio-group 
+                                                label={escQ.description}
+                                                options={escQ.options}
+                                                required={escQ.required}
+                                                value={escQ.response}
+                                                key={escQ.name}
+                                                data-name="inputField"
+                                                data-id={escQ.name}
+                                                read-only={readOnly}
+                                                type="radio"
+                                                class="slds-var-p-top_x-small slds-var-p-bottom_x-small">
+                        </lightning-radio-group>
+                    </template>
+                    <template if:true={escQ.isCheckbox}>
+                        <lightning-checkbox-group 
+                                                label={escQ.description}
+                                                options={escQ.options}
+                                                required={escQ.required}
+                                                value={escQ.response}
+                                                key={escQ.name}
+                                                data-name="inputField"
+                                                data-id={escQ.name}
+                                                read-only={readOnly}
+                                                class="slds-var-p-top_x-small slds-var-p-bottom_x-small">
+                        </lightning-checkbox-group>
+                    </template>
+                </template>
+                <template if:true={showBugTable}>
+                    <p class="slds-var-p-top_medium">
+                        <strong>Bugs attached to the Case</strong>
+                    </p>
+                    <lightning-layout>
+                        <lightning-layout-item size="12" class="slds-var-p-top_medium">
+                            <lightning-datatable
+                                data-id="bugTable"
+                                key-field="BugID__c"
+                                data={bugData}
+                                columns={bugDataColumns}
+                                selected-rows={selectedBugRows}
+                                >
+                            </lightning-datatable>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </template>
+                <c-fr-custom-flow-footer-lwc
+                    footer-display-message="Please fill all the required fields."
+                    display-footer-message={reqFieldMissing}
+                    footer-msg-style="color: rgb(194 57 52);"
+                    next-button-label={flowFooterNextBtnLabel}
+                    previous-button-label="Previous"
+                    onpreviousclick={handleGoPrevious}
+                    onnextclick={handleGoNext}
+                    >
+                </c-fr-custom-flow-footer-lwc>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,7 @@
+<apex:page standardController="Lead" extensions="LeadCloneApex">
+This will clone the selected fields.
+<apex:form >
+ <apex:commandButton value="Clone" action="{!leadClone}"/>
+ <apex:commandButton value="Cancel" action="{!Cancel}"/>
+ </apex:form>
+</apex:page>

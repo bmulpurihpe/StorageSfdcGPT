@@ -1,0 +1,80 @@
+<apex:page standardController="depot__c" extensions="DepotmappingTool">
+    <!-- This page must be accessed with an Account Id in the URL. For example: https://<salesforceInstance>/apex/NearbyContacts?id=001D000000JRBet -->
+    <apex:form >
+        <apex:pageBlock title="Depot Search">
+            <!--<apex:outputLabel value="Enter address" rendered="{!IF(EmptySearch == false, true,false)}" style="color:red;font-size:25px;"></apex:outputLabel>-->
+            <apex:pageBlockSection >
+                <!--<apex:inputText id="SearchText" label="Enter Address:" value="{!searchstring}"/> -->
+                <apex:inputTextarea cols="50" id="SearchText" label="Enter Address:" value="{!searchstring}"/>
+                <apex:selectRadio value="{!radioSelect}" label="Show Distance In:">
+                    <apex:selectOptions value="{!Options}">
+                    </apex:selectOptions>
+                </apex:selectRadio>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Search" action="{!search}">   
+                </apex:commandButton>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        <apex:pageBlock >
+            <apex:pageBlockSection title="Depot Map" rendered="{!EmptySearch}">
+                <apex:map width="1000px" height="600px" mapType="roadmap" center="{!searchstring}">
+                    <apex:repeat value="{!searchlist}" var="searchlists">
+                        <apex:mapMarker id="SearchAdd" title="{!searchlists}" position="{!searchlists}" icon="{!URLFOR($Resource.CustomerAddress)}">
+                        </apex:mapMarker>
+                    </apex:repeat>
+                    <apex:repeat value="{!wrapperLst}" var="depots">
+                        <apex:mapMarker title="{!depots.Depotrec.Name}" position="{!depots.Depotrec.depotAddress__c}" icon="{!URLFOR($Resource.ActiveDepots)}">
+                            <apex:mapInfoWindow >
+                                <apex:outputPanel layout="block" style="font-weight: bold;">
+                                    <apex:outputText >{!depots.Depotrec.Name}</apex:outputText>
+                                </apex:outputPanel>
+                                <apex:outputPanel layout="block">
+                                    <apex:outputText >
+                                        Distance:{!depots.DepotDistance}, Time:{!depots.DepotDistanceTime},{!depots.Depotrec.depotProvider__c},Stocked For 4 Hours: {!depots.Depotrec.depotStockedFor4Hour__c}
+                                        </apex:outputText>
+                                </apex:outputPanel>     		
+                            </apex:mapInfoWindow>
+                        </apex:mapMarker>
+                    </apex:repeat>
+                    <apex:repeat value="{!wrapperLstOutofCover}" var="depots">
+                        <apex:mapMarker title="{!depots.Depotrec.Name}" position="{!depots.Depotrec.depotAddress__c}" icon="{!URLFOR($Resource.DepotHome)}">
+                            <apex:mapInfoWindow >
+                                <apex:outputPanel layout="block" style="font-weight: bold;">
+                                    <apex:outputText >{!depots.Depotrec.Name}</apex:outputText>
+                                </apex:outputPanel>
+                                <apex:outputPanel layout="block">
+                                    <apex:outputText >
+                                        Distance:{!depots.DepotDistance}, Time:{!depots.DepotDistanceTime},{!depots.Depotrec.depotProvider__c},Stocked For 4 Hours: {!depots.Depotrec.depotStockedFor4Hour__c}
+                                    </apex:outputText>
+                                </apex:outputPanel>     		
+                            </apex:mapInfoWindow>
+                        </apex:mapMarker>
+                    </apex:repeat>
+                </apex:map>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Depots Table" rendered="{!EmptySearch}">
+                    <apex:pageBlockTable value="{!wrapperLstDataList}" var="depot" style="width:100%">
+                        <apex:column headerValue="Depots" style="width:100px">
+                            <apex:outputLink value="/{!depot.Depotrec.id}">{!depot.Depotrec.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="Depot Provider" style="width:100px">
+                            <apex:outputLabel value="{!depot.Depotrec.depotProvider__c}"></apex:outputLabel>
+                        </apex:column>
+                        <apex:column headerValue="Stocked For 4 Hours" style="width:100px">
+                            <apex:outputLabel value="{!depot.Depotrec.depotStockedFor4Hour__c}"></apex:outputLabel>
+                        </apex:column>
+                        <apex:column headerValue="Depot Address" style="width:450px">
+                            <apex:outputLabel value="{!depot.Depotrec.depotAddress__c}"></apex:outputLabel>
+                        </apex:column>
+                        <apex:column headerValue="Depot Distance" style="width:100px">
+                            <apex:outputLabel value="{!depot.DepotDistance}"></apex:outputLabel>
+                        </apex:column>
+                        <apex:column headerValue="Driving Time" style="width:100px">
+                            <apex:outputLabel value="{!depot.DepotDistanceTime}"></apex:outputLabel>
+                        </apex:column>
+                    </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,4 @@
+<apex:page standardController="Partner__c">
+<p></p>
+<c:Partner_Onboarding_Bar status="{!Partner__c.Status__c}"></c:Partner_Onboarding_Bar>
+</apex:page>

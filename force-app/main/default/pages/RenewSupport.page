@@ -1,0 +1,163 @@
+<apex:page standardController="SBQQ__Quote__c" extensions="QuoteRenewalController" id="page1" docType="html-5.0">
+    <apex:sectionHeader title="Upgrade/Renew Support" subtitle="{!SBQQ__Quote__c.Name}"/>
+    
+    <apex:pageMessages />
+    
+    <apex:form id="form1">
+    <apex:pageBlock mode="edit" rendered="{!viewAsset}">
+        <apex:pageBlockButtons rendered="{!selectedAsset != null}">
+            <apex:commandButton value="{!transactionType}" action="{!onUpgradeRenew}"/>
+            <apex:commandButton value="Cancel" action="{!onCancel}"/>
+        </apex:pageBlockButtons>
+        
+        <!--Support checkbox was missing, added 06/29/2016-->
+        <apex:pageBlockSection >
+            <apex:inputCheckbox label="Support" value="{!viewSupport}" rendered="{!NRDview}">
+                <apex:actionSupport event="onchange" rerender="Supports"/>
+            </apex:inputCheckBox>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection rendered="{!selectedAsset == null}" columns="1">
+            <apex:pageBlockTable var="asset" value="{!assets}">
+                <apex:column headerValue="{!$ObjectType.Asset.fields.SerialNumber.label}" value="{!asset.SerialNumber}"/>
+                <apex:column headerValue="{!$ObjectType.Asset.fields.Product_Name__c.label}" value="{!asset.Product_Name__c}"/>
+                <apex:column headerValue="{!$ObjectType.Asset.fields.Status.label}" value="{!asset.Status}"/>
+                <apex:column headerValue="{!$ObjectType.Asset.fields.Support_End_Date__c.label}" value="{!asset.Support_End_Date__c}"/>
+                <apex:column headerValue="{!$ObjectType.Asset.fields.Order_Type__c.label}" value="{!asset.Order_Type__c}"/>
+                <apex:column headerValue="{!$ObjectType.Asset.fields.Ship_Date__c.label}" value="{!asset.Ship_Date__c}"/>
+                <apex:column headerValue="{!$ObjectType.Asset.fields.Install_City__c.label}" value="{!asset.Install_City__c}"/>
+                <apex:column >
+                    <apex:commandLink value="Renew" action="{!onSelectToRenew}">
+                        <apex:param name="assetId" assignTo="{!selectedAssetId}" value="{!asset.Id}"/>
+                    </apex:commandLink>
+                    &nbsp;|&nbsp;
+                    <apex:commandLink value="Upgrade" action="{!onSelectToUpgrade}">
+                        <apex:param name="assetId" assignTo="{!selectedAssetId}" value="{!asset.Id}"/> 
+                    </apex:commandLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+        
+        
+        
+        <apex:pageBlockSection rendered="{!selectedAsset != null}" columns="1">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Current Support Level"/>
+                <apex:outputText value="{!selectedAsset.Support_Level__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Support End Date"/>
+                <apex:outputField value="{!selectedAsset.Support_End_Date__c}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="New Support Level"/>
+                <apex:selectList size="1" value="{!supportLevel}">
+                <!-- 
+                    <apex:selectOption itemValue="NBD" itemLabel="NBD" rendered="{!NOT(toshiba)}"/>
+                    <apex:selectOption itemValue="4HR" itemLabel="4HR" rendered="{!NOT(toshiba)}"/>
+                    <apex:selectOption itemValue="4ON" itemLabel="4HR ONSITE" rendered="{!NOT(toshiba)}"/> -->
+
+                    <apex:selectOption itemValue="NBD" itemLabel="NBD" rendered="{!regNBD}"/>
+                    <apex:selectOption itemValue="4HR" itemLabel="4HR" rendered="{!reg4HR}"/>
+                    <apex:selectOption itemValue="4ON" itemLabel="4HR ONSITE" rendered="{!reg4ON}"/>
+
+                    <apex:selectOption itemValue="NBO" itemLabel="TSC NBD ONSITE" rendered="{!viewNBO}"/>
+                    <apex:selectOption itemValue="4ON" itemLabel="TSC 4HR ONSITE" rendered="{!view4ON}"/>
+                    <apex:selectOption itemValue="TSCNBD" itemLabel="TSC PREMIUM" rendered="{!viewNBD}"/>
+                    <apex:selectOption itemValue="TSC4HR" itemLabel="TSC PREMIUM 4 HOUR" rendered="{!view4HR}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Support Term"/>
+                <apex:inputText value="{!supportTerm}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Support Start Date"/>
+                <apex:inputField value="{!selectedAsset.Support_Start_Date_Asset__c}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    
+        <!--NRD part was missing, added 06/28/2016 -->
+        <apex:pageBlock rendered="{!NRDview}">
+            <apex:pageBlockSection rendered="{!selectedAsset != null}">
+                <apex:inputCheckbox label="NRD" value="{!viewNRD}" rendered="{!selectedAsset != null}">
+                    <apex:actionSupport event="onchange" rerender="NRD"/>
+                </apex:inputCheckBox>
+            </apex:pageBlockSection>
+            <apex:outputPanel id="NRD" rendered="{!selectedAsset != null}">
+                <apex:outputPanel rendered="{!viewNRD}">
+            <apex:pageBlockSection columns="1">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="NRD End Date"/>
+                    <apex:outputField value="{!selectedAsset.assetNrdEndDate__c}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="NRD Term"/>
+                    <apex:inputText value="{!NRDTerm}"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="NRD Start Date"/>
+                    <apex:inputField value="{!selectedAsset.assetNrdStartDate__c}"/>
+                </apex:pageBlockSectionItem>
+           
+            </apex:pageBlockSection>
+             </apex:outputPanel>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:pageBlock>
+    
+    <apex:pageBlock rendered="{!viewCM}"  title="Concierge Manager" id="pageBlock1">
+        <apex:pageBlockButtons rendered="{!selectedQuoteCM != null}">
+            <apex:commandButton value="Renew" action="{!onRenewCM}"/>
+            <apex:commandButton value="Cancel" action="{!onCancel}"/>
+        </apex:pageBlockButtons>
+        
+        <apex:pageBlockSection columns="1" rendered="{!selectedQuoteLineId = null}">
+            <apex:pageBlockTable var="quote" value="{!SBQQ__Quote__c}">
+               <!-- <apex:column headerValue="{!$ObjectType.SBQQ__QuoteLine__c.fields.Name.label}" value="{!quote.Name}"/> -->
+                <apex:column headerValue="ACM End Date" value="{!quote.CM_End_Date__c}"/>
+                <apex:column headerValue="ACM Qantiity" value="{!CMQuantity}"/>
+               <!-- <apex:column headerValue="{!$ObjectType.SBQQ__QuoteLine__c.fields.Serial_Number__c.label}" value="{!quote.Serial_Number__c}"/> 
+                <apex:column headerValue="{!$ObjectType.SBQQ__QuoteLine__c.fields.SBQQ__ProductName__c.label}" value="{!quote.SBQQ__ProductName__c}"/> -->
+                <apex:column >
+                    <apex:commandLink value="Renew" action="{!onSelectCM}">
+                        <apex:param name="quoteId" assignTo="{!selectedQuoteLineId}" value="{!quote.Id}"/>
+                    </apex:commandLink>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection rendered="{!selectedQuoteCM != null}" columns="1" id="pageBlockSection">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="ACM Purchased"/>
+                <apex:inputCheckbox value="{!selectedQuoteCM.Concierge_Manager__c}" disabled="true"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="ACM Quantity"/>
+                <apex:inputText value="{!CMQuantity}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem id="pageBlockItem">
+                <apex:outputLabel value=" New ACM Start Date"/>
+<!--                <apex:input type="date" value="{!CMStartDate}">
+                </apex:input>-->
+                <apex:inputText value="{!CMStartDate}" id="datefield" onfocus="DatePicker.pickDate(false, 'page1:form1:pageBlock1:pageBlockSection:pageBlockItem:datefield', false);"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="ACM Support Term"/>
+                <apex:selectList size="1" value="{!supportTermCM}">
+                    <apex:selectOptions value="{!CMSupportTerm}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Current ACM Support End Date"/>
+                <apex:outputText value="{!CMEndDate}">
+                    <!--<apex:param value="{!CMEndDate}"/>-->
+                </apex:outputText>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+        
+    </apex:pageBlock>
+    
+    </apex:form>
+</apex:page>

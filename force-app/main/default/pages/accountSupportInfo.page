@@ -1,0 +1,24 @@
+<apex:page standardController="Account">
+
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr valign="top">
+<td width="300"><c:IYG_VF_Component region="panel_1" type="panel"/></td>
+<td width="300"><c:IYG_VF_Component region="panel_2" type="panel"/></td>
+<td><c:IYG_VF_Component region="panel_3" type="panel"/></td>                
+</tr>            
+</table>        
+
+<!--
+<span style="font-family: 'Arial','Helvetica',sans-serif; font-size: 1.1em; font-weight: bold; color: #4D4D4D;">
+
+<apex:outputText value="SUPPORT: This account is marked critical, and has SHI (Special Handling Instructions).  Review the 'Critical Account' and 'Account SHI' sections below for details."
+                 rendered="{!account.accountCritical__c}"
+                 style="color: red;"/>
+
+<apex:outputText value="SUPPORT: This account has SHI (Special Handling Instructions).  Review the 'Account SHI' section below for details."
+                 rendered="{!AND(NOT(account.accountCritical__c), LEN(account.accountShi__c) > 4)}"
+                 style="color: red;"/>
+
+</span>
+-->
+</apex:page>

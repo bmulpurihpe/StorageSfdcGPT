@@ -1,0 +1,829 @@
+<!--                              <<<< === Visualforce Page for Support Calendar === >>>>
+    =============================================================================================================
+        Name                    : calendarEvent
+        Description             : To insert or update parent and child records through a JSON taken from REST Apex class
+        Created Date            : 24th Nov, 2017
+        Author                  : Vishnu R
+        Version                 : 1.0 
+        Modification History    : Initial Version
+        ** Modified by vishnu on Feb 13th 2019 - Added the bootstrap date and datetime pickers for capturing current date in specific date format.
+        ** Modified by vishnu on Aug 5th 2020 - Added check for TSE's to disable the event creation from the UI,Allowing TSE to have a view access to the page.- TS-7289
+        ** Modified by Vasanthika on Jan 29th 2026 - Fix for Japanese locale Users Line 64 and 255 replaced by capturing the Username value from 'uname' passed by the calendarEvent_Controller class - SFDC-639
+    ==============================================================================================================
+-->
+<apex:page id="thePage" lightningStylesheets="false" docType="html-5.0" sidebar="false" controller="calendarEvent_Controller" action="{!pageLoad}" standardStylesheets="true" title="Support Calendar">
+   <html>
+        <head>
+            <meta charset='utf-8'/>
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js">
+            </script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+            </script>
+            <script src="{!$Resource.bootstrapmin}">
+            </script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js">
+            </script>
+            <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.min.js">
+            </script>
+            <!--For Full calendar-->
+            <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.5.0/fullcalendar.min.js">
+            </script>
+            <!--For Bootstrap Datetime Picker-->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js">
+            </script>
+            <!--For Full calendar UI to show as Grids-->
+            <link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.5.0/fullcalendar.min.css" rel="stylesheet"/>
+            
+            <!--This defines appearance of our web page when it's printed on a paper-->
+            <!--Commented by vishnu on Feb 13th 2019 -->
+            <!--<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.5.0/fullcalendar.print.css" rel="stylesheet" media="print"/>-->
+            
+            <!--For Full calendar CSS-->
+            <link href="//code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css" rel="stylesheet" type="text/css"/>
+            
+            <!--For Bootstrap Datetime Picker CSS-->
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+            
+            <!--Commented by vishnu on Feb 13th 2019 -->
+            <!--<apex:stylesheet value="{!URLFOR($Resource.bootstrapiso, 'bootstrap-iso/bootstrap-iso.css')}"/>-->
+            
+            <!--Boostrap CSS-->
+            <apex:stylesheet value="{!URLFOR($Resource.bootstrapForCalendar, 'bootstrapisoCalendar/css/bootstrap-iso.css')}"/>
+            <script>
+            //debugger;            
+            var previousOnload = window.onload;
+            window.onload = function() 
+            { 
+                if (previousOnload) { 
+                    previousOnload();
+                } 
+                var condition = true; // condition
+                if(condition) {
+                    document.getElementById("enableFullDayEvent").style.display = "none";
+                    if(document.getElementById("thePage:theForm:eventAssignedTo").value == '' || document.getElementById("thePage:theForm:eventAssignedTo").value == null){
+                        //document.getElementById("thePage:theForm:eventAssignedTo").value="{!$User.FirstName} {!$User.LastName}";
+                        document.getElementById("thePage:theForm:eventAssignedTo").value="{!uname}";
+                   }         
+                }
+            }
+            </script>
+            
+            <script src="https://www.jqueryscript.net/demo/jQuery-Right-click-Menu-Plugin-ContextMenu/jquery.contextmenu.min.js" type="text/javascript">
+            </script>
+            
+            <script type="text/javascript">
+            //We need to wrap everything in a doc.ready function so that the code fires after the DOM is loaded
+            $(document).ready(function(){
+                //Call the fullCallendar method. You can replace the '#calendar' with the ID of the dom element where you want the calendar to go.
+                $('#calendar').fullCalendar({
+                    themeSystem: 'jquery-ui',
+                    timezone: '{!userTimeZone}',
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month, agendaWeek, agendaDay'
+                    },
+                    allDayDefault: true,
+                    eventLimit: true,
+                    events:
+                    [
+                        //At run time, this APEX Repeat will reneder the array elements for the events array
+                        
+                        
+                       <apex:repeat value="{!listEvent}" var="lstEve"> 
+                        <apex:repeat value="{!lstEve}" var="e">
+                        {
+                        title: "{!e.title}",
+                        start: '{!e.startString}',
+                        end: '{!e.endString}',
+                        allDay: {!e.allDay},
+                        url:'{!e.url}',
+                        className: '{!e.className}',
+                        eventType: '{!e.eventType}'
+                        },
+                        </apex:repeat>
+                        </apex:repeat>
+                       
+                    ],
+                    //Added to show Modal for Event Detail
+                    eventClick: function(event) {
+                        var eventUrl = event.url;
+                        var arr = eventUrl.substr(1);
+                        viewEventDetailsFun(arr);
+                        return false;
+                    },
+                    eventRender: function (event, element) {
+                        element.bind('mousedown', function (e) {
+                            if (e.which == 3 && "{!JSENCODE($Profile.Name)}" != "Support: Technical Support Rep (TSR)") {
+                                //Added for Right Click Menu on any Event - Start
+                                $('.event-personal-rtp, .event-personal-minnesota, .event-personal-hq, .event-personal-apac, .event-personal-emea, .event-personal-weekend, .event-personal-bulletin,.event-personal-colorado,.event-other').contextMenu('myMenu1', {
+                                    bindings: {
+                                        'edit': function(t) {
+                                            var eventUrl = event.url;
+                                            var arr = eventUrl.substr(1);
+                                            editEventDetails(arr);
+                                        },
+                                        'cancel': function(t) {
+                                            return null;
+                                        }
+                                    }
+                                });
+                                //Added for Right Click Menu on any Event - End
+                            }
+                        });
+                    },
+                    dayRender: function (event, element) {
+                        element.bind('mousedown', function (e) {
+                            if (e.which == 3 && "{!JSENCODE($Profile.Name)}" != "Support: Technical Support Rep (TSR)") {
+                                $('.fc-day').contextMenu('myMenu2', {
+                                    bindings: {
+                                        'new': function(t) {
+                                            var v = event.format();
+                                            setEvnt(v);
+                                        },
+                                        'cancel': function(t) {
+                                            return null;
+                                        }
+                                    }
+                                });
+                                $('.ui-widget-content').contextMenu('myMenu2', {
+                                    bindings: {
+                                        'new': function(t) {
+                                            var v = event.format();
+                                            setEvnt(v);
+                                        },
+                                        'cancel': function(t) {
+                                            return null;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    //Can add some other event related things here
+                });
+                
+            });
+            </script>
+            
+            <script type="text/javascript">
+            // debugger;
+            
+            function assignedToValueChange(){
+                console.log('Inside 177');
+                document.getElementById('thePage:theForm:eventSubject').value = '';
+                document.getElementById('thePage:theForm:eventType').value = '';
+                document.getElementById('thePage:theForm:eventSubType').value = '';
+                document.getElementById('thePage:theForm:eventSubType').disabled=true;
+            }
+            
+            function writeSubject(){
+                
+                var type = document.getElementById('thePage:theForm:eventType').value;
+                var subType = document.getElementById('thePage:theForm:eventSubType').value;                
+                var editType = document.getElementById('thePage:theForm:edit_eventType').value;
+
+                
+                var assignedTo = document.getElementById('thePage:theForm:eventAssignedTo').value;
+                var assignedToRegion = document.getElementById('thePage:theForm:eventAssignedToRegion').value;
+                var multiuserbutton = document.getElementById("multiuserevents");
+                var childeventbutton = document.getElementById("childevents");
+                // Added by Exafort for TS-9347
+                var picklistVal = document.getElementsByClassName('form-control picklist')[0].value;
+                
+                if(type != 'Bulletin' && picklistVal == 'USER'){
+                    if(assignedTo != null && assignedTo != '' && type != null && type != ''){
+                        document.getElementById('thePage:theForm:eventSubject').value = assignedTo + ' ' + type + (subType != null && (subType.substring(0,1) != '_' && subType.length > 0 )  ? ' - ' + subType : '');
+                    }
+                }
+                // Added by Exafort for TS-9512
+                if(type != 'Bulletin' && picklistVal == 'REGION'){
+                    if(assignedToRegion != null && assignedToRegion != '' && type != null && type != ''){
+                        document.getElementById('thePage:theForm:eventSubject').value = assignedToRegion + ' ' + type + (subType != null && (subType.substring(0,1) != '_' && subType.length > 0 )  ? ' - ' + subType : '');
+                    }
+                }
+                if(type == 'Bulletin'){
+                    document.getElementById('thePage:theForm:eventSubject').value = '';
+                }
+                
+                var editType = document.getElementById('thePage:theForm:edit_eventType').value;
+                var editAssignedTo = document.getElementById('thePage:theForm:edit_eventOwnerId').value;
+                var editSubType = document.getElementById('thePage:theForm:edit_eventSubType').value;                
+               
+                if(editType !='Bulletin'){
+                    if(editAssignedTo != null && editType != null){
+                        document.getElementById('thePage:theForm:edit_eventSubject').value = editAssignedTo + ' ' + editType + (editSubType != null && (editSubType.substring(0,1) != '_' && editSubType.length > 0 )  ? ' - ' + editSubType : '');
+                    }
+                }
+                if(editType == 'Bulletin'){
+                    document.getElementById('thePage:theForm:edit_eventSubject').value = '';
+                }
+            }
+            
+            function allDayEventOnClickShowHideDate(){
+                var enablefulldayevent = document.getElementById("enableFullDayEvent");
+                var isallDay = document.getElementById('thePage:theForm:eventIsAllDayEvent').checked;
+                var hideStartAndEndDiv = document.getElementById('disableFullDayEvent');
+                if(isallDay==true){
+                    enablefulldayevent.style.display = "block";
+                    hideStartAndEndDiv.style.display = "none";
+                    // Added by Exafort for TS-4989
+                    document.getElementById('thePage:theForm:allDayEventStartDate').value = new Date().toLocaleDateString();
+                    // document.getElementById('thePage:theForm:allDayEventEndDate').value = new Date().toLocaleDateString();
+                }
+                else {
+                    enablefulldayevent.style.display = "none";
+                    hideStartAndEndDiv.style.display = "block";
+                }
+                
+                var edit_enablefulldayevent = document.getElementById("edit_enableFullDayEvent");
+                var edit_isallDay = document.getElementById('thePage:theForm:edit_eventIsAllDayEvent').checked;
+                var edit_hideStartAndEndDiv = document.getElementById('edit_disableFullDayEvent');
+                if(edit_isallDay==true){
+                    //console.log('isAll Day True');
+                    document.getElementById('thePage:theForm:edit_allDayEventEndDate').value = "";
+                    edit_enablefulldayevent.style.display = "block";
+                    edit_hideStartAndEndDiv.style.display = "none";
+                }
+                else {
+                    edit_enablefulldayevent.style.display = "none";
+                    edit_hideStartAndEndDiv.style.display = "block";
+                }
+            }
+            function newButtonActionFunctions(){
+                document.getElementById('newButton').click();
+                if(document.getElementById("thePage:theForm:eventAssignedTo").value == '' || document.getElementById("thePage:theForm:eventAssignedTo").value == null){
+                    // document.getElementById("thePage:theForm:eventAssignedTo").value="{!$User.FirstName} {!$User.LastName}";
+                    document.getElementById("thePage:theForm:eventAssignedTo").value="{!uname}";
+                }
+                allDayEventOnClickShowHideDate();
+                writeSubject();
+                document.getElementById("thePage:theForm:eventSubject").value='';
+                
+            }
+            //added by Exafort for event onclick
+            function viewalldayeventshowhide(){
+                viewButton.click();
+            }
+            // Added by Exafort for TS-9347
+            function UserRegionDisplay(){
+                var picklistVal = document.getElementsByClassName('form-control picklist')[0].value;
+                if(picklistVal == "USER"){
+                    var User = document.getElementById("UserDisplay");
+                    User.style.display="block";
+                    var Region = document.getElementById("RegionDisplay");
+                    Region.style.display="none";
+                }
+                if(picklistVal == "REGION"){
+                    var Region = document.getElementById("RegionDisplay");
+                    Region.style.display="block";
+                    var User = document.getElementById("UserDisplay");
+                    User.style.display="none";
+                }
+            }
+            // End of TS-9347
+            function editButtonActionFunctions(){
+                document.getElementById('editButton').click();
+                //allDayEventOnClickShowHideDate();
+                var Edit_enableFullDayEvent = document.getElementById("edit_enableFullDayEvent");
+                var isallDay = document.getElementById('thePage:theForm:edit_eventIsAllDayEvent').checked;
+                var hideStartAndEndDiv = document.getElementById('edit_disableFullDayEvent');
+                if(isallDay==true){
+                    Edit_enableFullDayEvent.style.display = "block";
+                    hideStartAndEndDiv.style.display = "none";
+                }
+                else {
+                    Edit_enableFullDayEvent.style.display = "none";
+                    hideStartAndEndDiv.style.display = "block";
+                }
+            }
+            
+            </script>
+            <script type="text/javascript">
+            function callDatePicker(){
+                $('#datetimepickerAllDayStart,#datetimepickerAllDayEnd').datetimepicker({
+                    format: 'L'
+                });
+            }
+            function callDateTimePicker(){
+                $('#datetimepickerStartDateTime,#datetimepickerEndDateTime').datetimepicker({
+                    format : 'MM/DD/YYYY hh:mm A'
+                });
+            }
+            function editDateOnclick(){ 
+                $('#editdatetimepickerAllDayStart,#editdatetimepickerAllDayEnd').datetimepicker({
+                    format : 'L'
+                });
+            }
+            function editDateTimeOnclick(){ 
+                $('#editdatetimepickerStart,#editdatetimepickerEnd').datetimepicker({
+                    format : 'MM/DD/YYYY hh:mm A'
+                });
+            }
+            </script>
+            
+            <style>
+                .ui-front {
+                z-index: 1500 !important;
+                }
+                input{
+                z-index: 10;
+                }
+                .centered-modal.in {
+                display: flex !important;
+                }
+                .centered-modal .modal-dialog {
+                margin: auto;
+                }
+                .lookupInput a {
+                display: block;
+                position: absolute;
+                top: 0px;
+                width: 44px !important;
+                margin-left: 352px;
+                <!--margin-left: 18px;-->
+                }
+                .lookupInput img {
+                float:right;
+                }
+                .span.lookupInput {
+                position: relative;
+                display: inherit;
+                }
+                .lookupInput a, .lookupInput a {
+                border: none !important;
+                background: none !important;
+                }
+                lookupIcon{
+                margin-left: 18px;
+                }
+                .datePicker {z-index:1151; position:fixed;}
+                
+            </style>
+            <style>
+                #cal-legend {float:left; width:20%;}
+                #cal-legend ul {margin:0;padding:0;list-style:none;}
+                #cal-legend ul li {margin:0;padding:5px;float:left;}
+                #cal-legend ul li span {display:block; height:16px; width:16px; margin-right:4px; float:left; border-radius:4px;}
+                #calendar {width:80%;float:right;}
+                #calendar a:hover {color:#000000 !important;}
+                .fc-event-inner {padding:3px;}
+                .event-birthday {background:#56458c;border-color:#56458c;}
+                .event-campaign {background:#cc9933;border-color:#cc9933;}
+                .fc-event{box-shadow: 2px 2px 2px #706868;}
+                .fc-today {background: #C0C0C0 !important;border: none !important;border-top: 1px solid #ddd !important;font-weight: bold;}
+                .event-personal-rtp {color: #000000; background:#3366FF;border-color:#3366FF;}
+                .event-personal-minnesota {color: #000000; background:#663399;border-color:#663399;}
+                .event-personal-hq {color: #000000; background:#FF9933;border-color:#FF9933;}
+                .event-personal-GRS {color: #000000; background:#BEA7CC;border-color:#BEA7CC;}
+                .event-personal-apac {color: #000000; background:#CC0000;border-color:#CC0000;}
+                .event-personal-emea {color: #000000; background:#669999;border-color:#669999;}
+                .event-personal-weekend {color: #000000; background:#CC3399;border-color:#CC3399;}
+                .event-personal-bulletin {color: #000000; background:#996633;border-color:#996633;}
+                .event-personal-colorado {color: #000000; background:#CFB87C;border-color:#CFB87C;}
+            </style>
+            <style type="text/css">
+                .teamsCheckboxesClass tr{display: grid;}
+                .orgsCheckboxesClass tr{display: grid;}
+                .loader {
+                border: 16px solid #f3f3f3;
+                border-radius: 50%;
+                border-top: 16px solid #3498db;
+                width: 50px;
+                height: 50px;margin:auto; margin-top: 200px;
+                -webkit-animation: spin 2s linear infinite; /* Safari */
+                animation: spin 2s linear infinite;
+                }
+                
+                /* Safari */
+                @-webkit-keyframes spin {
+                0% { -webkit-transform: rotate(0deg); }
+                100% { -webkit-transform: rotate(360deg); }
+                }
+                
+                @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="contextMenu" style="display:none" id="myMenu1">
+                <ul>
+                    <li id="edit">Edit</li>
+                    <li id="cancel">Cancel</li>
+                </ul>
+            </div>
+            <div class="contextMenu" style="display:none" id="myMenu2">
+                <ul>
+                    <li id="new" >New</li>
+                    <li id="cancel">Cancel</li>
+                </ul>
+            </div>
+            <apex:outputPanel id="calPanel">
+                <apex:form id="theForm">
+                    
+                    <apex:actionFunction name="setEvnt" oncomplete="newButtonActionFunctions();" action="{!changeDate}" reRender="bootstrapDiv_New">
+                        <apex:param value="" name="eventDate" assignTo="{!tempEventDate}"/>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="editEventDetails" oncomplete="editButtonActionFunctions();" action="{!editEvent}" reRender="bootstrapDiv_Edit">
+                        <apex:param value="" name="editEventId" assignTo="{!tempEventId}"/>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="viewEventDetailsFun"  action="{!viewEvent}" oncomplete="viewalldayeventshowhide();" reRender="bootstrapDiv_view" >
+                        <apex:param value="" name="viewEventId" assignTo="{!tempviewEventId}"/>
+                    </apex:actionFunction>
+                    <div id="cal-legend" >
+                        <!--<apex:outputText rendered="{!if($Profile.Name !='Support: Technical Support Rep (TSR)',false,true)}"><center>Nimble Support Calendar</center></apex:outputText>-->
+                        <apex:outputPanel rendered="{!if($Profile.Name !='Support: Technical Support Rep (TSR)',True,false)}">
+                        <button id="newButton" class="fc-agendaWeek-button ui-button ui-state-default ui-corner-left ui-corner-right" type="button" data-toggle="modal" data-target="#myModal">New Event</button>
+                        <button id="editButton" class="fc-agendaWeek-button ui-button ui-state-default ui-corner-left ui-corner-right" type="button" data-toggle="modal" data-target="#edit_Modal" style="display: none;">Edit Event</button>
+                        <button id="viewButton" class="fc-agendaWeek-button ui-button ui-state-default ui-corner-left ui-corner-right" type="button" data-toggle="modal" data-target="#view_Modal" style="display: none;" >Event Detail</button>
+                        </apex:outputPanel>
+                        <br/><br/>
+                        <apex:outputPanel >
+                            <b><apex:outputText value="Filter by team : "/></b>
+                            <apex:selectCheckboxes styleClass="teamsCheckboxesClass" value="{!teamListValues}">
+                                <apex:actionSupport action="{!toggleTeamOrgEvents}" event="onchange" />
+                                <apex:selectOptions id="teamCheckBoxValues" value="{!teamList}"/>
+                            </apex:selectCheckboxes>
+                            <b><apex:outputText value="Filter by organization : "/></b>
+                            <apex:selectCheckboxes styleClass="orgsCheckboxesClass" value="{!organizationListValues}">
+                                <apex:actionSupport action="{!toggleTeamOrgEvents}" event="onchange" />
+                                <apex:selectOptions value="{!organizationList}"/>
+                            </apex:selectCheckboxes><br/>
+                            <apex:outputPanel rendered="{!if($Profile.Name !='Support: Technical Support Rep (TSR)',True,false)}">
+                            <a href="/{!reportId}" style="text-decoration: none;" target="_blank">Current and Future Events</a>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                        <br/>
+                        <hr/>
+                        <table>
+                            <tr>
+                                <td style="background-color:#3366FF; width: 20px;"></td>
+                                <td style="padding-left: 10px;">RTP</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#663399; width: 20px;"></td>
+                                <td style="padding-left: 10px;">Minnesota</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#FF9933; width: 20px;"></td>
+                                <td style="padding-left: 10px;">HQ</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#CC0000; width: 20px;"></td>
+                                <td style="padding-left: 10px;">APAC</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#669999; width: 20px;"></td>
+                                <td style="padding-left: 10px;">EMEA</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#CC3399; width: 20px;"></td>
+                                <td style="padding-left: 10px;">Weekend</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#996633; width: 20px;"></td>
+                                <td style="padding-left: 10px;">Bulletin</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#CFB87C; width: 20px;"></td>
+                                <td style="padding-left: 10px;">Colorado</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#3A87AD; width: 20px;"></td>
+                                <td style="padding-left: 10px;">Others</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:#BEA7CC; width: 20px;"></td>
+                                <td style="padding-left: 10px;">GRS</td>
+                            </tr>                            
+                        </table>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <apex:actionRegion >
+                        <apex:outputPanel id="calendarPanel">
+                            <apex:outputPanel >
+                                <div id="calendar"></div>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                    
+                    
+                    <div class="bootstrap-iso">
+                        <div class="container">
+                            <!-- Trigger the modal with a button -->
+                            <!-- Modal -->
+                            <apex:outputPanel id="bootstrapDiv_New">
+                                <!-- Start - For creation of new Event -->
+                                <div class="modal fade centered-modal" id="myModal" role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"></button>
+                                                <center><h4 class="modal-title">New Event</h4></center>
+                                            </div> 
+                                            <apex:actionRegion >
+                                                <apex:pageMessages id="insideNewEventDiv"></apex:pageMessages>
+                                                <div class="modal-body">
+                                                    <form class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <label for="eventAssignedTo" class="control-label col-sm-3">Create Event for :</label>
+                                                            <div class="col-sm-8">
+                                                                <apex:selectList onchange="UserRegionDisplay()" styleClass="form-control picklist" size="1" value="{!selectedname}">
+                                                                    <apex:selectOptions id="UserOrRegion" value="{!items}"/>
+                                                                </apex:selectList> <br/>
+                                                            </div>
+                                                            <div id="UserDisplay" >
+                                                                <label for="eventAssignedTo" class="control-label col-sm-3"  >Assigned To :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:inputfield styleclass="form-control lookupInput" id="eventAssignedTo" onchange="assignedToValueChange()" value="{!newEvent.OwnerId}"/><br/>
+                                                                </div>
+                                                            </div>
+                                                            <div id="RegionDisplay" style="display:none;">
+                                                                <label for="eventAssignedToRegion" class="control-label col-sm-3">Region :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:inputfield styleclass="form-control" id="eventAssignedToRegion" OnChange="assignedToValueChange()" value="{!newEvent.Assigned_To_Region__c}"/><br/>
+                                                                </div>
+                                                            </div>
+                                                            <label for="eventType"  class="control-label col-sm-3">Type :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:inputfield styleclass="form-control" onchange="writeSubject()" id="eventType" value="{!newEvent.eventType__c}" /><br/>
+                                                            </div>
+                                                            <label for="eventSubType"  class="control-label col-sm-3">Sub Type :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:inputfield styleclass="form-control" onchange="writeSubject()" id="eventSubType" value="{!newEvent.eventSubType__c}"/><br/>
+                                                            </div>
+                                                            <label for="eventSubject" class="control-label col-sm-3">Subject :</label>
+                                                            <div class="col-sm-9">
+                                                                <!--<apex:inputfield styleclass="form-control lookupInput" id="eventSubject" value="{!Event.Subject}"/><br/><br/>-->
+                                                                <apex:input type="text" styleclass="form-control" id="eventSubject" value="{!eventSubject}"/><br/>
+                                                            </div>
+                                                            <label for="eventIsAllDayEvent" class="control-label col-sm-3">All-Day Event :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:inputfield styleclass="form-control" onclick="allDayEventOnClickShowHideDate()" style="width: 18px;border-color: white;height: 16px;" id="eventIsAllDayEvent" value="{!newEvent.IsAllDayEvent}"/><br/>
+                                                            </div>
+                                                            <!--Modified By vishnu to show Bootstap Date/Datetime picker on Feb 13th 2019 -- START -->
+                                                            <div id="enableFullDayEvent">
+                                                                <label for="allDayEventStartDate" class="control-label col-sm-3">Start Date :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date"  data-provide="datepicker" id="datetimepickerAllDayStart">
+                                                                            <apex:inputText id="allDayEventStartDate" styleClass="form-control" value="{!new_allDayStartDateInString}" /><br/>
+                                                                            <div class="input-group-addon" onclick="callDatePicker();"> <!--onclick="callDatePicker();"-->
+                                                                                <span class="glyphicon glyphicon-th"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <label for="allDayEventEndDate" class="control-label col-sm-3">End Date :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date"  id="datetimepickerAllDayEnd">
+                                                                            <apex:inputText id="allDayEventEndDate" styleClass="form-control" value="{!new_allDayEndDateInString}" /><br/>
+                                                                            <div class="input-group-addon" onclick="callDatePicker();"><!--onclick="callDatePicker();"-->
+                                                                                <span class="glyphicon glyphicon-th" ></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="disableFullDayEvent">
+                                                                <label for="eventStartDate" class="control-label col-sm-3">Start Date/Time :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date" id="datetimepickerStartDateTime">
+                                                                            <apex:inputText id="eventStartDate" styleClass="form-control" value="{!new_allDayStartDateTimeInString}" /><br/>
+                                                                            <div class="input-group-addon" onclick="callDateTimePicker();"><!--onclick="callDatePicker();"-->
+                                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <label for="eventEndDate" class="control-label col-sm-3">End Date/Time :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date" id="datetimepickerEndDateTime">
+                                                                            <apex:inputText id="eventEndDate" styleClass="form-control" value="{!new_allDayEndDateTimeInString}" /><br/>
+                                                                            <div class="input-group-addon" onclick="callDateTimePicker();"><!--onclick="callDatePicker();"-->
+                                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!--Modified By vishnu to show Bootstap Date/Datetime picker on Feb 13th 2019 -- END -->
+                                                            <div>
+                                                                <label for="noteOrMemo"  class="control-label col-sm-3">Notes/Memo :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:inputField value="{!newEvent.Description}" styleclass="form-control" id="noteOrMemo" /><br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </apex:actionRegion>
+                                            <div class="modal-footer" style="border-color:white;">
+                                                <apex:commandButton id="saveEvent" styleClass="btn btn-primary" value="Save" action="{!saveNewEvent}" reRender="insideNewEventDiv"/>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End - For creation of new Event -->
+                            </apex:outputPanel>
+                            
+                            <apex:outputPanel id="bootstrapDiv_Edit">
+                                <!-- Start - For Editing an Event -->
+                                <div class="modal fade centered-modal" id="edit_Modal" role="dialog">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"></button>
+                                                <center><h4 class="modal-title">Edit Event</h4></center>
+                                            </div>
+                                            <apex:actionRegion >
+                                                <apex:pageMessages id="insideEditEventDiv"></apex:pageMessages>
+                                                <div class="modal-body" style="height:550px;overflow-y: auto;">
+                                                    <form class="form-horizontal">
+                                                        <div class="form-group">
+                                                            <label for="edit_eventOwnerId" class="control-label col-sm-3">Assigned To :</label>
+                                                            <div class="col-sm-8">
+                                                                <apex:inputField styleclass="form-control lookupInput" id="edit_eventOwnerId" value="{!editEventDetails.OwnerId}" /><br/>
+                                                            </div>
+                                                            <label for="edit_eventType" class="control-label col-sm-3">Type :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:inputField styleclass="form-control" onchange="writeSubject()" id="edit_eventType" value="{!editEventDetails.eventType__c}"/><br/>
+                                                            </div>
+                                                            <label for="edit_eventSubType" class="control-label col-sm-3">Sub Type:</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:inputField styleclass="form-control" onchange="writeSubject()" id="edit_eventSubType" value="{!editEventDetails.eventSubType__c}"/><br/>
+                                                            </div>
+                                                            <label for="edit_eventSubject" class="control-label col-sm-3">Subject :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:input type="text" styleclass="form-control" id="edit_eventSubject" value="{!editEventSubject}"/><br/>
+                                                            </div>
+                                                            <label class="control-label col-sm-3">All-Day Event :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:inputField styleclass="form-control" onclick="allDayEventOnClickShowHideDate()" style="width: 18px;border-color: white;height: 16px;" id="edit_eventIsAllDayEvent" value="{!editEventDetails.IsAllDayEvent}"/><br/>
+                                                            </div>
+                                                            <!--Modified By vishnu to show Bootstap Date/Datetime picker on Feb 13th 2019 -- START -->
+                                                            <div id="edit_enableFullDayEvent">
+                                                                <label for="edit_allDayEventStartDate" class="control-label col-sm-3">Start Date :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date" data-provide="datepicker" id="editdatetimepickerAllDayStart">
+                                                                            <apex:inputText id="edit_allDayEventStartDate" styleClass="form-control" value="{!allDayStartDateInString}" /><br/>
+                                                                            <div class="input-group-addon" onclick="editDateOnclick();">
+                                                                                <span class="glyphicon glyphicon-th" ></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <label for="edit_allDayEventEndDate" class="control-label col-sm-3">End Date :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date" data-provide="datepicker" id="editdatetimepickerAllDayEnd">
+                                                                            <apex:inputText id="edit_allDayEventEndDate" styleClass="form-control" value="{!allDayEndDateInString}" /><br/>
+                                                                            <div class="input-group-addon" onclick="editDateOnclick();">
+                                                                                <span class="glyphicon glyphicon-th" ></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div id="edit_disableFullDayEvent">
+                                                                <label for="edit_eventStartDate" class="control-label col-sm-3">Start Date/Time :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date" id="editdatetimepickerStart">
+                                                                            <apex:inputText id="edit_eventStartDate" styleClass="form-control" value="{!edit_allDayStartDateTimeInString}" /><br/>
+                                                                            <span class="input-group-addon" onclick="editDateTimeOnclick();">
+                                                                                <span class="glyphicon glyphicon-calendar"></span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <label for="edit_eventEndDate" class="control-label col-sm-3">End Date/Time :</label>
+                                                                <div class="col-sm-9">
+                                                                    <div class="form-group">
+                                                                        <div class="input-group date" id="editdatetimepickerEnd">
+                                                                            <apex:inputText id="edit_eventEndDate" styleClass="form-control" value="{!edit_allDayEndDateTimeInString}" /><br/>
+                                                                            <span class="input-group-addon" onclick="editDateTimeOnclick();">
+                                                                                <span class="glyphicon glyphicon-calendar" ></span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!--Modified By vishnu to show Bootstap Date/Datetime picker on Feb 13th 2019 -- END -->
+                                                            </div>
+                                                            <label class="control-label col-sm-3">Is Cancelled :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:inputField id="Edit_IsCancelled" value="{!editEventDetails.IsCancelled__c}" styleclass="form-control" style="width: 18px;border-color: white;height: 16px;"/><br/>
+                                                            </div>
+                                                            <div>
+                                                                <label class="control-label col-sm-3">Notes/Memo :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:inputField id="edit_notesOrMemo" value="{!editEventDetails.Description}" styleclass="form-control"/><br/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </apex:actionRegion>
+                                            <div class="modal-footer" style="border-color:white;">
+                                                <apex:commandButton id="saveEditEvent" styleClass="btn btn-primary" value="Save" action="{!saveEditEvent}" reRender="insideEditEventDiv"/>
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End - For Editing an Event -->
+                            </apex:outputPanel>
+                            
+                            <!-- Start - For viewing an Event -->
+                            <apex:outputPanel id="bootstrapDiv_view">
+                                <div class="modal fade centered-modal" id="view_Modal" role="dialog">
+                                    <div class="modal-dialog">
+                                        <!-- Modal content-->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal"></button>
+                                                <center><h4 class="modal-title">Event Detail</h4></center>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form class="form-horizontal">
+                                                    <div class="form-group">
+                                                        <label for="eventAssignedTo" class="control-label col-sm-3">Assigned To :</label>
+                                                        <div class="col-sm-8">
+                                                            <apex:outputfield styleclass="form-control lookupInput" id="eventAssignedToview" value="{!viewEventDetails.OwnerId}"/><br/><br/>
+                                                        </div>
+                                                        <label for="eventType"  class="control-label col-sm-3">Type :</label>
+                                                        <div class="col-sm-9">
+                                                            <apex:outputfield styleclass="form-control"  id="eventTypeview" value="{!viewEventDetails.eventType__c}"  /><br/><br/>
+                                                        </div>
+                                                        <label for="eventSubType"  class="control-label col-sm-3">Sub Type :</label>
+                                                        <div class="col-sm-9">
+                                                            <apex:outputfield styleclass="form-control" id="eventSubTypeview" value="{!viewEventDetails.eventSubType__c}"/><br/><br/>
+                                                        </div>
+                                                        <label for="eventSubject" class="control-label col-sm-3">Subject :</label>
+                                                        <div class="col-sm-9">
+                                                            <apex:outputText id="eventSubjectview" value="{!viewEventSubject}"/><br/><br/>
+                                                        </div>
+                                                        <label for="eventIsAllDayEventview" class="control-label col-sm-3">All-Day Event :</label>
+                                                        <div class="col-sm-9">
+                                                            <apex:outputfield styleclass="form-control"  style="width: 18px;border-color: white;height: 16px;" id="view_eventIsAllDayEvent" value="{!viewEventDetails.IsAllDayEvent}"/><br/><br/>
+                                                        </div>
+                                                        <apex:outputPanel rendered="{!IF(viewEventDetails.IsAllDayEvent == true, true, false)}">
+                                                            <div id="enableFullDayEventview">
+                                                                <label for="allDayEventStartDate" class="control-label col-sm-3">Start Date :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:outputText id="allDayEventStartDateview"  value="{!allDayStartDateInString}" /><br/><br/>
+                                                                </div>
+                                                                <label for="allDayEventEndDate" class="control-label col-sm-3">End Date :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:outputText id="allDayEventEndDateview"  value="{!allDayEndDateInString}" /><br/><br/>
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        <apex:outputPanel rendered="{!IF(viewEventDetails.IsAllDayEvent == false, true, false)}">
+                                                            <div id="disableFullDayEventview">
+                                                                <label for="eventStartDate" class="control-label col-sm-3">Start Date/Time :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:outputfield styleclass="form-control" id="eventStartDateview"  value="{!viewEventDetails.StartDateTime}"/><br/><br/>
+                                                                </div>
+                                                                <label for="eventEndDate" class="control-label col-sm-3">End Date/Time :</label>
+                                                                <div class="col-sm-9">
+                                                                    <apex:outputfield styleclass="form-control" id="eventEndDateview" value="{!viewEventDetails.EndDateTime}"/><br/><br/>
+                                                                </div>
+                                                            </div>
+                                                        </apex:outputPanel>
+                                                        <label class="control-label col-sm-3">Is Cancelled :</label>
+                                                        <div class="col-sm-9">
+                                                            <apex:outputField id="view_IsCancelled" value="{!editEventDetails.IsCancelled__c}" styleclass="form-control" style="width: 18px;border-color: white;height: 16px;"/><br/><br/>
+                                                        </div>
+                                                        <div>
+                                                            <label for="noteOrMemo"  class="control-label col-sm-3">Notes/Memo :</label>
+                                                            <div class="col-sm-9">
+                                                                <apex:outputField value="{!viewEventDetails.Description}" styleclass="form-control" id="noteOrMemoview" /><br/><br/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="modal-footer" style="border-color:white;">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End - For viewing an Event -->
+                            </apex:outputPanel>
+                        </div>
+                    </div>
+                </apex:form>
+            </apex:outputPanel>
+        </body>
+    </html>
+</apex:page>

@@ -1,0 +1,68 @@
+<aura:component
+                implements="lightning:RecordHomeTemplate"
+                description="Three columns layout"
+                access="global"
+                >
+    <aura:attribute name="left" type="Aura.Component[]" access="global" />
+    <aura:attribute name="center" type="Aura.Component[]" access="global" />
+    <aura:attribute name="right" type="Aura.Component[]" access="global" />
+    
+    <aura:attribute name="left1" type="Aura.Component[]" access="global" />
+    <aura:attribute name="center1" type="Aura.Component[]" access="global" />
+    <aura:attribute name="right1" type="Aura.Component[]" access="global" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:html tag="style"> 
+    .centerpanel { 
+           width: 50% !important;
+    }        
+</aura:html>
+    
+    <div id="freezecontainer" style="position: sticky!important;top: 0px;z-index: 50;">
+        <lightning:layout>            
+            <lightning:layoutItem aura:id="centerColumn" size="12" class="center">
+                {!v.center1}
+            </lightning:layoutItem>           
+        </lightning:layout>
+    </div>
+    <div style="margin-top: 1%;">
+        
+    </div>
+    <div aura:id="container" style="position: sticky!important;top: 2px;z-index: 40;">
+        <lightning:layout >            
+            <lightning:layoutItem aura:id="centerColumn" size="8" class="leftcomp">
+                {!v.left1}
+            </lightning:layoutItem>  
+            <div style="margin-right: .3%;">
+                
+            </div>
+            <lightning:layoutItem aura:id="centerColumn" size="4" class="rightcomp">
+                {!v.right1}
+            </lightning:layoutItem>  
+        </lightning:layout>
+    </div>
+    <div style="margin-top: 1%;">
+        
+    </div>
+    <div aura:id="container">
+        
+        <lightning:layout>
+            <lightning:layoutItem aura:id="leftColumn" size="3" class="leftcomp">
+                {!v.left}
+            </lightning:layoutItem>
+            <div style="margin-right: .3%;">
+                
+            </div>
+            <div class="centerpanel">
+            <lightning:layoutItem aura:id="centerColumn"  size="6" class="center">
+                {!v.center}
+            </lightning:layoutItem>
+                </div>
+            <div style="margin-right: .3%;">
+                
+            </div>
+            <lightning:layoutItem aura:id="rightColumn" size="3" class="rightcomp">
+                {!v.right}
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

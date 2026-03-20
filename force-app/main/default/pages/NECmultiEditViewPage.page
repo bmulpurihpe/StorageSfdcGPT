@@ -1,0 +1,95 @@
+<!--                             <<<< === Visualforce page === >>>>
+    =============================================================================================================
+        Name                    : NECmultiEditViewPage
+        Description             : To display the nimble enhanced charcateritics defined in NEC object for different objects.
+        Created Date            : 11th april 2019
+        Author                  : Vishnu R
+        Version                 : 1.0
+        Modification History    : Initial Version
+    ==============================================================================================================   -->
+<apex:page Controller="NECController" sidebar="false" id="page" title="Nimble Enhanced Characteristics Mass Edit Page">
+    <script>
+    <!-- Added script to pass the filter group in URL TS-6846 -->
+    function updateURLParameter(urll, param, paramVal){
+        var newAdditionalURL = "";
+        var tempArray = urll.split("&");
+        var baseURL = tempArray[0];
+        var additionalURL = tempArray[1];
+        var temp = "=";
+        if (additionalURL) {
+            if(tempArray[1].split('=')[0] == param){
+                newAdditionalURL =  tempArray[1].split('=')[0]+ temp + paramVal;;
+            }
+        }
+        return baseURL + "&" + newAdditionalURL;
+    }
+    function ChangeUrlOnPicklistUpdate(){
+        var GroupValue = document.getElementById("page:form:PBlock1:pBlockS:necGroupFilter").value;
+        var url = window.location.href;
+        if (url.indexOf('&groupname=') > 0) {
+            var url=updateURLParameter(url,"groupname",GroupValue);  
+        }
+        else{
+            var UrlParameterToAdd = '&groupname='+GroupValue;
+            var encodedparams = encodeURIComponent(GroupValue);
+            url +='&groupname='+encodedparams;   
+        }
+        window.history.replaceState(null,null, url);
+        CallApexMethod();
+    }
+    </script>
+    <apex:form id="form">
+        <apex:actionFunction name="CallApexMethod" action="{!groupSelectionUpdate}" reRender="mainpanel" status="LoadStatusId"/>
+        <apex:pageBlock title="Edit Nimble Enhanced Characteristics" id="PBlock1" tabStyle="Account">
+            <apex:pageMessages id="NECMessages"/>
+            <apex:outputPanel id="timerPanel">
+                <apex:actionPoller reRender="NECMessages" interval="10" enabled="{!timer}" action="{!timerOff}"/> 
+            </apex:outputPanel>
+            
+            <apex:pageBlockSection title="Choose any NEC Definition group" id="pBlockS" collapsible="false" columns="3">
+                <apex:selectList multiselect="false" size="1" id="necGroupFilter" value="{!SelectedGroup}" onchange="ChangeUrlOnPicklistUpdate()" >
+                    <apex:outputLabel >NEC Definition Group Filter: </apex:outputLabel>&nbsp;
+                    <apex:selectOptions value="{!Groups}" />
+                    <!--<apex:actionSupport event="onchange" reRender="mainpanel" status="LoadStatusId" action="{!groupSelectionUpdate}"/>-->
+                </apex:selectList>                                
+                <apex:actionStatus id="LoadStatusId" >
+                    <apex:facet name="start" >
+                        Loading.... <img src="/img/loading.gif" /> 
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="SaveActStatusId" >
+                    <apex:facet name="start" >
+                        Saving....Please Wait..... <img src="/img/loading.gif" /> 
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockSection><br/>
+            <!--Showing the pageBlock Table-->
+            <apex:outputpanel id="mainpanel">
+                <apex:repeat value="{!NECDefinitionWithGroupMappings}" var="EACDefinitionGroups" id="MainRepeat">
+                    <b style="font-size:small">Group Name: {!EACDefinitionGroups}</b><br/><br/>
+                    <apex:pageBlockTable value="{!NECDefinitionWithGroupMappings[EACDefinitionGroups]}" var="WrapperListValue" id="Pbt1" columns="4" columnsWidth="25%,25%,25%,25%">
+                        <apex:facet name="header">
+                            <center><a href="/{!Recordid}" target="_Blank">{!ObjectRecordtype} - {!Case_RMA_Number_AddressBook_Account} </a></center>
+                        </apex:facet>
+                        <apex:column headerValue="Key Name" value="{!WrapperListValue.KeyName}" />
+                        <apex:column headerValue="Key Label" value="{!WrapperListValue.keyLabel}"/>
+                        <apex:column headerValue="Key Description" value="{!WrapperListValue.keyDescription}"/>
+                        <apex:column headerValue="Value" >
+                            <apex:inputCheckbox value="{!WrapperListValue.isCheckboxSelected}" id="BodyCheckboxId" 
+                                                rendered="{!WrapperListValue.isCheckbox}" styleClass="BodyCheckbox" />
+                            <apex:selectList value="{!WrapperListValue.picklistVal}" multiselect="false" size="1" id="picklistvalues" rendered="{!WrapperListValue.isPicklist}" styleClass="BodyPicklistValues" onclick="disablePicklistValue(this);" >
+                                <apex:selectOptions value="{!WrapperListValue.picklistValues}" />
+                            </apex:selectList>
+                            <apex:inputText value="{!WrapperListValue.textValue}" rendered="{!WrapperListValue.isText}" id="inputTextBox"/>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                    <br/>
+                </apex:repeat>
+            </apex:outputpanel>
+            <center>
+                <apex:commandButton action="{!InsertOrUpdateEACRecords}" value="Save" reRender="form,timerPanel" status="SaveActStatusId"/>
+                <apex:commandButton action="/{!Recordid}" value="Cancel"/>
+            </center>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

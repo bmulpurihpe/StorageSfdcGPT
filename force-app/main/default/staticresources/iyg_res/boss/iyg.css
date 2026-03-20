@@ -1,0 +1,48 @@
+    html,
+    body {
+        margin: 0px;
+        padding: 0px;
+        font-color: red;
+    }
+    
+    .iyg {
+        padding: 0px;
+        margin: 0px;
+    }
+    
+    .iygsidebar {
+        position: relative;
+        left: -8px;
+        width: 178px;
+    }
+    
+    .iygsidebar li {
+        font-size: 12px !important;
+    }
+    
+    .iygpanel li {
+        font-size: 14px !important;
+    }
+    
+    .iyg li {
+        color: #333435;
+        padding-bottom: 3px;
+    }
+    
+    .dire {
+        color: tomato;
+    }
+    
+    li a {
+        color: #3d3d3d !important;
+        text-decoration: none;
+    }
+    
+    li a:hover {
+        color: #3d3d3d !important;
+        text-decoration: underline;
+    }
+    
+    .ta a {
+        color: white !important;
+    }

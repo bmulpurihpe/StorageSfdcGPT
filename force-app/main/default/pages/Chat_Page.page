@@ -1,0 +1,57 @@
+<apex:page >
+    <div style="margin-left:50px;margin-top:50px;">
+        
+
+<!-- live chat button -->
+        <a id="liveagent_button_online_5732H000000KzK6" href="javascript://Chat" style="display: none;" onclick="liveagent.startChat('5732H000000KzK6')">
+            Online Chat
+        </a>
+        <div id="liveagent_button_offline_5732H000000KzK6" style="display: none;">
+            Offline Chat
+        </div>
+
+        <script type="text/javascript">
+            if (!window._laq) { window._laq = []; }
+            window._laq.push(
+                function(){
+                    liveagent.showWhenOnline(
+                        '5732H000000KzK6',
+                        document.getElementById('liveagent_button_online_5732H000000KzK6')
+                    );
+                    liveagent.showWhenOffline(
+                        '5732H000000KzK6',
+                        document.getElementById('liveagent_button_offline_5732H000000KzK6')
+                    );
+                }
+            );
+        </script>
+
+     
+  
+        <!-- live agent deployment -->
+       <script type='text/javascript' src='https://c.la3-c1-ph2.salesforceliveagent.com/content/g/js/49.0/deployment.js'></script>
+<script type='text/javascript'>
+        liveagent.init('https://d.la3-c1-ph2.salesforceliveagent.com/chat', '5722H000000KzFJ', '00D80000000aba6');
+        var orgOpen = window.open;
+    window.open = function (url, windowName, windowFeatures) {
+
+        /* Width of the chat window. Use your own value. */
+        var chatWindowHeight=468;
+
+        /* Height of the chat window. Use your own value. */
+        var chatWindowWidth=377;
+
+        /* Calculate the left position to keep the chatwindow in center */ 
+        var left = parseInt((screen.availWidth/2) - (chatWindowWidth/2));
+
+        /* Calculate the top position to keep the chatwindow in center */
+        var top = parseInt((screen.availHeight/2) - (chatWindowHeight/2));
+
+        /* Create the arguments for window.open method. */
+        var windowFeatures = "width=" + chatWindowWidth + ",height=" + chatWindowHeight + ",status,resizable,left=" + left + ",top=" + top + "screenX=" + left + ",screenY=" + top;
+
+        return orgOpen(url, windowName, windowFeatures); 
+    }
+</script>
+    </div>
+</apex:page>

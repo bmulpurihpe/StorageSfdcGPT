@@ -1,0 +1,204 @@
+<apex:component controller="ForecastUpdateNotificationController" access="global">
+    <apex:attribute name="uid" type="String" required="true" assignTo="{!UserId}" description="User Id" access="global"></apex:attribute>
+    
+    <p>{!User.Name}'s weekly forecast has been updated by {!IF(editByUser.Name != null , editByUser.Name , "")}. See table below for an overview of the recent updates.</p>
+
+    <apex:outputPanel layout="block">
+        <table border="1" cellpadding="2" cellspacing="0">
+            <thead style="font-weight: bold;">
+                <tr>
+                    <th style="background-color: #CADBFF; font-weight: bold;">Forecast Rollups</th>
+                    <th style="font-weight: bold;">Old Value</th>
+                    <th style="font-weight: bold;">New Value</th>
+                    <th style="font-weight: bold;">Variance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">CQ Quota</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.Quota}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.Quota}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.Quota}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                   <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">CQ Bookings</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.Booking}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.Booking}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.Booking}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">CQ Commit</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.QuarterCommit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.QuarterCommit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.QuarterCommit}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">CQ Gut</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.QuarterGut}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.QuarterGut}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.QuarterGut}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">CQ Upside</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.QuarterUpside}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.QuarterUpside}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.QuarterUpside}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">Month 1 Commit</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.Month1Commit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.Month1Commit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.Month1Commit}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">Month 2 Commit</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.Month2Commit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.Month2Commit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.Month2Commit}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">Month 3 Commit</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.Month3Commit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.Month3Commit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.Month3Commit}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">Upcoming Week Commit</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.UpcomingWeekCommit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.UpcomingWeekCommit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.UpcomingWeekCommit}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="background-color: #CADBFF; font-weight: bold;">Following Week Commit</td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!OldForecast.FollowingWeekCommit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!NewForecast.FollowingWeekCommit}"/>
+                        </apex:outputText>
+                    </td>
+                    <td>
+                        <apex:outputText value="{0, number, ###,##0}">
+                            <apex:param value="{!Variance.FollowingWeekCommit}"/>
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </apex:outputPanel>
+
+
+    <p>Click <a href="{!RepForecastURL}">HERE</a> to see details</p>
+    <p>Contact the Sales Operations team via <a href="mailto:sales.ops@nimblestorage.com">sales.ops@nimblestorage.com</a> if need assistance or have questions involving the Sales Forecast Rollup Tool.</p>
+</apex:component>

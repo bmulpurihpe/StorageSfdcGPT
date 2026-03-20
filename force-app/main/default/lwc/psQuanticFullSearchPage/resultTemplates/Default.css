@@ -1,0 +1,43 @@
+.bottom-metadata span {position:relative; margin-right:20px}
+
+.bottom-metadata span:after {
+    content:"·";
+    position:absolute;
+    font-family: symbol;
+}
+.bottom-metadata span:last-child:after {
+    content:"";
+}
+.meta-value{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 175px;
+  display: inline-block;
+}
+:host {
+  --sds-c-icon-color-foreground: white;
+  --slds-c-icon-color-foreground-default: white;
+  --lwc-spacingMedium: 5px;
+  --slds-c-button-spacing-inline-end: 15px;
+  --slds-c-button-spacing-inline-start: 15px;
+}
+
+c-quantic-result-label {
+  --sds-c-icon-color-background: rgb(12,35,64);
+}
+
+.psResultBadge {
+  text-transform: capitalize !important;
+  background-color: #0176d3;
+  margin-right: 10px;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 5px 10px;
+  color: white;
+  border-radius: 2px;
+  letter-spacing: 1px;
+}

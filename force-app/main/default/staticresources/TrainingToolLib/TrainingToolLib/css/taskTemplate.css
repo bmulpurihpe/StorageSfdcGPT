@@ -1,0 +1,195 @@
+div#container {
+    margin: 5px auto;
+}
+div#header {
+    margin-bottom: 20px;
+}
+div#container .banner {
+    //background-color: #F5F5F5;
+    padding: 15px 10px;            
+    //border-bottom: 2px solid #A52A2A;            
+    background-color: #5FB64B;
+    color: #fff;
+}
+div#container .banner img {
+    width: 40px;
+    height: 30px;
+    vertical-align: middle;;            
+}
+div#container .banner-title {
+    font-size: 16px;
+}        
+div#container .banner-btn {
+    float: right;
+    //margin-top: -5px;
+}                
+div#container .banner-btn .btn {
+    padding: 6px 20px;
+    border-color: #F0F8FF;
+}
+div#content .panel-control {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+div#content .panel-control label {
+    padding-right: 10px;
+}
+div#content .panel {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0 5px;    
+    margin-bottom: 20px;
+    border-top-width: 2px;
+    border-top-color: #5FB64B;   
+    position: relative;       
+}
+div#content .panel-heading {   
+    padding: 8px 5px;
+    border-bottom: 1px solid #5FB64B;
+    margin-bottom: 15px;
+}   
+
+div#content .panel-heading h3 {
+    display: inline-block;
+    padding: 6px;
+    font-size: 14px;
+}
+div#content .btn {
+    padding: 6px 20px;
+}
+div#content .panel-heading .btn-group {
+    float: right;
+}
+div#content .panel-body {
+    margin-bottom: 15px;
+}
+
+div#content .table-striped {
+    //border-collapse: collapse;
+    border: 1px solid #ddd;
+}  
+div#content .table-striped thead th {
+    background-color: #eaeaea;
+}
+div#content .table-striped > tbody > tr > td {
+    border-top: 1px solid #ddd;
+}
+div#content .table-striped tbody tr.even td {
+    background-color: #F9F9F9;
+}
+div#content .table-striped tbody tr:hover td {
+    background-color: #e3f3ff;
+}
+
+div#content .table-open th {
+    width: 30%;
+    text-align: right;
+}
+.textarea-input {
+    width: 400px;
+    height: 80px;
+}
+.text-input {
+    width: 300px;
+}
+.select-input {
+    width: 200px;
+}
+.error-alert {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    display: none;
+}
+div#container, 
+div#container .btn, 
+div#container select,
+div#container td,
+div#container h1,
+div#container h2,
+div#container h3,
+div#container h4,
+div#container h5 {
+    font-family: HelveticaNeueLT-Light !important;
+}  
+
+.block-overlay {
+    z-index: 1000;
+    border: none;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    opacity: 0.5;
+    position: absolute;
+    background-color: #000;
+    display: none;
+}
+.block-message {
+    z-index: 1011;
+    position: absolute;
+    padding: 0px;
+    margin: 0px;
+    width: 30%;
+    top: 100px;
+    left: 400px;
+    text-align: center;
+    color: #000;
+    border: 2px solid #AAAAAA;
+    background-color: #fff;
+    display: none;
+}
+
+a.tooltips {
+    position: relative;
+    display: inline;
+}
+a.tooltips span.tooltip-info {
+    position: absolute;
+    padding: 8px;
+    //width: 140px;
+    color: #FFFFFF;
+    background: #000000;          
+    //line-height: 30px;
+    //text-align: center;
+    visibility: hidden;
+    border-radius: 4px;
+    text-align: left;
+    width: 250px;
+    white-space: normal;
+    line-height: 20px;
+}
+a.tooltips span.tooltip-info:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -8px;
+    width: 0; height: 0;
+    border-top: 8px solid #000000;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+}
+a:hover.tooltips span.tooltip-info {
+    visibility: visible;
+    opacity: 0.8;
+    bottom: 30px;
+    left: 50%;
+    margin-left: -135px;
+    z-index: 999;
+}
+span.tip-info {
+    font-size: 12px;
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    padding: 4px;
+    margin-left: 10px;
+}

@@ -1,0 +1,113 @@
+<template>
+        <lightning-layout 
+            multiple-rows="true">
+            <lightning-layout-item 
+                size="4"
+                class="slds-p-bottom_small">
+                    <lightning-input
+                            placeholder="Search Knowledge"
+                            type="search"
+                            onchange={applySearchFilter}
+                    ></lightning-input>
+            </lightning-layout-item>
+            <lightning-layout-item size="8"></lightning-layout-item>
+            <lightning-layout-item size="4">
+                <template for:each={recordsToDisplay} for:item="article">
+                    <c-knowledge-article-list-accordian
+                        data-id={article.Id}
+                        key={article.Id}
+                        article-id={article.Id}
+                        title={article.Title}
+                        article-record-type={article.ArticleRecordType}
+                        article-number={article.ArticleNumber}
+                        url-name={article.UrlName}
+                        onviewarticledetail={articleDetailViewClick}
+                    ></c-knowledge-article-list-accordian>
+                </template>
+                <lightning-layout 
+                    multiple-rows="true"
+                    class="slds-p-top_small">
+                    <lightning-layout-item size="4" class="slds-p-left_x-large slds-p-right_xx-large">
+                        <lightning-combobox
+                            id="pageSizeCombo"
+                            onchange={handleRecordsPerPage}
+                            options={pageSizeOptionsCombo}
+                            label="Page Size"
+                            value="5">
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4"></lightning-layout-item>
+                    <lightning-layout-item size="4" class="slds-p-top_large">
+                        <span class="slds-badge"> Total Records: {totalRecords}</span>
+                    </lightning-layout-item>
+                    <lightning-layout-item 
+                        size="12"
+                        class="slds-p-around_small slds-align_absolute-center"
+                        alignment-bump="left">
+                        <lightning-button 
+                            disabled={bDisableFirst} 
+                            icon-name="utility:jump_to_left" 
+                            class="slds-p-horizontal_x-small" 
+                            onclick={firstPage}>
+                        </lightning-button>
+                        <lightning-button 
+                            disabled={bDisableFirst} 
+                            icon-name="utility:chevronleft" 
+                            onclick={previousPage}
+                            class="slds-p-right_x-small">
+                        </lightning-button>
+                        <span class="slds-badge">{pageNumber} &nbsp;of&nbsp; {totalPages} &nbsp; Page(s)</span>
+                        <lightning-button 
+                            disabled={bDisableLast} 
+                            icon-name="utility:chevronright" 
+                            onclick={nextPage} 
+                            class="slds-p-horizontal_x-small" 
+                            icon-position="right">
+                        </lightning-button>
+                        <lightning-button 
+                            disabled={bDisableLast} 
+                            icon-name="utility:jump_to_right" 
+                            onclick={lastPage} 
+                            icon-position="right">
+                        </lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </lightning-layout-item>
+            <lightning-layout-item size="8">
+                <template if:true={noRecordsFound}>
+                    <div class="slds-p-left_small">
+                        <div class="slds-box slds-box_small slds-size_2-of-2 slds-theme_error slds-var-m-top_medium">
+                            <p class="slds-var-p-around_medium">
+                                <strong>Looks like there's a problem.</strong>
+                                <br />
+                                <span>This record is no longer available. Ask your administrator for help.</span>
+                            </p>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={showArticleDetails}>
+                    <div class="slds-p-left_small">
+                        <c-knowledge-article-detail-view-lwc 
+                            title={selectedArticleTitle}
+                            article-id={selectedArticleId}
+                            record-type={selectedArticleRecordType}
+                        ></c-knowledge-article-detail-view-lwc>
+                        
+                    </div>
+                    <div class="slds-p-top_small slds-p-left_small">
+                        <lightning-card title="">
+                            <div class="slds-p-left_medium">
+                                <lightning-tree items={dataCategorySelections} header="Categories"></lightning-tree>
+                            </div>
+                        </lightning-card>
+                    </div>
+                    <div class="slds-p-top_small slds-p-left_small slds-p-bottom_small">
+                        <c-knowledge-article-feedback-lwc
+                            record-id={selectedArticleId}
+                            description-placeholder="some placeholder">
+                        </c-knowledge-article-feedback-lwc>
+                    </div>
+                </template>
+            </lightning-layout-item>
+        </lightning-layout>
+</template>

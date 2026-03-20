@@ -1,0 +1,142 @@
+<apex:page controller="TrainingTaskController" showHeader="true" sidebar="false" tabStyle="Training__tab" docType="html-5.0">
+    <apex:stylesheet value="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/bootstrap-customize/css/bootstrap.min.css')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/bootstrap-customize/css/bootstrap.min.css')}" />
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/css/trainingTask.css')}" />
+    <script type="text/javascript">
+        var currentUser = '{!JSENCODE(CurrentUser)}';
+        var userPath = '{!JSENCODE(UserPath)}';
+        var pageUrl = '{!$Page.TrainingTask}';
+    </script>
+    <div id="container">
+        <div id="header">
+            <div class="banner">
+                <img src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/images/book-icon.png')}" />
+                <h1 class="banner-title">Nimble Training Program - Be Expert!</h1>                
+                <apex:outputPanel rendered="{!isTrainingAdmin}" layout="block" styleClass="banner-btn">
+                    <input type="button" class="btn" value="Manage Training Material" onclick="window.location.href='{!$Page.TaskTemplate}'" />
+                </apex:outputPanel>
+            </div>
+        </div>
+        <div id="content" ng-app="taskApp" ng-controller="taskController">  
+            <div id="userPath">            
+            </div>          
+            <!-- Message Start -->
+            <div class="panel-body" ng-show="messages.length > 0">
+                <table class="table-striped" width="100%" cellspacing="0" cellpadding="8">
+                    <thead>
+                        <tr><th class="align-center">Messages of the Moment</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="message in messages" ng-class-even="'even'" ng-class-odd="'odd'">
+                            <td ng-bind="message.Message__c"></td>
+                        </tr>
+                    </tbody>
+                </table> 
+            </div>            
+            <!-- Message End -->
+            <!-- My Task Start -->
+            <div class="panel">      
+                <div class="panel-heading">
+                    <h3>My Tasks</h3>                  
+                </div>      
+                <div class="panel-body bootstrap-style">
+                    <div role="tabpanel">
+                        <!-- Nav Tabs -->
+                        <ul class="nav nav-tabs" role="tablist">                        
+                            <li role="presentation" ng-repeat="wrapper in taskWrapper">
+                                <a href="#Tab{{$index}}" aria-controls="Tab{{$index}}" role="tab" data-toggle="tab" class="bootstrap-link" ng-class="wrapper.ClassName" ng-bind="wrapper.Tab"></a>
+                            </li>
+                        </ul>
+                        <!-- Tab Panes -->
+                        <div class="tab-content">                        
+                            <div role="tabpanel" class="tab-pane" ng-repeat="wrapper in taskWrapper" id="Tab{{$index}}">
+                                <div class="tab-pane-header" ng-init="options=[{Value:'', Label:'All Tasks'},{Value:'Open', Label:'Open Tasks'},{Value:'Completed', Label:'Completed Tasks'}]">
+                                    <select ng-model="wrapper.filter" ng-init="wrapper.filter=options[0]" ng-options="option as option.Label for option in options" class="select-input">
+                                    </select>
+                                    <div class="progress">
+                                        <div class="progress-bar" ng-class="wrapper.ClassName" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{wrapper.Progress}}%;">{{ wrapper.Progress}}%</div>
+                                    </div>                                    
+                                </div>
+
+                                <table class="table-striped" width="100%" cellspacing="0" cellpadding="8">
+                                    <thead>
+                                        <tr class="align-center">
+                                            <th>Subject</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Due Date</th>
+                                            <th>Duration</th>
+                                            <th>Completed</th>   
+                                            <th>Attachment</th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="task in filteredTasks = (wrapper.Tasks | filter:{'Filter':wrapper.filter.Value})" ng-class-even="'even'" ng-class-odd="'odd'">
+                                            <td>
+                                                <a ng-href="/{{task.RecordId}}" ng-bind="task.Subject" target="_blank"></a>
+                                            </td>
+                                            <td ng-bind="task.Description"></td>
+                                            <td ng-bind="task.Status"></td>
+                                            <td ng-bind="task.ActivityDate"></td>
+                                            <td ng-bind="task.SeatTime"></td>
+                                            <td>
+                                                <input type="checkbox" ng-model="task.IsClosed" ng-click="closeTask(wrapper, task)" ng-disabled="task.IsClosed" />
+                                            </td>
+                                            <td>
+                                                <a href="{{task.AttachmentURL}}" target="_blank">{{ task.AttachmentName }}</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot ng-show="filteredTasks.length == 0">
+                                        <tr>
+                                            <td colspan="7">No task to display.</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+            <!-- My Task End -->
+            
+            <!-- My Team Start -->
+            <div class="panel" ng-show="teamTaskSummaries.length > 0">      
+                <div class="panel-heading">
+                    <h3>My Team</h3>                  
+                </div>      
+                <div class="panel-body">
+                    <table class="table-striped" width="100%" cellspacing="0" cellpadding="8">
+                        <thead>
+                            <tr class="align-center">
+                                <th>User</th>
+                                <th>% of Total Completion</th>
+                                <th>% of Due Tasks Completion</th>
+                                <th>Days on the Job</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="summary in teamTaskSummaries" ng-class-even="'even'" ng-class-odd="'odd'">
+                                <td>
+                                    <a href="" ng-click="drillDown(summary.UserId)" class="link-underline"  ng-class="{'highlight': !summary.HasTask}">{{ summary.UserName }}</a>
+                                </td>
+                                <td>
+                                    <div ng-show="{{ summary.HasTask }}">{{ summary.OverallCompleteRate }}%</div>
+                                </td>
+                                <td>
+                                    <div ng-show="{{ summary.HasTask }}">Product {{ summary.ProductCompleteRate }}% / Selling {{ summary.SellingCompleteRate }}% / Tool {{ summary.ToolCompleteRate }}%</div>
+                                </td>
+                                <td ng-bind="summary.DaysOnJob"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- My Team End -->
+        </div>
+    </div>
+    <script type="text/javascript" src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/js/jquery-2.1.4.min.js')}" />
+    <script type="text/javascript" src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/js/angular.min.js')}" />
+    <script type="text/javascript" src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/bootstrap-customize/js/bootstrap.min.js')}" />
+    <script type="text/javascript" src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/js/trainingTask.js')}" />
+</apex:page>

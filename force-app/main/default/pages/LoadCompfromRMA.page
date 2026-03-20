@@ -1,0 +1,22 @@
+<apex:page controller="loadCompfromRMAController">
+    <apex:form >
+        <apex:pagemessages />
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="4"> 
+                <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/>
+                <apex:commandButton value="Import RMA" action="{!importCSVFile}"/>
+                <apex:commandButton value="Create Component" action="{!insertComponent}"   rendered="{!NOT(compCreated)}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock >
+            <apex:pageblocktable value="{!rmaList}" var="rma">
+                <apex:column headerValue="RMA #"  value="{!rma.rmaOrderType__c}" />
+                <apex:column headerValue="Incoming Part #"  value="{!rma.rmaPartNumber__c}" />
+                <apex:column headerValue="Serial number"  value="{!rma.rmaOutgoingShipmentPartSn__c}" />
+                <apex:column headerValue="Component"  value="{!rma.rmaComponentV2__c}" />
+                <apex:column headerValue="Asset"  value="{!rma.rmaDiskShelfAsset__c}" />
+                <apex:column headerValue="Component CreatedBy"  value="{!rma.Asset_Date_and_Time__c}" />
+            </apex:pageblocktable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,39 @@
+<apex:page controller="CopySOInfo_Controller" >
+
+<apex:form style="padding-left:20px;background-color:#eeeeee;">
+<br/>
+<!--<font style="color:#2E9AFE;font-size:30px;">
+{!so.name}
+</font>-->
+<apex:sectionHeader title="Sales Order" subtitle="{!so.name}" />
+<br/>
+<b>
+<!--<apex:outputLabel value="Selected Sales order: {!so.name}" /> -->
+
+
+Search</b> &nbsp;<apex:inputtext value="{!inputvalue}"/> <apex:commandButton value="Go!" action="{!Go}" />
+  <apex:pageMessage summary="No Sales Order Available for copy" severity="error"  strength="2" rendered="{!hasMessage1}"></apex:pagemessage>
+  <apex:pageBlock id="detailrecords" rendered="{!records}">
+  <apex:pageMessage summary="Please select Sales Order that you want to copy" severity="error"  strength="2" rendered="{!hasMessage}"></apex:pagemessage>
+        <br/> <b>  <apex:outputLabel value="Copy from Sales Order" /> </b> <br/><br/>
+               
+           <div align ="left">
+           &nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLabel value="Sales Order Name" />
+           <apex:selectRadio value="{!selectedSalesOrder}" style="width:200px;" layout="pageDirection">
+            <apex:selectOptions value="{!items}" /> 
+            </apex:selectRadio>
+            &nbsp;&nbsp; <apex:inputCheckbox value="{!attachPo}"/> 
+        <b>    <apex:outputlabel value="Copy Attachments" /></b>
+           
+        </div>
+  
+
+</apex:pageBlock>
+<div align ="center">
+<apex:commandButton value="Copy Header Information" action="{!UpdateHeader}" onclick="if(!confirm('Are you sure?')){return false;}"/>
+<apex:commandButton value="Cancel" action="{!Cancel}" />  
+</div>
+
+</apex:form>
+
+</apex:page>

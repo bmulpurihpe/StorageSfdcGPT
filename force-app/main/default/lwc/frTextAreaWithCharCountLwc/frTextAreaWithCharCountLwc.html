@@ -1,0 +1,18 @@
+<template>
+    <lightning-textarea 
+                    label={label}
+                    required={required}
+                    value={value}
+                    read-only={readOnly}
+                    max-length={maxLength}
+                    onchange={handleTextAreaOnChange}
+                    data-name="inputField"
+                    >
+    </lightning-textarea>
+    <template if:true={maxLength}>
+        <lightning-badge
+            label={remainingCharCountBadge}
+        >
+        </lightning-badge>
+    </template>
+</template>

@@ -1,0 +1,66 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card  title="Case Manager">
+        <lightning-button 
+            label="Launch App" slot="actions" onclick={goLaunchAppFlowModal}>
+        </lightning-button>
+        <lightning-accordion>
+            <lightning-accordion-section
+                name="Escalations" label={escAccordianLabel}
+                >
+                <lightning-datatable
+                    key-field="Id"
+                    data={escalationsData}
+                    columns={escalationsDataColumns}
+                    hide-checkbox-column="true"
+                    hide-table-header
+                    >
+                </lightning-datatable>
+            </lightning-accordion-section>
+            <lightning-accordion-section
+                name="Consults" label={consBugsAccordianLabel}
+                >
+                <lightning-datatable
+                    key-field="Id"
+                    data={consultsBugsData}
+                    columns={consultsBugsDataColumns}
+                    hide-checkbox-column="true"
+                    hide-table-header
+                    >
+                </lightning-datatable>
+            </lightning-accordion-section>
+            <lightning-accordion-section    
+                name="Transfers" label={transAccordianLabel}
+                >
+                <lightning-datatable
+                    key-field="Id"
+                    data={transfersData}
+                    columns={transfersDataColumns}
+                    hide-checkbox-column="true"
+                    hide-table-header
+                    >
+                </lightning-datatable>
+            </lightning-accordion-section>
+        </lightning-accordion>
+        <lightning-layout>
+            <lightning-layout-item size="6" padding="around-small">
+                <lightning-formatted-url 
+                        value={engageHpeServiceUrl}
+                        target="_self"
+                        label="Engage HPE Services"
+                        >
+                </lightning-formatted-url>
+            </lightning-layout-item>
+            <lightning-layout-item size="6" padding="around-small">
+                <div class="slds-float_right">
+                    <lightning-button
+                            name="refresh"
+                            icon-name="utility:refresh"
+                            onclick={initializeComponent}
+                            >
+                    </lightning-button>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </lightning-card>
+</template>

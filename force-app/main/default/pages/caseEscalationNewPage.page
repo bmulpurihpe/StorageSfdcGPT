@@ -1,0 +1,87 @@
+<apex:page showChat="false"
+           showHeader="true"
+           sidebar="true"
+           tabStyle="caseEscalation__c"
+           title="Case Escalation Edit: New Case Escalation"
+           standardController="caseEscalation__c"
+           extensions="caseEscalationExtensionsWithSharing">
+    <apex:sectionHeader title="Case Escalation Edit" subtitle="New Case Escalation"/>
+    <apex:form >
+        <apex:pageBlock mode="maindetail" title="Case Escalation Edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save"   action="{!customSave}"/>
+                <apex:commandButton value="Cancel" action="{!Cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageMessages />
+            <apex:pageBlockSection title="Information" showheader="true" collapsible="false" columns="2">
+                
+                <apex:outputField value="{!caseEscalation__c.caseEscalationCase__c}"/>
+                <apex:inputField value="{!caseEscalation__c.Workspace__c}"/>
+                <apex:inputField value="{!caseEscalation__c.caseEscalationJIRALink__c}"/>
+                <apex:inputField value="{!caseEscalation__c.Channel_Name__c}"/>
+                <apex:inputField value="{!caseEscalation__c.caseEscalationPriority__c}"/>
+                <!-- <apex:inputField value="{!caseEscalation__c.caseEscalationPriorityCreate__c}"/> -->
+                <apex:inputField value="{!caseEscalation__c.URL__c}"/>
+                <apex:inputField value="{!caseEscalation__c.caseEscalationJIRAId__c}"/>
+                <!--  <apex:inputField value="{!caseEscalation__c.caseEscalationPriorityHistory__c}"/> -->
+                <!-- <apex:inputField value="{!caseEscalation__c.caseEscalationPriority__c}"/> -->
+                <apex:pageBlockSectionItem />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel for="group" value="Case Escalation Type Definition Group"/>
+                    <apex:actionRegion >
+                        <apex:selectList id="group"
+                                         value="{!groupValue}"
+                                         multiselect="false"
+                                         required="true"
+                                         size="1">
+                            <apex:actionSupport event="onchange" rerender="user"/>
+                            <apex:selectOptions value="{!groupOptions}"/>
+                        </apex:selectList>
+                    </apex:actionRegion>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem />
+                <apex:selectList label="Case Escalation Type Definition User"
+                                 id="user"
+                                 value="{!userValue}"
+                                 multiselect="false"
+                                 rendered="true"
+                                 disabled="{!disableUser}"
+                                 size="1">
+                    <apex:selectOptions value="{!userOptions}"/>
+                </apex:selectList>
+                
+                
+                
+                <!-- End: Added by Larry Wasser 10.17.2021 -->          
+            </apex:pageBlockSection>
+            <!-- Start: Added by Larry Wasser 10.17.2021 -->
+            <apex:pageBlockSection title="Executive Escalation Info" showheader="true" collapsible="false" columns="2">
+                <!-- <apex:outputField value="{!caseEscalation__c.caseEscalationCase__r.OwnerId}" /> -->
+                <apex:inputField value="{!caseEscalation__c.Escalation_Closure_Status__c}" />
+                <apex:inputField value="{!caseEscalation__c.Compact_Problem_Title__c}" />
+                <apex:inputField value="{!caseEscalation__c.Situational_Assessment__c}" />
+                <apex:inputField value="{!caseEscalation__c.Last_Public_Communication__c}" />
+                <apex:inputField value="{!caseEscalation__c.Escalation_Check_In_Cadence__c}" />        
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Executive Escalation Ownership" showheader="true" collapsible="false" columns="1">
+                <apex:inputField value="{!caseEscalation__c.Static_Escalation_Owner_Override__c}" />
+                <!-- <apex:outputField value="{!caseEscalation__c.caseEscalationCase__r.OwnerId}" /> -->
+                
+                
+            </apex:pageBlockSection>
+            <!-- <apex:pageBlockSection title="Refresh Executive Escalation Ownership" showheader="true" collapsible="false" columns="1">
+<!-- <apex:outputField value="{!caseEscalation__c.caseEscalationCase__r.OwnerId}" /> 
+<apex:inputField value="{!caseEscalation__c.Refresh_Case_Owner__c}" />
+</apex:pageBlockSection>  -->
+            <apex:pageBlockSection title="Executive Escalation Notes (Top Level)" showheader="true" collapsible="false" columns="1" >
+                <!-- <apex:outputField value="{!caseEscalation__c.caseEscalationCase__r.OwnerId}" /> -->
+                <apex:inputField value="{!caseEscalation__c.Escalation_Notes__c}" />
+            </apex:pageBlockSection>
+            <!-- End: Added by Larry Wasser 10.17.2021 -->      
+            <apex:pageBlockSection >
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    [caseEscalationNewPage]
+</apex:page>

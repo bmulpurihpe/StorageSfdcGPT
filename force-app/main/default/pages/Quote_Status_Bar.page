@@ -1,0 +1,4 @@
+<apex:page standardController="SBQQ__Quote__c">
+<p></p>
+<c:Quote_Status_Bar status="{!SBQQ__Quote__c.SBQQ__Status__c}"></c:Quote_Status_Bar>
+</apex:page>

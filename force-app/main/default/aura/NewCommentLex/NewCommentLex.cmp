@@ -1,0 +1,17 @@
+<aura:component implements="force:lightningQuickActionwithoutHeader,force:hasRecordId" 
+                controller="NewCommentLexController">
+     <aura:attribute name="loading" type="boolean" default="true"/>
+    
+    <div class="loading_image">
+        <aura:if isTrue="{! v.loading }">
+            <lightning:spinner alternativeText="Loading" size="Medium" variant="brand"/>
+        </aura:if>
+    </div>
+    <div class="slds-align_absolute-center" style="height:10rem">
+        <b><div class="slds-text-heading_medium" >
+            Loading..Please Wait....
+            </div></b>
+    </div>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+</aura:component>

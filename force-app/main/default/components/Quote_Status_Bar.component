@@ -1,0 +1,77 @@
+<apex:component >
+<apex:attribute name="status" type="string" required="true" description="What stage is the quote"/>
+<apex:outputPanel rendered="{!status == 'Draft'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="../servlet/servlet.FileDownload?file=015340000027iIB&oid=00D180000008d3L" alt="Draft" height="50" />
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Orderable'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="../servlet/servlet.FileDownload?file=015340000027iID&oid=00D180000008d3L" alt="Orderable" height="50" />
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Accepted'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="../servlet/servlet.FileDownload?file=015340000027iI9&oid=00D180000008d3L" alt="Accepted" height="50" />
+            <!-- 
+            <img src="https://c.cs23.content.force.com/servlet/servlet.ImageServer?id=01518000000YhxP&oid=00D180000008d3L" alt="Accepted" height="50" /> -->
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Approval Pending'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="../servlet/servlet.FileDownload?file=015340000027iIE&oid=00D180000008d3L" alt="Approval Pending" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'In Review'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="../servlet/servlet.FileDownload?file=015340000027iIC&oid=00D180000008d3L" alt="In Review" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Approved'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="../servlet/servlet.FileDownload?file=015340000027iIA&oid=00D180000008d3L" alt="Approved" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Recalled'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img src="../servlet/servlet.FileDownload?file=015340000027iIF&oid=00D180000008d3L" alt="Recalled" height="50" />
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!status == 'Rejected'}">
+<table style="width:100%;">
+    <tr style="width:100%;">
+        <td align="middle" style="width:100%;">
+            <img  src="../servlet/servlet.FileDownload?file=015340000027iIG&oid=00D180000008d3L" alt="Rejected" height="50"/>
+        </td>
+    </tr>
+</table>
+</apex:outputPanel>
+</apex:component>

@@ -1,0 +1,112 @@
+<apex:page id="page" standardController="case">
+    <apex:sectionHeader id="section" title="Case Edit" subtitle="{!case.CaseNumber}"/>
+    <apex:form id="form">
+        <apex:pageBlock id="block" title="Case Edit" mode="edit">
+
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Save & New" action="{!save}" />
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+
+
+            <apex:pageBlockSection id="section" title="Case Information" columns="2">
+                <apex:inputField value="{!case.OwnerId}" required="false"/>
+                <apex:inputField value="{!case.Status}" required="true"/>
+                <apex:inputField value="{!case.AccountId}" required="false"/>
+                <apex:inputField value="{!case.Duplicate_Case__c}" required="false"/>
+                <apex:inputField value="{!case.ContactId}" required="false"/>
+                <apex:inputField value="{!case.Auto_Close__c}" required="false"/>
+                <apex:inputField value="{!case.CaseNumber}" required="false"/>
+                <apex:inputField value="{!case.Auto_Open__c}" required="false"/>
+                <apex:inputField value="{!case.Priority}" required="false"/>
+                <apex:inputField value="{!case.Closed_By__c}" required="false"/>
+                <apex:inputField value="{!case.Severity__c}" required="false"/>
+                <apex:inputField value="{!case.caseToolsUsedToSolve__c}" required="false"/>
+                <apex:inputField value="{!case.Origin}" required="true"/>
+                <apex:inputField value="{!case.casePachinkoCaseType__c}" required="false"/>
+                <apex:inputField value="{!case.Case_Type__c}" required="false"/>
+                <apex:inputField value="{!case.caseIsThisCaseRelatedToANimbleProduct__c}" required="false"/>
+                <apex:inputField value="{!case.SuppliedEmail}" required="false"/>
+                <apex:inputText id="rt" size="30" label="Case Record Type"/>
+                    <apex:inputHidden id="rt1" value="{!Case.RecordTypeId}"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Category/Technical Area (At Time of Open)" columns="2">
+                <apex:inputField value="{!case.caseCatImpactToCustomer__c}" required="true"/>
+                <apex:inputField value="{!case.Peak_Area__c}" required="false"/>
+                <apex:inputField value="{!case.Technology_Area__c}" required="false"/>
+                <apex:inputField value="{!case.Escalation_Rotation__c}" required="false"/>
+                <apex:inputField value="{!case.Sub_Technology_Area__c}" required="false"/>
+                <apex:inputField value="{!case.Case_Difficulty_Rating__c}" required="false"/>
+                <apex:inputField value="{!case.Type}" required="true"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Closure information" columns="2">
+                <apex:inputField value="{!case.Closure_Volume_Downtime_Minutes__c}" required="false"/>
+                <apex:inputField value="{!case.casCatClosureRootCause__c}" required="false"/>
+                <apex:inputField value="{!case.caseClosureBusinessImpact__c}" required="false"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Volume Information" columns="2">
+                <apex:inputField value="{!case.Nimble_Cloud_Volume__c}" required="false"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Service Provider Information" columns="2">
+                <apex:inputField value="{!case.Nimble_Version__c}" required="true"/>
+                <apex:inputField value="{!case.caseNimbleGroupId__c}" required="false"/>
+                <apex:inputField value="{!case.caseNimbleGroupName__c}" required="false"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Description Information" columns="1">
+                <apex:inputField value="{!case.Subject}" required="false"/>
+                <apex:inputField value="{!case.Description}" required="false"/>
+                <apex:inputField value="{!case.caseCurrentStatus__c}" required="false"/>
+                <apex:inputField value="{!case.casePlanOfAction__c}" required="false"/>
+                <apex:inputField value="{!case.caseCaseSummary__c}" required="false"/>
+                <apex:inputField value="{!case.Instructions__c}" required="false"/>
+                <apex:inputField value="{!case.Estimated_Effort__c}" required="true"/>
+                <apex:inputField value="{!case.caseClosureEstimatedEffort__c}" required="false"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Web Information" columns="2">
+                <apex:inputField value="{!case.caseKbNeeded__c}" required="false"/>
+                <apex:inputField value="{!case.caseKbTopicNeeded__c}" required="false"/>
+                <apex:inputField value="{!case.caseKbCreated__c}" required="false"/>
+                <apex:inputField value="{!case.caseKbCreatedNumber__c}" required="false"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Additional Information" columns="2">
+                <apex:inputField value="{!case.caseEscalationType__c}" required="true"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Nimble Internal Notes" columns="1">
+                <apex:inputField value="{!case.Nimble_Internal_Notes__c}" required="false"/>
+            </apex:pageBlockSection>
+
+
+            <apex:pageBlockSection title="Attn Req Information" columns="2">
+                <apex:inputField value="{!case.caseAttnReq__c}" required="false"/>
+                <apex:inputField value="{!case.caseAttnReqDateTime__c}" required="false"/>
+                <apex:inputField value="{!case.caseAttnReqSource__c}" required="false"/>
+                <apex:inputField value="{!case.caseAttnReqCreator__c}" required="false"/>
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+        window.onload = function() {
+            document.getElementById('page:form:block:section:rt').value = "Nimble Cloud Volume Case";
+            document.getElementById('page:form:block:section:rt').readOnly=true;
+            document.getElementById('page:form:block:section:rt1').value = "01234000000BnF9";
+        };
+    </script>
+</apex:page>

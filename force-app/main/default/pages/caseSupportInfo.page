@@ -1,0 +1,148 @@
+<apex:page standardController="Case">
+
+<table border="0" width="100%" cellpadding="0" cellspacing="0">
+<tr valign="top">
+<td width="300"><c:IYG_VF_Component region="panel_1" type="panel"/></td>
+<td width="300"><c:IYG_VF_Component region="panel_2" type="panel"/></td>
+<td><c:IYG_VF_Component region="panel_3" type="panel"/></td>                
+</tr>            
+</table>        
+
+<!--
+    
+    <span style="font-family: 'Arial','Helvetica',sans-serif; font-size: 1.1em; font-weight: bold; color: #4D4D4D;">
+        <apex:outputText value="INFO: The Asset part shipment address is in a validated state.  Go ahead and process the RMA - there is no need to contact the customer for address validation.<br/><br/>"
+                         style="color: green; font-weight:bold; font-size:120%;"
+                         rendered="{!AND(NOT(Case.Asset.astAssetPartShipLastValDateIsStale__c),
+                                   OR(Case.Asset.SLA__c == 'Premium',
+                                   AND(Case.Asset.SLA__c == 'Premium 4 Hour',
+                                   CONTAINS(Case.Asset.assetSameDayPartDeliveryPreference__c, 'SAME-DAY-10')
+                                   )
+                                   )
+                                   )}"
+                         escape="false"/>
+        
+        
+        <apex:outputText value="WARNING:  Customer has requested 4 hour delivery during local business hours only.  Please ship as next business day if outside of local business hours (9AM to 5PM local time).<br/><br/>"
+                         style="color: #FFCC00; font-weight:bold; font-size:120%;"
+                         rendered="{!AND(NOT(Case.Asset.astAssetPartShipLastValDateIsStale__c),
+                                   AND(Case.Asset.SLA__c == 'Premium 4 Hour',
+                                   CONTAINS(Case.Asset.assetSameDayPartDeliveryPreference__c, 'SAME-DAY-20')
+                                   )
+                                   )}"
+                         escape="false"/>
+        <apex:outputText style="color: {!IF(Now() - Case.Asset.assetPartShipLastValidatedDatetime__c <= 180, 'green', '#FFCC00')};font-weight:bold; font-size:120%;" value="Address Verified.<br/><br/>"    
+                         rendered="{!AND(NOT(Case.Asset.astAssetPartShipLastValDateIsStale__c), 
+                                   AND(Case.Asset.SLA__c == 'Premium 4 Hour',   
+                                   CONTAINS(Case.Asset.assetSameDayPartDeliveryPreference__c, 'SAME-DAY-20'), NOT(ISBLANK(Case.Asset.assetPartShipLastValidatedDatetime__c))    
+                                   )    
+                                   )}" escape="false"/>
+        
+        <apex:outputText value="WARNING: Contact customer to confirm shipping preference.<br/><br/>"
+                         style="color: red; font-weight:bold; font-size:120%;"
+                         rendered="{!AND(Case.Asset.SLA__c == 'Premium 4 Hour',
+                                   OR(ISBLANK(Case.Asset.assetSameDayPartDeliveryPreference__c),
+                                   CONTAINS(Case.Asset.assetSameDayPartDeliveryPreference__c, 'SAME-DAY-30')
+                                   )
+                                   )}"
+                         escape="false"/> 
+        
+        <apex:outputText value="SUPPORT: This case's account is marked critical, and has SHI (Special Handling Instructions).  "
+                         rendered="{!AND(case.account <> null, case.account.accountCritical__c)}"
+                         style="color: red;"/>
+        <apex:outputLink value="{!URLFOR($Action.Account.View, case.account.id)}"
+                         rendered="{!AND(case.account <> null, case.account.accountCritical__c)}"
+                         style="color: red;"
+                         target="_blank">CLICK HERE</apex:outputLink>
+        <apex:outputText value=" to view account in a separate window.<br/><br/>"
+                         rendered="{!AND(case.account <> null, case.account.accountCritical__c)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SUPPORT: This case's account has SHI (Special Handling Instructions).  "
+                         rendered="{!AND(case.account <> null, NOT(case.account.accountCritical__c), LEN(case.account.accountShi__c) > 4)}"
+                         style="color: red;"/>
+        <apex:outputLink value="{!URLFOR($Action.Account.View, case.account.id)}"
+                         rendered="{!AND(case.account <> null, NOT(case.account.accountCritical__c), LEN(case.account.accountShi__c) > 4)}"
+                         style="color: red;"
+                         target="_blank">CLICK HERE</apex:outputLink>
+        <apex:outputText value=" to open the account in a separate window.<br/><br/>"
+                         rendered="{!AND(case.account <> null, NOT(case.account.accountCritical__c), LEN(case.account.accountShi__c) > 4)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SUPPORT: This case's asset is marked critical, and has SHI (Special Handling Instructions).  "
+                         rendered="{!AND(case.asset <> null, case.asset.assetCritical__c)}"
+                         style="color: red;"/>
+        <apex:outputLink value="{!URLFOR($Action.Asset.View, case.asset.id)}"
+                         rendered="{!AND(case.asset <> null, case.asset.assetCritical__c)}"
+                         style="color: red;"
+                         target="_blank">CLICK HERE</apex:outputLink>
+        <apex:outputText value=" to view asset in a separate window.<br/><br/>"
+                         rendered="{!AND(case.asset <> null, case.asset.assetCritical__c)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SUPPORT: This case's asset has SHI (Special Handling Instructions).  "
+                         rendered="{!AND(case.asset <> null, NOT(case.asset.assetCritical__c), LEN(case.asset.assetShi__c) > 4)}"
+                         style="color: red;"/>
+        <apex:outputLink value="{!URLFOR($Action.Asset.View, case.asset.id)}"
+                         rendered="{!AND(case.asset <> null, NOT(case.asset.assetCritical__c), LEN(case.asset.assetShi__c) > 4)}"
+                         style="color: red;"
+                         target="_blank">CLICK HERE</apex:outputLink>
+        <apex:outputText value=" to open the asset in a separate window.<br/><br/>"
+                         rendered="{!AND(case.asset <> null, NOT(case.asset.assetCritical__c), LEN(case.asset.assetShi__c) > 4)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SUPPORT: This case's asset is marked 'Customer Elected Not To Renew'.  DO NOT PROVIDE ANY SUPPORT FOR THIS ASSET!<br/><br/>"
+                         rendered="{!AND(case.asset <> null, case.asset.Customer_Elected_Not_to_Renew__c)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SSUPPORT: This case's asset's support has expired, but it is within 30 day grace period. Provide full support. Notify customer and renewals team of expiration. See: http://kcs.nimblestorage.com/doc/1600 <br/><br/>"
+                         rendered="{!AND(case.asset <> null, NOT(case.asset.Customer_Elected_Not_to_Renew__c), case.asset.assetSupportExpiredGracePeriodActive__c)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SUPPORT: This case's asset's support has expired and 30 day grace period has expired. Do not support without documented Senior Manager approval. See: http://kcs.nimblestorage.com/doc/1600 <br/><br/>"
+                         rendered="{!AND(case.asset <> null, NOT(case.asset.Customer_Elected_Not_to_Renew__c), case.asset.assetSupportExpiredGracePeriodInactive__c)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SUPPORT: This case's asset Status is something OTHER than 'Shipped' or 'Return Pending'.  Be aware of this when working with this asset.  "
+                         rendered="{!AND(case.asset <> null, case.asset.Status <> 'Shipped', case.asset.Status <> 'Return Pending')}"
+                         style="color: red;"/>
+        
+        <apex:outputLink value="{!URLFOR($Action.Asset.View, case.asset.id)}"
+                         rendered="{!AND(case.asset <> null, case.asset.Status <> 'Shipped', case.asset.Status <> 'Return Pending')}"
+                         style="color: red;"
+                         target="_blank">CLICK HERE</apex:outputLink>
+        
+        <apex:outputText value=" to view asset in a separate window.<br/><br/>"
+                         rendered="{!AND(case.asset <> null, case.asset.Status <> 'Shipped', case.asset.Status <> 'Return Pending')}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="SUPPORT: This asset's account has SHI (Special Handling Instructions).  "
+                         rendered="{!AND(NOT(case.asset.account.accountCritical__c), LEN(case.asset.account.accountShi__c) > 4)}"
+                         style="color: red;"/>
+        <apex:outputLink value="{!URLFOR($Action.Account.View, case.asset.account.id)}"
+                         rendered="{!AND(NOT(case.asset.account.accountCritical__c), LEN(case.asset.account.accountShi__c) > 4)}"
+                         style="color: red;"
+                         target="_blank">CLICK HERE</apex:outputLink>
+        <apex:outputText value=" to open the account in a separate window.<br/><br/>"
+                         rendered="{!AND(NOT(case.asset.account.accountCritical__c), LEN(case.asset.account.accountShi__c) > 4)}"
+                         style="color: red;"
+                         escape="false"/>
+        
+        <apex:outputText value="*** SLA: PREMIUM 4 HOUR *** <br/><br/>" rendered="{!IF(AND(case.asset.SLA__c <> null,case.asset.SLA__c == 'Premium 4 Hour'), true, false)}"
+                         style="font-weight: bold; color: red; font-size: 2em;" escape="false"/>
+        
+        <apex:outputText value="*** SLA: PREMIUM 4 HOUR ONSITE *** <br/><br/>" rendered="{!IF(AND(case.asset.SLA__c <> null,case.asset.SLA__c == 'Premium 4 Hour Onsite'), true, false)}"
+                         style="font-weight: bold; color: red; font-size: 2em;" escape="false"/>
+        
+</span>
+-->
+
+</apex:page>

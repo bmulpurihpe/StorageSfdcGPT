@@ -1,0 +1,208 @@
+<apex:page standardController="Case" docType="html-5.0" id="thePage" extensions="caseAttnReqSnoozeController">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+    </script>
+    <style>
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnReqSnoozeHoursID:hover{
+        background-color:rgb(227,243,255);
+        height:15px;
+        }
+        #AttnReqSnoozeHoursID:hover{
+        background-color:rgb(227,243,255);
+        height:15px;
+        }
+        @media (min-width: 768px){
+        .bootstrap-iso .col-sm-2 {
+        width: 16.66666667%;
+        font-size: 88%;
+        color: #4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        font-weight: bold;
+        text-align: right;
+        padding-left: 0px;
+        padding-right: 5px;
+        }
+        }
+        @media (min-width: 1024px){
+        #thePage\:myForm\:pageBlockID\:pgsection\:caseOwnerNextReturn{
+        padding-left: 0px;
+        padding-right: 5px;
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnReqSnoozeHoursLabel{
+        padding-left: 0px;
+        padding-right: 5px;
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnSnoozeIntervalInHoursLabel{
+        padding-left: 0px;
+        padding-right: 5px;
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        }
+        body .bPageBlock .pbBody .data2Col{
+        padding-left: 12px;
+        }
+        }
+        @media (min-width: 1700px) and (max-width: 1900px){
+          body .bPageBlock .pbBody .data2Col{
+        padding-left: 38px !important;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:caseOwnerNextReturn{
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        padding-right:16px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:caseOwnerNextReturnValue{
+        padding-left: 14px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnReqSnoozeHoursLabel{
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        padding-right:16px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnReqSnoozeHoursText{
+        padding-left: 14px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnSnoozeIntervalInHoursLabel{
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        padding-right: 20px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnSnoozeIntervalInHoursValues{
+        margin-left: 15px;
+        }
+        }
+        @media (min-width: 1991px) and (max-width: 2560px){
+        body .bPageBlock .pbBody .data2Col{
+        padding-left: 38px !important;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:caseOwnerNextReturn{
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        padding-left:21px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:caseOwnerNextReturnValue{
+        padding-left: 10px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnReqSnoozeHoursLabel{
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        padding-left:21px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnReqSnoozeHoursText{
+        padding-left: 10px;
+        }
+        #thePage\:myForm\:pageBlockID\:pgsection\:AttnSnoozeIntervalInHoursLabel{
+        text-align: right;
+        color:#4a4a56;
+        font-family: Arial,Helvetica,sans-serif;
+        text-align: right;
+        font-size: 91%;
+        font-weight: bold;
+        }
+        }
+    </style>
+    <apex:stylesheet value="{!URLFOR($Resource.bootstrapiso, 'bootstrap-iso/bootstrap-iso.css')}"/>
+    <apex:form id="myForm">
+        <apex:pageMessages id="thePageMessage" escape="false"/>
+        <apex:pageBlock id="pageBlockID">
+            <apex:pageBlockButtons id="pageBlockButtonID" location="top">
+                <apex:commandButton action="{!save}"  id="saveButton" reRender="redirectPanel, thePageMessage" value="Save" style="display:{!IF(showSaveButton == true, 'block', 'none')};float:left;" disabled="{!IF(allDisabled  == 24, true, false)}"/>
+                <apex:commandButton action="{!displayText}" reRender="redirectPanel" id="cancelButton" value="Cancel" style="display:{!IF(showSaveButton == true, 'block', 'none')}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection id="pgsection" columns="1">
+                <apex:outputField value="{!Case.caseAttnReq__c}"/>
+                <apex:outputField value="{!Case.caseAttnReqDateTime__c}"/>
+                <apex:outputField value="{!Case.caseAttnReqSource__c}"/>
+                <apex:outputField value="{!Case.caseAttnReqCreator__c}"/>
+                
+                <!--<apex:outputField value="{!Case.caseOwnerNextReturn__c}" rendered="{!IF(LEFT(Case.OwnerID, 3) == '00G', false, true)}"/>-->
+                <apex:outputPanel styleClass="bootstrap-iso col-sm-9" ><!--rendered="{!IF(LEFT(Case.OwnerID, 3) == '00G', false, true)}"-->
+                    <apex:outputlabel styleClass="bootstrap-iso col-sm-2" for="caseOwnerNextReturnValue" value="Case Owner Next Return" id="caseOwnerNextReturn"></apex:outputlabel>
+                    <div id="caseOwnerNextReturnValueDiv" class="bootstrap-iso col-sm-7">
+                        <!-- rendered based on field "Is_CaseOwner_On_Shift__c" added by exafort for TS-9578 -->
+                        <apex:outputText rendered="{!Case.Is_CaseOwner_On_Shift__c == True}"> <span id="theText">Scheduled to be on shift right now</span></apex:outputText>
+                        <apex:outputField id="caseOwnerNextReturnValue1" value="{!Case.Next_Start_DateTime__c}" rendered="{!Case.Is_CaseOwner_On_Shift__c == False}"></apex:outputField>
+                    </div>
+                </apex:outputPanel>
+                
+                <apex:outputField id="AttReqDateTimeWithSnoozePeriod" value="{!Case.AttReqDateTimeWithSnoozePeriod__c}"/> <!--rendered="{!IF(LEFT(Case.OwnerID, 3) == '00G', false, true)}"-->
+                
+                <!--Added by Exafort for TS-9516 -->
+<!--                <apex:outputField id="TSENextWorkingStartDateTime" value="{!Case.Next_Start_DateTime__c}"/>	-->
+                <!--  <apex:selectList size="1" id="snoozeHourId" value="{!Case.AttnSnoozeIntervalInHours__c}" style="width:320px;"  multiselect="false">
+					<apex:selectOptions value="{!snoozeHours}"></apex:selectOptions>
+				</apex:selectList>-->
+                
+                <apex:outputPanel styleClass="bootstrap-iso col-sm-9"  id="panelForRefresh" style="display: {!IF(HideStatusOutputField == true, 'none', 'block')}" >  <!--rendered="{!IF(LEFT(Case.OwnerID, 3) == '00G', false, true)}"-->
+                    <apex:outputLabel for="AttnReqSnoozeHoursText" styleClass="col-sm-2" id="AttnReqSnoozeHoursLabel">Attn Req Snooze Interval<br/>(In Hours)</apex:outputLabel>
+                    <div id="AttnReqSnoozeHoursID" style="height: 15px;width: 83.33333%;" class="col-sm-7">
+                        <apex:outputText id="AttnReqSnoozeHoursText" label="Attn Req Snooze Interval(In Hours)" value="{!Case.AttnSnoozeIntervalInHours__c}"/>
+                    </div>
+                    
+                    <apex:actionSupport event="ondblclick" action="{!callStatus}" reRender="panelForRefresh, selectList, saveButton, cancelButton"/>
+                </apex:outputPanel>
+                
+                <apex:outputPanel styleClass="bootstrap-iso col-sm-9" id="selectList" style="display: {!IF(showStatusInputField == true, 'block', 'none')}"> <!--rendered="{!IF(LEFT(Case.OwnerID, 3) == '00G', false, true)}"-->
+                    <apex:outputLabel for="AttnSnoozeIntervalInHoursValues" styleClass="col-sm-2" id="AttnSnoozeIntervalInHoursLabel">Attn Req Snooze Interval<br/>(In Hours)</apex:outputLabel>
+                    <div class="col-sm-7">
+                        <apex:selectList size="1" id="AttnSnoozeIntervalInHoursValues" value="{!Case.AttnSnoozeIntervalInHours__c}">
+                            <apex:selectOptions value="{!snoozeHours}"/>
+                        </apex:selectList>
+                    </div>
+                    
+                </apex:outputPanel>
+                
+                
+                <apex:outputField value="{!Case.caseAttnReqSnoozeReason__c}"> <!--rendered="{!IF(LEFT(Case.OwnerID, 3) == '00G', false, true)}"-->
+                    <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                                            hideOnEdit="editButton,deleteButton" event="ondblclick" 
+                                            changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                </apex:outputField>
+                
+                <apex:outputPanel id="redirectPanel" >
+                    <apex:outputText rendered="{!refreshRecord}">
+                        <script type="text/javascript">
+                        window.top.location.href = '{!redirectUrl}';
+                        </script>
+                    </apex:outputText>
+                </apex:outputPanel>
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

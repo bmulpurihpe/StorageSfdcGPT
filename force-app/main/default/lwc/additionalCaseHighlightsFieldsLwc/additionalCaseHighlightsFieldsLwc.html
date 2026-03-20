@@ -1,0 +1,111 @@
+<template>
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid slds-page-header">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-custom-custom18" title="SearchDetails">
+                        <lightning-icon icon-name="standard:case"></lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <span></span>
+                    </h2>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <lightning-record-view-form
+                    record-id={recordId}
+                    object-api-name="Case"
+                    density="comfy">
+                <div class="slds-grid">
+                    <template if:false={isGrsUser}>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <label class="slds-form-element__label">Record Type</label>
+                            <lightning-output-field variant="label-hidden" field-name="RecordTypeId" onclick= {navigateToRecord} target="_self"></lightning-output-field>
+                            <lightning-button-icon
+                            icon-name="action:edit"
+                            alternative-text="Change Record Type"
+                            onclick={openModal}
+                            variant="border-filled"
+                            class="slds-m-left_Xx-small">
+                        </lightning-button-icon>
+                        </div>
+                    </template>
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Status</label>
+                        <lightning-output-field variant="label-hidden" field-name="Status"></lightning-output-field>
+                    </div>
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Sub Status</label>
+                        <lightning-output-field variant="label-hidden" field-name="Sub_Status__c"></lightning-output-field>
+                    </div>
+                    <template if:false={isGrsUser}>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <label class="slds-form-element__label">Priority</label>
+                            <lightning-output-field variant="label-hidden" field-name="Priority"></lightning-output-field>
+                        </div>
+                    </template>
+                    <template if:true={isGrsUser}>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <label class="slds-form-element__label">Severity</label>
+                            <lightning-output-field variant="label-hidden" field-name="Severity__c"></lightning-output-field>
+                        </div>
+                    </template>
+                    <template if:false={isGrsUser}>
+                        <div class="slds-form-element slds-form-element_stacked">
+                            <label class="slds-form-element__label">Case Attn Required</label>
+                            <lightning-output-field variant="label-hidden" 
+                                                    field-name="Case_Attn_Required_Lex__c"></lightning-output-field>
+                        </div>
+                    </template>
+                </div>
+            </lightning-record-view-form>
+        </div>
+    </article>
+
+    <template if:true={showModal}>
+        <section role="dialog"
+                 class="slds-modal slds-fade-in-open"
+                 aria-labelledby="modal-heading-01"
+                 aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <!-- Modal Header -->
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium">Change Case Record Type</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close"
+                            title="Close"
+                            onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </header>
+
+                <!-- Modal Body -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    &nbsp;&nbsp;<br></br>
+                    <p1>Existing picklists aren’t updated when record types change. You’ll need to change picklist values manually.</p1>
+                    &nbsp;&nbsp;<br></br>
+                    Select a new Record Type for Case: <strong> {caseNumber}</Strong>
+                    <br></br>
+
+                    <lightning-combobox
+                        label="Record Type"
+                        value={selectedRecordTypeId}
+                        placeholder="Select Record Type"
+                        options={recordTypeOptions}
+                        onchange={handleRecordTypeChange}>
+                    </lightning-combobox>
+                </div>
+
+                <!-- Modal Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Save" onclick={saveRecordType} variant="brand"></lightning-button>
+                    <lightning-button label="Cancel" onclick={closeModal} variant="neutral"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

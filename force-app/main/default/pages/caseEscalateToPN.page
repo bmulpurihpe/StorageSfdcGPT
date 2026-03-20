@@ -1,0 +1,70 @@
+<apex:page standardController="Case" extensions="EscalateToPNController"> <!-- action="{!escalateToPN}"> -->   
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageMessages escape="false"/> 
+            
+            <apex:pageBlockSection title="Fields Related to the Asset Requiring Support from HPE Services (NOT for Assets Supported by Storage Support)">
+                <!--                  <apex:outputLabel value="Enter Serial Number: (Do NOT enter a Storage-Supported Asset Serial Number)" />  -->
+                
+                <apex:inputText value="{!userInputSerialNum}" label="Serial Number (of Asset Requiring HPE Services Support):" required="true"/> 
+                <!-- <apex:outputText ><span style="color:Red;">DO NOT enter the Serial Number of a Storage-Supported Asset -- The Asset Serial Number may be validated at </span><apex:outputLink style="color:Blue;" value="https://support.hpe.com/hpsc/wc/public/home">HPE Serial Number Lookup App</apex:outputLink></apex:outputText> -->
+                <!-- Placeholder for TS-9323   replace current text with commented version immediately below -->
+                <apex:outputText ><span style="color:Red;">DO NOT enter the Serial Number of a Storage-Supported Asset UNLESS this is a GLCP Case -- The Asset Serial Number may be validated at </span><apex:outputLink style="color:Blue;" value="https://snr.int.hpecorp.net/WWSNR">HPE Serial Number Lookup App</apex:outputLink></apex:outputText>
+                <!--                  <apex:outputLabel value="Enter Comments:" /> -->
+                <apex:inputText value="{!userInputContractId}" label="Contract Id (of Asset Requiring HPE Services Support):"/> 
+                <apex:outputLabel ><span style="color:Red;">DO NOT enter the Contract Id of a Storage-Supported Asset -- Enter Support Agreement ID (SAID), Care Pack Serial Number, or other unique Contract Id of the HPE Services-Supported Asset entered above -- Leave this field ** BLANK ** if not known</span></apex:outputLabel>
+                <apex:selectList label="Direct Routing Destination (to HPE Services Team)" value="{!userInputDirectRoutingDestination}" size="1" multiselect="false" required="false"  >
+                    <apex:selectOptions value="{!DirectRoutingDestinationOptions}"  />
+                </apex:selectList>
+                <apex:outputLabel ><span style="color:Red;">Use this field ONLY if confidently known</span></apex:outputLabel>
+                
+                
+                
+
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>                
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>   
+                <apex:pageBlockSectionItem ></apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Fields for Populating the Case to be Created in HPE Services">
+                <apex:inputText value="{!gsemProblemTitle}" label="Problem Title (for HPE Services Case):" required="true"/> 
+                <apex:outputText ><b>Case Subject (from Storage Support Case):     </b><span style="color:DodgerBlue;">{!case.Subject}</span></apex:outputText>
+                <apex:inputTextArea value="{!gsemProblemDescription}" label="Problem Description (for HPE Services Case):"/> 
+                <apex:outputText ><b>Case Description (from Storage Support Case):      </b> <span style="color:DodgerBlue;">{!case.Description}</span></apex:outputText>
+                <apex:selectList label="Severity (Critical, Major, or Medium):" value="{!userInputSeverity}" size="1" multiselect="false" required="true"  >
+                    <apex:selectOptions value="{!caseSeverityOptions}"  />
+                </apex:selectList>
+            </apex:pageBlockSection>
+            
+            <!--
+              <apex:pageBlockSection title="Asset Location (** ALWAYS VERIFY **)">
+                <apex:inputText value="{!case.Account.Name}" label="Account Name:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.asset.Install_Street1__c}" label="Street 1:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.asset.Install_Street2__c}" label="Street 2:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.asset.Install_City__c}" label="City:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.asset.Install_State_Province__c}" label="State/Province:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.asset.Install_Zip_Code__c}" label="Postal Code:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.asset.Install_Country__c}" label="Country:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.asset.Install_Country_ISO_Code__c}" label="ISO Country Code:"/> <apex:outputText label=" "></apex:outputText>
+            </apex:pageBlockSection>
+            -->
+            
+            <!--
+            <apex:pageBlockSection title="Customer Contact Information (** ALWAYS VERIFY **)">
+                <apex:inputText value="{!case.Contact.Salutation}" label="Contact Salutation:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.Contact.FirstName}" label="Contact First Name:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.Contact.LastName}" label="Contact Last Name Name:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.Contact.Title}" label="Contact Title:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.Contact.Email}" label="Contact Email:"/> <apex:outputText label=" "></apex:outputText>
+                <apex:inputText value="{!case.Contact.Phone}" label="Contact Phone:"/> <apex:outputText label=" "></apex:outputText>               
+            </apex:pageBlockSection>
+            -->
+            
+            
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!escalateToPN}" value="Submit"/>
+                <apex:commandButton action="{!Cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>           
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

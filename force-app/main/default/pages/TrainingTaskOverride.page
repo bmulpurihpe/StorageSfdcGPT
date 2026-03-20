@@ -1,0 +1,24 @@
+<apex:page standardController="TrainingTask__c">
+    <style>
+        .banner {
+            //background-color: #F5F5F5;
+            padding: 10px;            
+            //border-bottom: 2px solid #A52A2A;            
+            background-color: #5FB64B;
+            color: #fff;
+        }
+        .banner img {
+            width: 40px;
+            height: 30px;
+            vertical-align: middle;;            
+        }
+        .banner-title {
+            font-size: 16px;
+        }  
+    </style>
+    <div class="banner">        
+        <img src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/images/book-icon.png')}" />
+        <h1 class="banner-title">Training Material Management</h1>
+    </div>
+    <apex:detail />
+</apex:page>

@@ -1,0 +1,802 @@
+<apex:page standardcontroller="RMAv2__c" id="Page" extensions="rmav2ExtensionsWithSharingDetail">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+ <script type="text/javascript">
+ 
+               $(document).ready(function() {
+                     var pageError = document.getElementById("Page:PM2").textContent;
+                     if(pageError == '')
+                     {
+                        var stdButtons = document.getElementById('Page:myform:pageBlockId:pageBlockButtonsId:stdButtonPanelId');
+                        $(stdButtons).show();
+                     }
+                     else
+                     {
+                        var stdButtons = document.getElementById('Page:myform:pageBlockId:pageBlockButtonsId:stdButtonPanelId');
+                        $(stdButtons).hide();
+                        
+                        document.getElementById('Page:myform:pageBlockId:pageBlockButtonsId:saveButton').style.display = '';
+                        document.getElementById('Page:myform:pageBlockId:pageBlockButtonsId:cancelButton').style.display = '';
+                     }
+                });
+
+</script>
+<apex:pageMessages id="PM2" escape="false"/>
+    <apex:sectionheader title="{!$ObjectType.RMAv2__c.label} Detail" subtitle="{!RMAv2__c.Name}"/>
+    <chatter:feedwithfollowers entityId="{!RMAv2__c.Id}"/>
+    <apex:form id="myform" >
+    
+        <apex:pageblock id="pageBlockId" mode="mainDetail" title="{!$ObjectType.RMAv2__c.label} Detail">
+             <apex:pageBlockButtons id="pageBlockButtonsId">
+             
+             <apex:outputPanel id="stdButtonPanelId">
+                <apex:commandButton action="{!edit}" id="editButton" value="Edit"/>
+               <apex:commandButton onclick="return confirm('Are you sure you want to delete this RMA?')"  id="deleteButton" action="{!deleteRMA}" value="Delete">
+                     <apex:param name="prefix" value="{!$ObjectType.RMAv2__c}"/>
+                     <apex:param name="rmaID" value="{!RMAv2__c.Id}"/>
+               </apex:commandButton>
+
+                 <apex:commandButton action="{!cloneRMA}"  id="cloneButton" value="Clone RMA"/>
+                 
+                 <apex:commandButton action="{!submitRMA}" disabled="{!DraftShipmentStatus}" id="submitRMAButton" value="{!SubmitRMALabel}"/>
+                 
+                 <apex:commandButton action="{!cancelRMA}" disabled="{!OpenShipmentStatus}" id="cancelRMAButton" value="Cancel RMA"/>
+              </apex:outputPanel>  
+                 
+                <apex:commandButton action="{!save}"  id="saveButton" value="Save" style="display:none"/>
+                <apex:commandButton onclick="resetInlineEdit()" id="cancelButton" value="Cancel" style="display:none"/>
+            </apex:pageBlockButtons>
+
+            <!-- **********   [Record Type : Master ]   **********  -->
+            <apex:outputpanel >
+                <apex:pageBlockSection title="General Information Section"  collapsible="false"  columns="2">
+                
+                
+                
+                    <apex:outputField value="{!RMAv2__c.rmaType__c}"/>
+          
+                    <apex:outputField value="{!RMAv2__c.rmaStatus__c}"/>
+                     <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.Name}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaFaRequired__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaCaseNumber__c}"/>
+                    
+                    <apex:outputField value="{!RMAv2__c.rmaEFAPriority__c}" rendered="{!renderEFAPriority}" />
+                    <apex:outputLabel rendered="{!renderEFAPriority}" />
+                    
+                    <apex:outputfield value="{!RMAv2__c.rmaCustomerFaRequired__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaCaseNimbleVersion__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaRcaCompleted__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnTo__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaDateTimeOpened__c}"/>
+                    <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.rmaDateTimeClosed__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaExcludeFromOpsMetrics__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaDateTimeCanceled__c}"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:outputfield value="{!RMAv2__c.rmaWarrantyEntitlement__c}"/>
+                    <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.rmaShowOnSiteSectionsAlways__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value="Created By"/>
+                        <apex:outputpanel >
+                            <apex:outputfield value="{!RMAv2__c.CreatedById}"/>&nbsp;, 
+                            <apex:outputfield value="{!RMAv2__c.CreatedDate}"/>
+                        </apex:outputpanel>
+                    </apex:pageblocksectionitem>
+                    <apex:outputfield value="{!RMAv2__c.rmaShowReturnSectionsAlways__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel value="Last Modified By"/>
+                        <apex:outputpanel >
+                            <apex:outputfield value="{!RMAv2__c.LastModifiedById}"/>&nbsp;, 
+                            <apex:outputfield value="{!RMAv2__c.LastModifiedDate}"/>
+                        </apex:outputpanel>
+                    </apex:pageblocksectionitem>
+                    
+                    
+                    
+                    
+                </apex:pageblocksection>
+                <apex:pageblocksection title="TSE Instructions Section (populated after an RMA is saved)" showheader="true" collapsible="true" columns="1">
+                   
+                     <apex:pageblockSectionItem >
+                    <apex:outputLabel value="TSE Instructions v2"/>
+                    <apex:outputPanel id="pwPanel" > 
+                     <apex:outputPanel styleClass="requiredBlock"/>
+                            <apex:include pageName="rmaTseInstructionsv2"/>
+                     </apex:outputPanel>
+                   </apex:pageblockSectionItem>
+                   
+                   
+                   <apex:pageblockSectionItem >
+                   <apex:outputLabel value="Order Data"/>
+                    <apex:outputPanel id="pwPanel" > 
+                     <apex:outputPanel styleClass="requiredBlock"/>
+                           <apex:include pageName="rmaOrderDataKeyValue"/>
+                     </apex:outputPanel>
+                   </apex:pageblockSectionItem>
+ 
+                </apex:pageblocksection>
+                <apex:pageBlockSection title="Part Selection Section (WHAT)" showheader="true" collapsible="true" columns="1">
+                    <apex:outputfield value="{!RMAv2__c.rmaLabArray__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaComponent__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaNimbleOsVersion__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaModel__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaPart__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaQuantity__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaManufacturer__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaDiskShelfAsset__c}"/>
+                    <apex:outputField rendered="{!IF(hideHddSddSerialNumber != true, true, false)}" value="{!RMAv2__c.rmaHddSsdSerialNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaConfigurationDetails__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    
+                  
+   
+                </apex:pageblocksection>
+                <apex:pageblocksection title="RMA Reason Section (WHY)" showheader="true" collapsible="true" columns="1">
+                        
+                      
+                     <apex:outputfield value="{!RMAv2__c.rmaReason__c}"/>               
+                   
+                    <apex:outputfield value="{!RMAv2__c.rmaGeneralFailureDetails__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaDetailedReason__c}"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Address Selection Section (WHERE)" showheader="true" collapsible="true" columns="2">
+
+                   <apex:outputField value="{!RMAv2__c.rmaAddressBook__c}"/>  
+ 
+                    <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentLocationValidated__c}"/> 
+                    
+                    
+                    
+                   <apex:pageblockSectionItem >
+                      <apex:outputLabel style="font-size:11px;font-weight:bold;color:#4a4a56;height:150px;" value="Shipment Label Details"/>
+                      <apex:inputtextarea style="font-size:12px;height:130px;Width:100%;resize:none;border:5px;border-style: none;border-color:Transparent;overflow:auto;"  readonly="true" value="{!ShipmentLabelDetails}"/>
+                   </apex:pageblockSectionItem>
+                    
+                    
+                    <apex:outputfield value="{!RMAv2__c.rmaAddOverriddenAddressToAddressBook__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputLabel />
+
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentAccountName__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentAccountName__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentStreet1__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentStreet1__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentStreet2__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentStreet2__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentCity__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentCity__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentState__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentState__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentPostalCode__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentPostalCode__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentCountry__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentCountry__c}"/>
+                    <apex:outputField value="{!RMAv2__c.rmaOverrideShipmentAttn__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentAttn__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentPhone__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentPhone__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideShipmentEmail__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentEmail__c}"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="SLA/Uplift Selection Section (WHEN)" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetSla__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentSla__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaUplift__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaMissedSla__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaUpliftApprovedBy__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaMissedSlaReason__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="SHI Section" showheader="true" collapsible="true" columns="1">
+                    <apex:outputfield value="{!RMAv2__c.rmaTransmitRmaShisWithOrder__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShi__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                </apex:pageblocksection>
+                
+                
+            <apex:actionRegion >
+           
+            <apex:outputPanel id="OnSiteSectionID">
+               <apex:outputPanel rendered="{!IF(hideOnSiteSections != true, true, false)}">
+
+                <apex:pageblocksection title="Onsite Service Info Section" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteTechStatus__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeOrderConfirmed__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeArrivalEta__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteTechOrderNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeArrivalActual__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteTechName__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeReleased__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Onsite Service - Codes/Notes" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteSchedulingCode__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteSchedulingCode__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteSchedulingNotes__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteSchedulingNotes__c}"/>
+                    <apex:pageblocksectionItem />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsitePartHandoverCode__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsitePartHandoverCode__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsitePartHandoverNotes__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsitePartHandoverNotes__c}"/>
+                    <apex:pageblocksectionItem />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteCheckInCode__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteCheckInCode__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteCheckInNotes__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteCheckInNotes__c}"/>
+                    <apex:pageblocksectionItem />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsitePartDispositionCode__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsitePartDispositionCode__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsitePartDispositionNotes__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsitePartDispositionNotes__c}"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Onsite Service - FE Arrival Address" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalStreet1__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteArrivalStreet1__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalStreet2__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteArrivalStreet2__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalCity__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteArrivalCity__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalState__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteArrivalState__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalPostalCode__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteArrivalPostalCode__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalCountry__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteArrivalCountry__c}"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Onsite Service - Array Location" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideAssetLocBuilding__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetLocBuilding__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideAssetLocFloor__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetLocFloor__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideAssetLocDatacenter__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetLocDatacenter__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideAssetLocAreaOrGrid__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetLocAreaOrGrid__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideAssetLocRow__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetLocRow__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideAssetLocRack__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetLocRack__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOverrideAssetLocPositionInRack__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetLocPositionInRack__c}"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Onsite Service - Component Slots" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteControllerExpanderSlot__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                   <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteHddSsdSlot__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsitePowerSupplySlot__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteNicCardSlot__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                </apex:pageblocksection>
+                
+               </apex:outputPanel>
+             </apex:outputPanel>                
+          </apex:actionRegion>
+                
+                
+                
+                <apex:pageblocksection title="Outgoing Shipment Info Section" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentStatus__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentDateTimeOpened__c}"/>
+                    <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentDateTimeClosed__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentOrderProvider__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentDateTimeCanceled__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentOrderDepot__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentAfterShipStatus__c}">
+
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentOrder4HrDepotFound__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentAfterShipLastUpdate__c}">
+
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rma4HourDepotDistanceMiles__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                   <apex:outputfield value="{!RMAv2__c.OutgoingShipmentAfterShipSignedBy__c}">
+
+                    </apex:outputfield>
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutShipProviderOrderNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentDepot__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentCarrier__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentTrackingNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentTrackingUrl__c}"/>
+                   
+                    <apex:pageblocksectionItem />
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentPartSn__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaFulfilledPartNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentNotes__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                   <apex:pageblocksectionItem />
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutShipDateTimeOrderConfirmed__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutShipDateTimeShipped__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                   <apex:pageblocksectionItem />
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutShipDateTimeEta__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                     <apex:outputlabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutShipDateTimeDelivered__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutShipSignedForBy__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                </apex:pageblocksection>
+                
+                
+               <apex:actionRegion >  
+                  <apex:outputPanel id="ReturnShipmentInfoSectionId">
+                   <apex:outputPanel rendered="{!IF(hideReturnSections != true, true, false)}">
+                
+                <apex:pageblocksection title="Return Shipment Info Section (Customer to Provider)" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentStatus__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentDateTimeOpened__c}"/>
+                    <apex:outputLabel />
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentDateTimeClosed__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShipProviderOrderNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentDateTimeCanceled__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentCarrier__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentTrackingNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentTrackingUrl__c}"/>
+                    <apex:pageblocksectionItem />
+                    <apex:outputLabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentNotes__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                   <apex:pageblocksectionItem />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShipDateTimeDelivered__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShipSignedForBy__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                </apex:pageblocksection>
+                
+              
+                
+                <apex:pageblocksection title="Return Shipment 2 Info Section (Provider to Nimble)" showheader="true" collapsible="true" columns="2">
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShip2Status__c}">
+                       
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputLabel />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShip2Carrier__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShip2TrackingNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:pageblocksectionItem />
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShip2DateTimeShipped__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShip2DateTimeEta__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShip2DateTimeDelivered__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                    <apex:outputfield value="{!RMAv2__c.rmaRetShip2SignedForBy__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:pageblocksectionItem />
+                </apex:pageblocksection>
+                
+                
+                  </apex:outputPanel>
+                </apex:outputPanel> 
+              </apex:actionRegion>  
+                
+
+                <apex:pageblocksection title="Debugging Section (ignore)" showheader="true" collapsible="true" columns="1">
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetPartShipLastValDateIsStale__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetSameDayPartDeliveryPreference__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetSerialNumber__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaAssetNrdIsInEffect__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaPartFailedWithinOpsTimePeriod__c}"/>
+                    
+                    
+                    
+                    <apex:outputfield value="{!RMAv2__c.rmaPartIsAShipOnlyPart__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaIsForAGModel__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOpenedWithinWarrantyPeriod__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaCaseIsEngOrExecEscalated__c}"/>
+                     <apex:outputfield value="{!RMAv2__c.rmaPartNumber__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaShipmentEmailInEmailField__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                     <apex:outputField value="{!RMAv2__c.rmaGateKeeperStatus__c}"/>
+                     <apex:outputField value="{!RMAv2__c.rmaAllowOrderCancel__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaFaLogicHistory__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaOnsiteCompiledNotes__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                    <apex:outputfield value="{!RMAv2__c.rmaDeliveryInstructions__c}">
+                       <apex:inlineEditSupport showOnEdit="saveButton, cancelButton" 
+                        hideOnEdit="editButton,deleteButton,cloneButton,submitRMAButton,cancelRMAButton" event="ondblclick" 
+                        changedStyleClass="myBoldClass" resetFunction="resetInlineEdit"/>
+                    </apex:outputfield>
+                </apex:pageblocksection>
+            </apex:outputpanel>
+        </apex:pageblock>
+
+    </apex:form>
+
+    <!-- **********   [Related Lists for Record Type : Master ]   **********  -->
+    <apex:outputpanel >
+        <apex:relatedlist list="CombinedAttachments" title="Notes & Attachments"/>
+        <apex:relatedlist list="AfterShip_CheckPoint_for_RMA__r" title="AfterShip Check Point for RMA"/> 
+        
+    </apex:outputpanel>    
+    
+<apex:pageBlock title="RMAV2 History">
+    <apex:pageBlockTable value="{!histories}" var="h">
+        <apex:column headerValue="Date" value="{!h.thedate}" />
+        <apex:column headerValue="User" value="{!h.who}" />
+        <apex:column headerValue="Action">
+            <apex:outputText escape="false" value="{!h.action}" /></apex:column>
+    </apex:pageBlockTable>
+</apex:pageBlock>
+ 
+    
+</apex:page>

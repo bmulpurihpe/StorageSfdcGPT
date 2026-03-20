@@ -1,0 +1,129 @@
+<apex:page standardController="Asset" showHeader="true">
+
+    <apex:sectionHeader title="Operations Tools" subtitle="Quick Create Asset" />
+
+    <apex:form id="quickie">
+        <apex:pageBlock >
+            <apex:pageMessages />
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!save}"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" />
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockSection title="Asset Information" columns="2" collapsible="false">
+                <apex:inputField value="{! Asset.Name }" required="true"/>
+                <apex:inputField value="{! Asset.Asset_Stage__c }"/>
+
+                <apex:inputField value="{! Asset.AccountId }" required="true"/>
+                <apex:inputField value="{! Asset.Status }" required="true"/>
+
+                <apex:inputField value="{! Asset.Product2Id }" required="true"/>
+                <apex:inputField value="{! Asset.Order_Type__c }" required="true"/>
+
+                <apex:inputField value="{! Asset.SerialNumber }" required="true"/>
+                <apex:inputField value="{! Asset.PurchaseDate }" required="true"/>
+
+                <apex:inputField value="{! Asset.ContactId }" required="true"/>
+                <apex:inputField value="{! Asset.Ship_Date__c }" required="true"/>
+
+                <apex:inputField value="{! Asset.Business_Contact__c }"/>
+                <apex:inputField value="{! Asset.HPE_Serial_Number__c}" required="true"/>
+
+                <apex:inputField value="{! Asset.Opportunity_Asset__c }"/>
+                <apex:inputField value="{! Asset.HPE_Support_SKU__c}" required="true"/>
+
+                <apex:inputField value="{! Asset.Dynamic_SKU__c}" required="true"/>
+                <apex:inputField value="{! Asset.HPE_Service_Agreement_ID__c}"/>
+
+                <apex:inputField value="{! Asset.Loan__c}"/>
+                <apex:inputField value="{! Asset.HPE_Opportunity_ID__c}"/>
+
+                <apex:inputField value="{! Asset.dHCI__c}"/>                
+                <apex:inputField value="{! Asset.HPE_Order_Number__c}"/>
+
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.HPE_Quote_Number__c}"/>
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Array/Shelf Details" columns="2" collapsible="false">
+                <apex:inputField value="{! Asset.Array_Controller__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Networking__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Networking_2__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Networking_3__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Networking_4__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Networking_5__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Networking_6__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Capacity__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Array_Cache__c}"/>
+                <apex:pageBlockSectionItem />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Shelf Details" columns="2" collapsible="false">
+                <apex:inputField value="{! Asset.SSD_Packs__c}"/>
+                <apex:inputField value="{! Asset.Expansion_Shelf_Base__c}"/>
+
+                <apex:inputField value="{! Asset.SSD_Bank_A__c}"/>
+                <apex:inputField value="{! Asset.SSD_Bank_A_SKU__c}"/>
+
+                <apex:inputField value="{! Asset.SSD_Bank_B__c}"/>
+                <apex:inputField value="{! Asset.SSD_Bank_B_SKU__c}"/>
+
+                <apex:inputField value="{! Asset.Shelf_Capacity__c}"/>
+                <apex:pageBlockSectionItem />
+
+                <apex:inputField value="{! Asset.Shelf_Pack_4__c}"/>
+                <apex:pageBlockSectionItem />
+
+                <apex:inputField value="{! Asset.Shelf_Pack_4__c}"/>
+                <apex:pageBlockSectionItem />
+
+                <apex:inputField value="{! Asset.Shelf_Pack_4__c}"/>
+                <apex:pageBlockSectionItem />
+
+                <apex:inputField value="{! Asset.Shelf_Pack_4__c}"/>
+                <apex:pageBlockSectionItem />
+
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Support Entitlement Information" columns="2" collapsible="false">
+                <apex:inputField value="{! Asset.Customer_Elected_Not_to_Renew__c}"/>
+                <apex:inputField value="{! Asset.CDMR_Start_Date__c}"/>
+                <apex:inputField value="{! Asset.SLA__c}" required="true"/>
+                <apex:inputField value="{! Asset.CDMR_End_Date__c}"/>
+                <apex:inputField value="{! Asset.Support_Start_Date_Asset__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Support_End_Date__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.assetNrdStartDate__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.assetNrdEndDate__c}"/>
+                <apex:pageBlockSectionItem />
+            </apex:pageBlockSection>
+
+            <apex:pageBlockSection title="Install Address" columns="2" collapsible="false">
+                <apex:inputField value="{! Asset.Install_Street1__c}" required="true"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Install_Street2__c}"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Install_City__c}" required="true"/>
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Install_State_Province__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Install_Zip_Code__c}" />
+                <apex:pageBlockSectionItem />
+                <apex:inputField value="{! Asset.Install_Country__c}" required="true"/>
+                <apex:pageBlockSectionItem />
+            </apex:pageBlockSection>
+
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

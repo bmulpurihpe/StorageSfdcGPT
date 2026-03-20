@@ -1,0 +1,70 @@
+<template>
+    <c-quantic-result-template>
+      <div slot="label" class="psResultBadge"> Cases </div>
+
+      <div slot="badges" class="slds-grid slds-grid_vertical-align-center">
+        <c-quantic-result-badge variant="recommended" result={result}></c-quantic-result-badge>
+        <c-quantic-result-badge variant="featured" result={result}></c-quantic-result-badge>
+      </div>
+
+      <div slot="actions" class="slds-grid slds-grid_vertical-align-center floatingtest">
+        <template if:true={resultHasPreview}>
+          <c-quantic-result-quickview 
+            preview-button-label="" 
+            engine-id={engineId}
+            tooltip ="Quick View"
+            result={result}>
+          </c-quantic-result-quickview>
+        </template>
+      </div>
+
+      <div slot="title" class="psTitleRow">
+        <c-ps-case-result-link result={result} engine-id={engineId}></c-ps-case-result-link>
+        <template if:true={result.raw.sfcasenumber}> 
+          <c-quantic-result-field result={result} label="#" field="sfcasenumber" type="string" style="color:#313a45"></c-quantic-result-field>
+        </template>
+        <lightning-formatted-date-time value={result.raw.date}></lightning-formatted-date-time>
+      </div>
+
+      <div slot="excerpt" class="psExcerpt">
+        {result.Excerpt}
+      </div>
+  
+      <div slot="bottom-metadata" class="bottom-metadata slds-m-top_x-small">
+        <div class="psTable">
+          <template if:true={result.raw.sfcasenumber}> 
+            <c-quantic-result-field result={result} label="Case Number" field="sfcasenumber" type="string" style="color:#313a45"></c-quantic-result-field>
+          </template>
+          <template if:true={result.raw.sfrecordtypename}> 
+            <c-quantic-result-field result={result} label="Case Record Type" field="sfrecordtypename" type="string" style="color:#313a45"></c-quantic-result-field>
+          </template>
+          <template if:true={result.raw.sfassetassetnimbleosversion__c}> 
+            <c-quantic-result-field result={result} label="Nimble OS Version" field="sfassetassetnimbleosversion__c" type="string" style="color:#313a45"></c-quantic-result-field>
+          </template>
+          <template if:true={result.raw.sfbugs__rbugid__c}> 
+            <c-quantic-result-field result={result} label="Bug Number(s)" field="sfbugs__rbugid__c" type="string" style="color:#313a45"></c-quantic-result-field>
+          </template>
+          <template if:true={result.raw.sftechnology_area__c}> 
+            <c-quantic-result-field result={result} label="Tech Area" field="sftechnology_area__c" type="string" style="color:#313a45"></c-quantic-result-field>
+          </template>
+          <template if:true={result.raw.sfsub_technology_area__c}> 
+            <c-quantic-result-field result={result} label="Tech Sub-Area" field="sfsub_technology_area__c" type="string" style="color:#313a45"></c-quantic-result-field>
+          </template>
+          <template if:true={result.raw.sfsupport_profile__c}> 
+            <c-quantic-result-field result={result} label="Support Profil" field="sfsupport_profile__c" type="string" style="color:#313a45"></c-quantic-result-field>
+          </template>
+        </div>
+      </div>
+
+      <div slot="children">
+        <c-quantic-result-children 
+          class="psChildren"
+          engine-id={engineId}
+          template-id="FoldedCase"
+          collection={collection}
+          folded-result-list-controller={foldedResultListController}
+          result-templates-manager={resultTemplatesManager}>
+        </c-quantic-result-children>
+      </div>
+    </c-quantic-result-template>
+  </template>

@@ -1,0 +1,6 @@
+{
+  "arenaSessionId": "LABS-TsIvhUPPe6sErgorf4ockxPcLkXff1C0|",
+  "workspaceId": 413704593,
+  "workspaceName": "Nimble Storage Production",
+  "workspaceRequestLimit": 10000
+}

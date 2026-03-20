@@ -1,0 +1,19 @@
+:host {
+    --lwc-spacingMedium: 5px;
+    --slds-c-button-spacing-inline-end: 15px;
+    --slds-c-button-spacing-inline-start: 15px;
+    --lwc-colorBackgroundAlt:#F0F0F4;
+}
+
+.psTabBar {
+    margin: 0.75rem auto;
+}
+
+.psSearchBox {
+    margin: 0.75rem auto;
+    width: 50%;
+}
+
+c-quantic-notifications {
+    --lwc-zIndexToast: 1
+}

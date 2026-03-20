@@ -1,0 +1,47 @@
+<apex:page standardController="Ops_RMA__c"   sidebar="false" showHeader="true"  contentType="application/vnd.ms-excel#RTVTraveler-{!Ops_RMA__c.RMA_Number__c}.xls">
+<!-- contentType="application/vnd.ms-excel#SalesForceExport.xls" -->
+<style type="text/css">
+    
+    .TableTitle {background-color: #FFCC99; font-weight: bold;font-size: 400% }
+    .TablerowHeader{font-weight: bold;font-size: 100%;height: 50px;width:100px}
+    .Tablerowvalue{font-size: 100%;height: 50px;width:100px}
+    .TableFirstrowvalue{font-weight: bold;font-size: 300%;height: 50px;width: 500px}
+    .TableCommentsHeader{font-weight: bold;font-size: 100%;height: 50px;width: 100px}
+</style>
+
+        <table border="1">
+              <tr>
+                  <td colspan="4" class="TableTitle"><center> RTV </center></td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> P/N: </td>
+                  <td colspan="3" class="TableFirstrowvalue"> {!Ops_RMA__c.OpsRMA_Part__c}</td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> S/N: </td>
+                  <td class="Tablerowvalue"> {!Ops_RMA__c.Component_Serial__c}</td>
+                  <td colspan="2" rowspan="3"> </td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> Vendor RMA#: </td>
+                  <td> {!Ops_RMA__c.Vendor_RMA__c} </td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> Vendor FA Requested: </td>
+                  <td>{!Ops_RMA__c.Vendor_FA_Requested_by_Platform_Eng__c}</td>
+              </tr>             
+              <tr>
+                  <td class="TablerowHeader"> Test Status: </td>
+                  <td> </td>
+                  <td rowspan="2" class="TableCommentsHeader"> Comment: </td>
+                  <td rowspan="2" colspan="1"> </td>
+              </tr>
+               <tr>
+                  <td class="TablerowHeader"> Nimble OS Version </td>
+                  <td> {!Ops_RMA__c.Nimble_Version__c} </td>
+              </tr>
+        </table>
+
+
+   
+</apex:page>

@@ -1,0 +1,34 @@
+<!--
+    Please do not change the styling in this component.
+-->
+<template>
+    <footer 
+                class="slds-card__footer actionButtonBar 
+                        slds-grid slds-grid_align-spread 
+                        slds-var-p-horizontal_small">
+                <template if:true={displayFooterMessage}>
+                    <div class="actionsLeft slds-grid 
+                                slds-var-m-right_xx-small"
+                                data-id="footerMsgDiv"
+                                style={footerMsgStyle}>
+                        <p>{footerDisplayMessage}</p>
+                    </div>
+                </template>
+                <div class="actionsLeft slds-grid 
+                                slds-var-m-right_xx-small">
+                    </div>
+                <div class="actionsRight slds-grid">
+                    <lightning-button
+                        class="slds-var-m-right_small"
+                        onclick={handleGoPrevious}
+                        label={previousButtonLabel}>
+                    </lightning-button>
+                    <lightning-button
+                        variant="brand"
+                        onclick={handleGoNext}
+                        label={nextButtonLabel}>
+                    </lightning-button>
+                </div>
+            </footer>
+    
+</template>

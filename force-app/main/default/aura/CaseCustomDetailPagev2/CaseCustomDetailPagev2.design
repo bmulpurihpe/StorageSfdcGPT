@@ -1,0 +1,12 @@
+<design:component label="Case Custom Page">
+    <flexipage:template>
+        <flexipage:region name="left" defaultWidth="SMALL" />
+        <flexipage:region name="center" defaultWidth="LARGE" />
+        <flexipage:region name="right" defaultWidth="SMALL" />
+        
+        <flexipage:region name="left1" defaultWidth="SMALL" />
+        <flexipage:region name="center1" defaultWidth="LARGE" />
+        <flexipage:region name="right1" defaultWidth="SMALL" /> 
+        
+    </flexipage:template>
+</design:component>

@@ -1,0 +1,575 @@
+<!--                              <<<< === Visualforce Page for Nimble Service Portal === >>>>
+=============================================================================================================
+Name                    : nimbleServiceportal
+Description             : To capture the field value related to the requests in the case dockets.
+Created Date            : 21st July 2019
+Author                  : Vishnu R
+Version                 : 1.0
+Modification History    : Updated by Guru Dev(Exafort) on 04/04/22 for TS-9050
+==============================================================================================================
+-->
+<apex:page controller="nimbleServicePortalControllerV1" docType="html-5.0" id="Thepage" standardStylesheets="true" cache="false" > <!--standardController="Case_Docket__c"   extensions="nimbleServicePortalController"-->
+    <html>
+        <head>
+            <script src="/soap/ajax/64.0/connection.js" type="text/javascript">
+            </script>
+            <script src="/soap/ajax/64.0/apex.js" type="text/javascript">
+            </script>
+            <meta charset='utf-8'/>
+            <!--Code to add " ?id=recordid " to the base url of the visualforce page -->
+            <script type="text/javascript">
+            
+            var previousOnload = window.onload;
+            window.onload = function() 
+            { 
+                
+                if (previousOnload) { 
+                    previousOnload();
+                } 
+                var condition = true; // condition
+                if(condition) {
+                    var url = window.location.href;
+                    var requestValueForNull = 'recordid';
+                    if (url.indexOf('id=') > 0) {//Change from '?id=' to 'id=' for TS-9050
+                        console.log('<== do nothing ==>')
+                    }else{ 
+                        var UrlParameterToAdd = '?id='+requestValueForNull;
+                        var encodedparams = encodeURIComponent(requestValueForNull);
+                        if(url.toLowerCase().indexOf('name=') > 0){//Added for TS-9050 By Exafort(Guru Dev) on 04/04/22
+                            url +='&id='+encodedparams;
+                        }
+                        else{
+                             url +='?id='+encodedparams; 
+                        }
+                        
+                    }
+                    window.history.replaceState(null,null, url);
+                    //CallApexMethod();
+                }
+                
+                
+            }
+            
+            
+            </script>
+            <script type="text/javascript">
+            /**Attachment TS-6516**/
+            var maxStringSize = 6000000;
+            function uploadFiles()
+            {
+                input = document.getElementById('fileinput');
+                console.log('input :' + input);
+                file = input.files[0];
+                fr = new FileReader();
+                if(file == null){ 
+                    document.getElementById("{!$Component.TheformTwo.fileName}").value='';
+                    document.getElementById("{!$Component.TheformTwo.fileBody}").value='';
+                }
+                else{
+                fr.onload = receivedBinaryString;
+                fr.readAsBinaryString(file);
+                 }
+                function receivedBinaryString(){
+                    
+                    var attachment = window.btoa(fr.result)
+                    var fileSize = attachment.length;
+                    if(fileSize != 0){
+                    document.getElementById("{!$Component.TheformTwo.fileName}").value = file.name; // get inputText tag Id by from view source
+                    document.getElementById("{!$Component.TheformTwo.fileBody}").value = attachment;
+                    }
+                    else{
+                         alert("Selected file does not have any content. Please attach file with content");
+                        document.getElementById('fileinput').value ="";
+                        document.getElementById("{!$Component.TheformTwo.fileName}").value='';
+                        document.getElementById("{!$Component.TheformTwo.fileBody}").value='';
+                        }
+                      
+                    console.log('fileSize  : '+fileSize );
+                    if(fileSize > maxStringSize )
+                        alert("Base 64 Encoded file is too large.  Maximum size is " + maxStringSize + " your file is " + fileSize + ".");        
+                    
+                }
+                
+                
+            }
+            /**Attachment**/
+            
+            /*Added by exafort on 03/12/2021 for TS -8031 */
+            function disableSaveButtons()
+            {
+                
+                var requestValue = document.getElementsByClassName("btn");
+                for(var i=1 ; i < requestValue.length ; i++){
+                    requestValue[i].disabled = true;
+                    requestValue[i].setAttribute("style", "background:#c1bebe;");
+                }                                
+            }
+            
+            function updateURLParameter(urll, param, paramVal){
+                var newAdditionalURL = "";
+                var tempArray = urll.split("&");
+                var baseURL = tempArray[0];
+                var additionalURL = tempArray[1];
+                var temp = "=";
+                
+                if (additionalURL) {
+                    if(tempArray[1].split('=')[0] == param){
+                        newAdditionalURL =  tempArray[1].split('=')[0]+ temp + paramVal;;
+                    }
+                }
+                return baseURL + "&" + newAdditionalURL;
+            }
+            /*function ChangeUrlOnPicklistChange(){
+                var requestValue = document.getElementById("Thepage:Theform:pBS:pBSOne:Request").value;
+                var url = window.location.href;
+                if (url.indexOf('&name=') > 0) {
+                    var url=updateURLParameter(url,"name",requestValue);  
+                }
+                else{
+                    var UrlParameterToAdd = '&name='+requestValue;
+                    var encodedparams = encodeURIComponent(requestValue);
+                    url +='&name='+encodedparams;   
+                }
+                window.history.replaceState(null,null, url);
+                CallApexMethod();
+            }*/
+            function ChangeUrlOnPicklistChangeCombo(rowNumval){  
+                sforce.connection.sessionId = '{!$Api.Session_ID}';
+                if(rowNumval >= 0){                
+                    var requestValue = document.getElementById("Thepage:TheformTwo:j_id234:j_id238:"+rowNumval+":j_id239").innerText;
+                    
+                }
+                else if (rowNumval == undefined) {
+                    var requestValue = document.getElementById("Thepage:Theform:pBS:pBSOne:RequestCombo").value;
+                }
+                console.log('### requestValue ===>'+requestValue);
+                soql = "select Id,Name,cdLabel__c From Case_Docket__c where cdLabel__c='"+requestValue+"'";
+                console.log('### soql ===>'+soql);
+                result = sforce.connection.query(soql);
+                console.log('### result ===>'+result);
+                console.log('### result size===>'+result.size);
+                if(result.size == 1){
+                    records = result.records["Name"];
+                    console.log('### records ===>'+records);
+                    var requestValuefromQuery = records;
+                    var url = window.location.href;
+                    if (url.indexOf('&name=') > 0) {
+                        var url=updateURLParameter(url,"name",requestValuefromQuery);  
+                    }
+                    else{
+                        var UrlParameterToAdd = '&name='+requestValuefromQuery;
+                        var encodedparams = encodeURIComponent(requestValuefromQuery);
+                        url +='&name='+encodedparams;   
+                    }
+                    window.history.replaceState(null,null, url);
+                    CallApexMethod(requestValuefromQuery);
+                }else{
+                    console.log('### ===> soql query record size is 0');
+                }
+                
+            }
+            function clearRequestValue(){
+                //alert(document.getElementById("Thepage:Theform:pBS:pBSOne:RequestCombo"));
+                document.getElementById("Thepage:Theform:pBS:pBSOne:RequestCombo").value="";
+                document.getElementById("Thepage:Theform:pBS:warningMsg").innerHTML = "";
+                var str = window.location.href;
+                var nap = str.lastIndexOf("&name");
+                var res = str.substring(0, nap);
+                window.history.replaceState(null,null, res);
+                
+                
+            }
+            function checkLimit(limitField, limitNum)
+            {
+                if (limitField.value.length > limitNum) {
+                    limitField.value = limitField.value.substring(0, limitNum);
+                } 
+            }
+            </script>
+            <style>
+                td.dataCol.first.last  {
+                width:95%;
+                }
+            </style>
+        </head>
+        <body>
+            
+            <apex:form id="Theform">
+                <apex:param name="id" value="{!$CurrentPage.parameters.id}"/>
+                <apex:param name="name" value="{!$CurrentPage.parameters.name}"/>
+                <apex:pageBlock id="pBS" title="Self Service Portal" >
+                    <!-- section for showing error messages -->
+                    <div style="font-size:20px;Color:red" >
+                        <apex:outputText id="warningMsg" value="{!warningMsg}" />
+                        
+                        
+                    </div>
+                    <apex:actionFunction name="CallApexMethod" action="{!getFieldInfosFromCaseDocket}" reRender="Sectiontohide,caseDocketLink,pBS" status="LoadStatusId">
+                        <apex:param value="" name="requestVal" assignTo="{!selectedReqName}"/>
+                    </apex:actionFunction>
+                    <apex:pageBlock >
+                        <!-- to Show the header details based on the record id in the URL-->
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'Case'}">
+                            <!-- if the URL record id object name is "case"-->
+                            Create Ops Case for Case Number &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].CaseNumber}</apex:outputLink>
+                            <br/> <br/>
+                            Related Objects <br/>
+                            <!-- To show the related object details for case record id in the URL-->
+                            <apex:outputpanel rendered="{!sobjectrecs[0].Account.Name != null}">Create Ops Case for &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].Account.Id}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].Account.Name}</apex:outputLink><br/></apex:outputpanel>
+                            <apex:outputpanel rendered="{!sobjectrecs[0].Asset.SerialNumber != null}">Create Ops Case for &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].Asset.Id}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].Asset.SerialNumber}</apex:outputLink><br/></apex:outputpanel>
+                            <apex:outputpanel rendered="{!sobjectrecs[0].Contact.Name !=null}">Create Ops Case for &nbsp; <apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].Contact.Id}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].Contact.Name}</apex:outputLink></apex:outputpanel>    
+                            <apex:outputpanel rendered="{!relatedObj != null}">
+                                <!--When related id is passed in the URL-->
+                                <br/>
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Case'}"> Create Ops Case for &nbsp; {!RelatedIdObjName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].CaseNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Asset'}"> Create Ops Case for &nbsp; {!RelatedIdObjName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].SerialNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(AND(RelatedIdObjName!='Asset',RelatedIdObjName!='Case'), TRUE, FALSE)}"> Create Ops Case for &nbsp; {!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].Name}</apex:outputLink></apex:outputPanel>
+                            </apex:outputpanel>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'Account'}">
+                            Create Ops Case for Account &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].Name}</apex:outputLink> 
+                            <apex:outputpanel rendered="{!relatedObj != null}">
+                                <br/> <br/>
+                                Related Objects <br/>
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Case'}"> Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].CaseNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Asset'}">Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].SerialNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(AND(RelatedIdObjName!='Asset',RelatedIdObjName!='Case'), TRUE, FALSE)}">Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].Name}</apex:outputLink></apex:outputPanel>
+                            </apex:outputpanel>
+                            
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'Asset'}">
+                            Create Ops Case for Asset &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].SerialNumber}</apex:outputLink>
+                            <br/> <br/>
+                            Related Objects <br/>
+                            <apex:outputpanel rendered="{!sobjectrecs[0].Contact.Id != null}">Create Ops Case for &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].Contact.Id}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].Contact.Name}</apex:outputLink><br/></apex:outputpanel>
+                            <apex:outputpanel rendered="{!sobjectrecs[0].Account.Id != null}">Create Ops Case for &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].Account.Id}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].Account.Name}</apex:outputLink><br/></apex:outputpanel>
+                            <apex:outputpanel rendered="{!relatedObj != null}">
+                                
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Case'}"> Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].CaseNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Asset'}">Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].SerialNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(AND(RelatedIdObjName!='Asset',RelatedIdObjName!='Case'), TRUE, FALSE)}">Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="apex/nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].Name}</apex:outputLink></apex:outputPanel>
+                            </apex:outputpanel>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'Contact'}">
+                            Create Ops Case for Contact &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].Name}</apex:outputLink>
+                            <br/> <br/>
+                            Related Objects <br/>
+                            <apex:outputpanel rendered="{!sobjectrecs[0].Account.Id != null}">Create Ops Case for &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].Account.Id}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].Account.Name}</apex:outputLink><br/></apex:outputpanel>
+                            <apex:outputpanel rendered="{!relatedObj != null}">
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Case'}"> Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].CaseNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Asset'}">Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].SerialNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(AND(RelatedIdObjName!='Asset',RelatedIdObjName!='Case'), TRUE, FALSE)}">Create Ops Case for &nbsp;{!RelatedIdObjName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].Name}</apex:outputLink></apex:outputPanel>
+                            </apex:outputpanel>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'RMAv2__c'}">
+                            Create Ops Case for RMA &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].Name}</apex:outputLink>
+                            <br/> <br/>
+                            Related Objects <br/>
+                            <apex:outputpanel rendered="{!sobjectrecs[0].rmaCaseNumber__r.CaseNumber != null}">Create Ops Case for &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].rmaCaseNumber__c}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].rmaCaseNumber__r.CaseNumber}</apex:outputLink><br/></apex:outputpanel>
+                       <apex:outputPanel rendered="{!sobjectrecs[0].rmaAssetSerialNumber__c != null}">Create Ops Case for &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!sobjectrecs[0].rmaAssetId__c}&relatedId={!sobjectrecs[0].Id}">{!sobjectrecs[0].rmaAssetSerialNumber__c}</apex:outputLink></apex:outputPanel>
+                            <apex:outputpanel rendered="{!relatedObj != null}">
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Case'}"> Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].CaseNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!RelatedIdObjName=='Asset'}">Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].SerialNumber}</apex:outputLink></apex:outputPanel>
+                                <apex:outputPanel rendered="{!IF(AND(RelatedIdObjName!='Asset',RelatedIdObjName!='Case'), TRUE, FALSE)}">Create Ops Case for &nbsp;{!RelatedIdObjectName} &nbsp;<apex:outputLink target="_blank" value="nimbleServicePortal?id={!relatedObj[0].Id}">{!relatedObj[0].Name}</apex:outputLink></apex:outputPanel>
+                            </apex:outputpanel>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'Asset_Stage__c'}">
+                            Create Ops Case for Asset Stage &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].Name}</apex:outputLink> <br/>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'AddressBook__c'}">
+                            Create Ops Case for AddressBook &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].Name}</apex:outputLink> <br/>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'depot__c'}">
+                            Create Ops Case for Depot  &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].Name}</apex:outputLink> <br/>
+                        </apex:outputpanel>
+                        <apex:outputpanel rendered="{!RecordIdObjName == 'Opportunity'}">
+                            Create Ops Case for Opportunity &nbsp; <apex:outputLink target="_blank" value="/{!sobjectrecs[0].Id}">{!sobjectrecs[0].Name}</apex:outputLink> <br/>
+                        </apex:outputpanel>
+                        
+                    </apex:pageBlock>
+                    
+                    <!-- Fieldset for displaying request combobox-->
+                    <fieldset> 
+                        <legend>
+                            Request
+                        </legend>                 
+                        <apex:pageBlockSection columns="2" id="pBSOne" >
+                            <!-- request Combobox -->
+                            <apex:inputText id="RequestCombo" size="255" maxlength="255" list="{!listOfStrings}" value="{!selectedRequest}" onchange="ChangeUrlOnPicklistChangeCombo();" style="width:100%;">
+                            </apex:inputText>
+                            <!--Section for Reset button -->
+                            <apex:outputPanel id="resetButtonPanel">
+                                <!-- <apex:commandButton id="resetButton" value="Reset" onclick="clearRequestValue();" reRender="Sectiontohide,caseDocketLink,resetButtonPanel" title="Click to clear the selected value in the request" disabled="{!selectedRequest == ''}"/> -->
+                                <apex:commandButton id="resetButton" value="Reset" onclick="clearRequestValue();" reRender="Sectiontohide,caseDocketLink,resetButtonPanel" title="Click to clear the selected value in the request" />
+                            </apex:outputPanel>
+                        </apex:pageBlockSection>
+                        <!-- status displayed on loading fields information -->
+                        <center>
+                            <apex:actionStatus id="LoadStatusId"  >
+                                <apex:facet name="start" >
+                                    <b>Loading results..Please Wait....!</b>&nbsp;<img src="/img/loading.gif" /> 
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </center>
+                    </fieldset>
+                </apex:pageBlock>
+            </apex:form>
+            
+            <apex:form id="TheformTwo">
+                <!-- TS-6516-->
+                <apex:outputPanel id="Sectiontohide2">
+                <apex:inputTextArea value="{!fileBody}"  Id="fileBody" style="display:none;"/>
+                                     <apex:inputText value="{!fileName}"  Id="fileName" style="display:none;"/>
+                </apex:outputPanel>
+                 
+                
+                <!--Request Info & Support Information panel-->
+                <apex:outputPanel id="caseDocketLink" > <!--rendered="{!IF(cdRecord.size > 0,'true','false')}"-->
+                    <!-- Section for Request Info & Support Information-->
+                    <apex:pageBlock id="caseDocketLink_pb1" rendered="{!selectedRequest != ''}" title="Request Info & Support Information" >
+                        <!--Fieldset to display description from the case docket -->
+                        <fieldset>
+                            <legend>
+                                Description 
+                            </legend>
+                            <apex:outputField value="{!cdRecord[0].cdDescription__c}"  />
+                        </fieldset>
+                        <!--Fieldset to display links from the case docket -->
+                        <fieldset>
+                            <legend>
+                                Links  
+                            </legend>
+                            <ul>
+                                <li><b>KB     :</b> <a target="_blank" style="text-decoration:none" href="{!cdRecord[0].cdDocExternalURL__c}">{!cdRecord[0].cdDocExternalURL__c}</a></li>
+                                <li><b>JIRA   :</b> <a target="_blank" style="text-decoration:none" href="https://nimblejira.nimblestorage.com/browse/{!cdRecord[0].cdJiraOrigin__r.Name}">{!cdRecord[0].cdJiraOrigin__r.Name}</a></li>
+                                <li><b>Docket :</b> <a target="_blank" style="text-decoration:none" href="/{!cdRecord[0].Id}">{!cdRecord[0].Name}</a></li>
+                            </ul> 
+                        </fieldset> 
+                    </apex:pageBlock>
+                </apex:outputPanel>
+                <!-- Field Information panel -->
+                <apex:outputPanel id="Sectiontohide" >
+                    
+                    <!-- Section for fields information -->
+                    <apex:pageBlock id="Sectiontohide_pb2" rendered="{!selectedRequest != ''}" title="Fields Information">
+                        <!-- section for showing error messages -->
+                        
+                        <apex:outputPanel id="ErrorMessages">
+                            <apex:pageMessages />
+                        </apex:outputPanel>
+                        <!-- section to refresh the error messages after 5 secs-->
+                        <apex:actionRegion >
+                            <apex:outputPanel id="timerPanel">
+                                <apex:actionPoller reRender="ErrorMessages" interval="5" enabled="{!timer}" action="{!timerOff}"/> 
+                            </apex:outputPanel>
+                        </apex:actionRegion>
+                        <!--<apex:actionFunction name="clearMessage" action="{!timerOff}" reRender="ErrorMessages"/>-->
+                        <!-- Save Save&New status messages section -->
+                        <center>
+                            <apex:actionStatus id="SaveStatusId">
+                                <apex:facet name="start" >
+                                    
+                                    
+                                    <b>Saving ...Please Wait....!</b>&nbsp;<img src="/img/loading.gif" /> 
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </center>
+                        <apex:outputPanel id="fieldsetPanel">
+                            <!-- Fields Information Section-->
+                            <fieldset>
+                                <legend>
+                                    Fields 
+                                </legend>
+                                <table  style="float:right;width:100%"> <!--style="float:left;width:100%" -->
+                                    <apex:repeat value="{!servicePortalWrapList}" var="WrapperListValue" id="repeatId">
+                                        <tr style="width:50%;{!IF(WrapperListValue.cfieldLabel == 'Additional Info' || WrapperListValue.cfieldLabel == 'Is this under duress ?'
+                                                   || WrapperListValue.hideOnPortal,'display:none','')}">
+                                            <td style="width:50%;float: right;">
+                                                <apex:outputLabel value="{!WrapperListValue.cfieldLabel}"
+                                                                  rendered="{!IF(WrapperListValue.cfieldLabel == 'Additional Info' || WrapperListValue.cfieldLabel == 'Is this under duress ?'
+                                                                            || WrapperListValue.hideOnPortal,false,true)}"/>&nbsp;
+                                                <apex:image value="{!$Resource.helpTextImage}" styleClass="helpIcon" title="{!WrapperListValue.cfieldDesc}"
+                                                            rendered="{!IF(WrapperListValue.cfieldLabel == 'Additional Info' || WrapperListValue.cfieldLabel == 'Is this under duress ?' 
+                                                                      || WrapperListValue.hideOnPortal,false,true)}"/>
+                                            </td>
+                                            <td style="width:50%">
+                                                <apex:outputPanel styleClass="{!IF(WrapperListValue.cfieldRequired == true, 'requiredInput','none')}" layout="block"> 
+                                                    <apex:outputPanel styleClass="{!IF(WrapperListValue.cfieldRequired == true,'requiredBlock','none')}" layout="block"/><!--style="{!IF(WrapperListValue.cfieldRequired,'border-left: 3px solid #c00','')}"-->
+                                                    <apex:inputCheckbox value="{!WrapperListValue.isCheckboxSelected}" id="BodyCheckboxId" 
+                                                                        disabled="{!WrapperListValue.cfieldReadOnly}"
+                                                                        rendered="{!AND(WrapperListValue.isCheckbox,IF(WrapperListValue.cfieldLabel == 'Is this under duress ?',false,true))}" />
+                                                    <apex:selectList value="{!WrapperListValue.picklistVal}" multiselect="{!WrapperListValue.isMultiSelectPicklist}" size="1" id="picklistvalues"
+                                                                     rendered="{!WrapperListValue.isPicklist}" styleClass="BodyPicklistValues"
+                                                                     disabled="{!WrapperListValue.cfieldReadOnly}" style="width:400px;">
+                                                        <apex:selectOptions value="{!WrapperListValue.picklistValues}" />
+                                                    </apex:selectList>
+                                                    <apex:inputText id="inputTextBox" size="255" maxlength="255" value="{!WrapperListValue.textValue}" rendered="{!WrapperListValue.isText}" style="width:395px;"
+                                                                    disabled="{!WrapperListValue.cfieldReadOnly}"/><!--required="{!WrapperListValue.cfieldRequired}"-->
+                                                    <apex:inputTextArea id="inputTextAreaBox" value="{!WrapperListValue.textAreaValue}" style="margin: 0px; height: 60px; width: 394px;" 
+                                                                        disabled="{!WrapperListValue.cfieldReadOnly}"
+                                                                        onkeydown="checkLimit(this,255);"  
+                                                                        onkeyup="checkLimit(this,255);" 
+                                                                        onchange="checkLimit(this,255);"
+                                                                        rendered="{!AND(WrapperListValue.isTextArea,IF(WrapperListValue.cfieldLabel == 'Additional Info',false,true))}" /> <!--required="{!WrapperListValue.cfieldRequired}"-->
+                                                    <!-- TS-6516 Exafort Guru Dev-->
+                                                    <apex:outputPanel rendered="{!WrapperListValue.IsAttachment}">
+                                                    <input type="file" multiple="false" id="fileinput" onchange="uploadFiles();"/>
+                                                        <!--disabled="{!WrapperListValue.cfieldReadOnly}"-->
+                                                    </apex:outputPanel>
+                                                    <!--Added end-->
+
+                                                </apex:outputPanel>
+                                            </td>                                       
+                                        </tr>
+                                    </apex:repeat>
+                                </table>
+                                
+                            </fieldset>
+                            <!--Handling Field Information Section-->
+                            <fieldset>
+                                <legend>
+                                    Handling 
+                                </legend>
+                                <table style="float:right;width:100%">  <!--style="float:left;width:100%"  -->
+                                    <apex:repeat value="{!servicePortalWrapList}" var="WrapperListValuee" id="repeatId_2">
+                                        <tr style="width:50%;{!IF(WrapperListValuee.cfieldLabel == 'Additional Info' || WrapperListValuee.cfieldLabel == 'Is this under duress ?','','display:none')}">
+                                            <td style="width:50%;float: right;"><!--style="width:50%;float:right;"-->
+                                                <apex:outputLabel value="{!WrapperListValuee.cfieldLabel}" 
+                                                                  rendered="{!IF(WrapperListValuee.cfieldLabel == 'Additional Info' || WrapperListValuee.cfieldLabel == 'Is this under duress ?',true,false)}"/>&nbsp;
+                                                <apex:image value="{!$Resource.helpTextImage}" styleClass="helpIcon" title="{!WrapperListValuee.cfieldDesc}" 
+                                                            rendered="{!IF(WrapperListValuee.cfieldLabel == 'Additional Info' || WrapperListValuee.cfieldLabel == 'Is this under duress ?',true,false)}"/>
+                                            </td>
+                                            <td style="width:50%"> <!--style="float:left;width:50%"---->
+                                                <apex:outputPanel styleClass="{!IF(WrapperListValuee.cfieldRequired == true, 'requiredInput','none')}" layout="block"> 
+                                                    <apex:outputPanel styleClass="{!IF(WrapperListValuee.cfieldRequired == true,'requiredBlock','none')}" layout="block"/> <!--required="{!WrapperListValuee.cfieldRequired}"-->
+                                                    <apex:inputCheckbox value="{!WrapperListValuee.isCheckboxSelected}" id="BodyCheckboxId_2"
+                                                                        styleClass="BodyCheckbox" disabled="{!WrapperListValuee.cfieldReadOnly}" required="{!WrapperListValuee.cfieldRequired}"
+                                                                        rendered="{!AND(WrapperListValuee.isCheckbox,IF(WrapperListValuee.cfieldLabel == 'Is this under duress ?',true,false))}">
+                                                        
+                                                    </apex:inputCheckbox>
+                                                    <apex:selectList value="{!WrapperListValuee.picklistVal}" multiselect="{!WrapperListValuee.isMultiSelectPicklist}" size="1" id="picklistvalues"
+                                                                     styleClass="BodyPicklistValues" disabled="{!WrapperListValuee.cfieldReadOnly}" style="width:400px;"
+                                                                     rendered="{!AND(WrapperListValuee.isPicklist,IF(WrapperListValuee.cfieldLabel != 'Additional Info' || WrapperListValuee.cfieldLabel != 'Is this under duress ?',false,true))}">
+                                                        <apex:selectOptions value="{!WrapperListValuee.picklistValues}" />
+                                                    </apex:selectList>
+                                                    <!--required="{!WrapperListValuee.cfieldRequired}"-->
+                                                    <apex:inputText value="{!WrapperListValuee.textValue}"  id="inputTextBox_2" style="width:395px;"
+                                                                    disabled="{!WrapperListValuee.cfieldReadOnly}" required="{!WrapperListValuee.cfieldRequired}"
+                                                                    rendered="{!AND(WrapperListValuee.isText,IF(WrapperListValuee.cfieldLabel != 'Additional Info' || WrapperListValuee.cfieldLabel != 'Is this under duress ?',false,true))}"/>
+                                                    <apex:inputTextArea value="{!WrapperListValuee.textAreaValue}" style="margin: 0px; height: 60px; width: 394px;"
+                                                                        id="inputTextAreaBox_2" required="{!WrapperListValuee.cfieldRequired}" disabled="{!WrapperListValuee.cfieldReadOnly}"
+                                                                        onkeydown="checkLimit(this,255);"  
+                                                                        onkeyup="checkLimit(this,255);" 
+                                                                        onchange="checkLimit(this,255);"
+                                                                        rendered="{!AND(WrapperListValuee.isTextArea,IF(WrapperListValuee.cfieldLabel == 'Additional Info',true,false))}" />
+                                                    
+                                                    
+                                                </apex:outputPanel>
+                                            </td>                                       
+                                        </tr>
+                                    </apex:repeat>
+                                </table>
+                                
+                            </fieldset>
+                            
+                        </apex:outputPanel>
+                        
+                        <!--Save Save& New Button Section-->
+                        <apex:pageBlockButtons id="PBB" >
+                            <apex:CommandButton onclick="disableSaveButtons()" value="Save" action="{!insertCaseDocketFieldData1}" status="SaveStatusId" reRender="Sectiontohide,Sectiontohide2" /> 
+                            
+                            <apex:CommandButton onclick="disableSaveButtons()" value="Save & New" action="{!insertCaseDocketFieldData2}" status="SaveStatusId" reRender="Sectiontohide,Sectiontohide2"/>
+                            
+                        </apex:pageBlockButtons>
+                        
+                    </apex:pageBlock>
+                    <!-- To display three vertical panels section My recent cases,popular items and related cases -->
+                    <!-- Added by Guru Dev(Exafort) for TS-8933 on 16/Feb/22-->
+                    <table style="border-collapse: collapse; width: 100%;" border="0"  cellpadding="5">
+                        <tbody>
+                            <tr>
+                                <td style="width: 33.3333%;"><br/>
+                                    <!--page block section to display My recent cases-->
+                                    <apex:pageBlock rendered="{!IF(selectedRequest != '','false','true')}"><br/>
+                                        <font size="+0.5">
+                                            <strong>My Recent Cases</strong><br/><br/>
+                                        </font>
+                                        <apex:outputPanel rendered="{!IF(MyCaseList.size > 0,'TRUE','FALSE')}">
+                                            <apex:pageBlockTable value="{!MyCaseList}" var="MyCases">
+                                                <apex:column headerValue="CaseNumber">
+                                                    <apex:outputLink value="/{!MyCases.Id}" target="_blank">
+                                                        {!MyCases.CaseNumber}
+                                                    </apex:outputLink>
+                                                </apex:column>
+                                                <apex:column headerValue="Subject">
+                                                    <apex:outputLink value="/{!MyCases.Id}" target="_blank">
+                                                        {!MyCases.Subject}
+                                                    </apex:outputLink>
+                                                </apex:column>
+                                            </apex:pageBlockTable>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(MyCaseList.size = 0,'TRUE','FALSE')}">
+                                            &nbsp; <B>No Recent Cases</B>
+                                        </apex:outputPanel>
+                                    </apex:pageBlock>
+                                </td>
+                                <td style="width: 33.3333%;">&nbsp;
+                                    <!--page block section to display popular Requests-->
+                                    <apex:pageBlock rendered="{!IF(selectedRequest != '','false','true')}"><br/>
+                                        <font size="+0.5">
+                                            <strong>Popular Requests</strong><br/><br/>
+                                        </font>
+                                        <apex:outputPanel rendered="{!IF(PopularItemList.size > 0,'TRUE','FALSE')}">
+                                            <apex:variable value="{!0}" var="rowNum"/>
+                                            <apex:pageBlockTable value="{!PopularItemList}" var="PopItmlst" >
+                                                <apex:column headerValue="Case Docket" onclick="ChangeUrlOnPicklistChangeCombo('{!rowNum}')">
+                                                    <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                                                    <u>
+                                                        {!PopItmlst['DocketLabel']}
+                                                    </u>
+                                                </apex:column>
+                                            </apex:pageBlockTable>
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(PopularItemList.size = 0,'TRUE','FALSE')}">
+                                            &nbsp; <B>No Dockets Found</B>
+                                        </apex:outputPanel>
+                                    </apex:pageBlock>
+                                </td>
+                                <td style="width: 33.3333%;">&nbsp;
+                                    <!--page block section to display related cases-->
+                                    <apex:pageBlock rendered="{!IF(selectedRequest != '','false','true')}"><br/>
+                                        <font size="+0.5">
+                                            <strong>Related Cases</strong><br/><br/>
+                                        </font>
+                                        <apex:outputPanel rendered="{!IF(casesForRecordIdinUrlcase.size > 0,'TRUE','FALSE')}">
+                                            <apex:pageBlockTable value="{!casesForRecordIdinUrlcase}" var="CRec">
+                                                <apex:column headerValue="Case Number">
+                                                    <apex:outputLink value="/{!CRec.Id}"  target="_blank">
+                                                        {!CRec.CaseNumber} 
+                                                    </apex:outputLink>
+                                                </apex:column>
+                                                <apex:column headerValue="Subject">
+                                                    <apex:outputLink value="/{!CRec.Id}"  target="_blank">
+                                                        {!CRec.Subject}
+                                                    </apex:outputLink>
+                                                </apex:column>
+                                                <apex:column headerValue="Underlying Object">
+                                                    <apex:outputLink value="/{!CRec.CaseDocket__c}"  target="_blank">
+                                                        {!CRec.CaseDocket__r.cdUnderlyingObject__c}
+                                                    </apex:outputLink>
+                                                </apex:column>
+                                            </apex:pageBlockTable> 
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!IF(casesForRecordIdinUrlcase.size = 0,'TRUE','FALSE')}">
+                                            &nbsp; <B>No Related Cases Found</B>
+                                        </apex:outputPanel>
+                                    </apex:pageBlock></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!--Added End-->
+                </apex:outputPanel>
+            </apex:form>
+        </body>
+    </html>
+</apex:page>

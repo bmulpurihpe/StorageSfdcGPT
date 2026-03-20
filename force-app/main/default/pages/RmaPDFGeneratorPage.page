@@ -1,0 +1,149 @@
+<!-- 
+* Created by Exafort for the JIRA TS-10419 & TS-10486
+* This Visualforce page is designed to generate a PDF and attach it to the related RMA.
+* Also email's the Generated PDF to the related case contact
+-->
+
+<apex:page controller="RmaPDFGeneratorController" renderAs="pdf">
+    <table style="border-top: 1px solid;width: 100%;border-right: 1px solid;border-left: 1px solid;border-bottom: 1px solid;">
+        <tr>
+            <th style="width :10%; text-align: center;" rowspan="1">RMA/Work Order Request ({!rmaRecord.rmaCaseNumber__r.casenumber} - {!rmaRecord.rmaDiskShelfAsset__r.HPE_Serial_Number__c} - {!rmaRecord.name})- Nimble H3C [Onsite]</th>
+        </tr>
+    </table>
+    <table style="border-top: 1px solid;width: 100%;border-right: 1px solid;border-left: 1px solid;border-bottom: 1px solid;border-collapse: collapse;">
+        <tr>
+            <td style="width :36.33%; text-align: left;border: 1px solid black;padding: 6px;font-size: 13px;font-family: Arial Unicode MS;" rowspan="1"> Nimble Case ID :</td>
+            <td style="width :30.33%; text-align: left;border: 1px solid black;padding: 6px;font-size: 13px;font-family: Arial Unicode MS;" rowspan="1"> Nimble 案件编号 :</td>
+            <td style="width :33.33%; text-align: left;border: 1px solid black;padding: 6px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaCaseNumber__r.casenumber}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 6px;font-size: 13px;" rowspan="1">Problem Description :</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 6px;font-size: 13px;" rowspan="1">问题描述 :</td>
+            <td style="width: 33.33%; text-align: left; vertical-align: middle; border: 1px solid black; padding: 6px; font-size: 13px; overflow: hidden; text-overflow: ellipsis;">{!rmaRecord.rmaGeneralFailureDetails__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 6px;font-size: 13px;" rowspan="1">Severity : [P1 / P2 / P3 / P4]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 6px;font-size: 13px;" rowspan="1">严重程度 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 6px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaCaseNumber__r.Priority}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Product Model : [e.g. HF20, AF40, Alletra 6010, etc.]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">产品型号 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!assetProductCode}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">HPE Serial Number : [e.g. 5UMxxxxxxx]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">HPE 产品序列号 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!serialNumber}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Nimble Serial Number : [e.g. AF-xxxxxx]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Nimble 产品序列号 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!diskShelfAssetName}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Onsite Task : [Provide POA]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">现场任务 :</td>
+            <td style="width: 33.33%; text-align: left; vertical-align: middle; border: 1px solid black; padding: 8px; font-size: 13px; word-wrap: break-word;" rowspan="1">
+                <apex:repeat value="{!rmaOnsiteTaskLines}" var="line">
+                    <apex:outputText value="{!line}" escape="false"/><br/>
+                </apex:repeat>
+            </td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Fault Location : [e.g. Drive slot, Controller slot, etc.]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">故障位置 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;word-wrap: break-word;" rowspan="1">
+                <apex:repeat value="{!RmaFaultLines}" var="Faultline">
+                    <apex:outputText value="{!Faultline}" escape="false"/><br/>
+                </apex:repeat>
+            </td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">SLA (Service Level Agreement) : [e.g. 4HR, NBD]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">服务等级协议 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaAssetSla__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Estimated Delivery Date/Time :  [YYYY-MM-DD, HH:MM to HH:MM]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">客户同意的上门维修时间 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaEstimated_Delivery_Date_Time__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Provide CE Name, Telephone, Email address to Customer?</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">是否需要提供上门前所需信息?</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Yes</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">NRD (Non Returnable Disk)? [N.A. / Yes / No]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">是否有NRD (不可退回的磁盘)?</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaAssetNrdIsInEffect__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Has RMA been submitted before? [Default value is 'No' if this is the first RMA]</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">请注明追加备件或无备件 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.CE_to_bring_RMA_part__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">RMA Part Number with Description: [e.g. SR-CONT-502 HF20 Controller, SR-CONT-504 HF40 Controller, etc.] </td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">备件号及描述 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaSubstitutionPart__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Quantity :</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">数量 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaQuantity__c}</td>
+        </tr>
+        
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Customer Company Name：</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">公司名：</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaShipmentAccountName__c}</td>
+        </tr>
+        
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Customer Name :</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">客户姓名 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaShipmentAttn__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Customer Telephone : (e.g. +86 xxxxxxxxxx)</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">客户电话 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaShipmentPhone__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Customer Email :</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">客户邮箱地址 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.rmaShipmentEmail__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">Install Site Address :</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">上门维修地址 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">{!rmaRecord.Full_Shipment_Address__c}</td>
+        </tr>
+        <tr>
+            <td style="width :36.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">
+                H3C CE Remote Technical Support : <br/>
+                Option 1: <br/>
+                H3C CE to call Nimble Technical Support Hotline if assistance is required during the onsite tasks. <br/>
+                Local hotline in China : 400-120-0986  PIN 646253 [Please select Option 1 for 'Nimble/Alletra' products. If a Chinese speaking TSE is available, the call will be transferred to him/her. If all are busy or unavailable, the call will be transferred to the general queue.] <br/>
+                Please provide the Nimble Case ID in row 2 above. If a non-Chinese speaking TSE answers the call, you may ask if a Chinese speaking TSE is available. Else, you may request for a Chinese Language Translator. <br/>
+                Option 2:<br/>
+                During AOH (After Office Hours), if H3C CE requires a English translator to call Nimble Support Hotline, H3C CE should call HPE L0 team local hotline (400 842 6990) and provide the Nimble Case ID in row 2 above. HPE L0 team will assist to bridge the conversation between H3C CE and Nimble Support. Nimble TSE to engage Language line (Chinese Support) to communicate with H3C CE.</td>
+            <td style="width :30.33%; text-align: left;font-family: Arial Unicode MS;border: 1px solid black;padding: 8px;font-size: 13px;" rowspan="1">H3C CE 远程技术支援 :</td>
+            <td style="width :33.33%; text-align: left; vertical-align: middle;border: 1px solid black;padding: 8px;font-size: 13px;font-family: Arial Unicode MS;" rowspan="1">"选项1： <br/>
+                如果在现场任务期间需要帮助，<br/>H3C CE 可拨打 Nimble 技术支援热线。<br/>
+                中国当地热线：400-120-0986 PIN 646253 [Nimble 或 Alletra 产品，请选择选项 <br/>1，若有会说中文的 TSE，此通话将转接给他，<br/>否則此通话将被排在一般的呼叫队列] <br/>
+                请在以上表格第二号提供 Nimble 案件编号。<br/>
+                如果接听电话的是不会说中文的技术支援工程师，<br/>
+                您可以询问是否有会说中文的技术支援工程师。<br/>
+                否则，您可以要求一位中文翻译。 <br/><br/>
+                选项2：<br/>
+                在非办公时间期间，如果H3C CE需要英语翻译员联系Nimble技术支援热线，<br/>
+                H3C CE应拨打HPE L0 团队当地热线 (400 842 6990) <br/>
+                并提供以上表格第二号的 Nimble 案件编号。 <br/>
+                HPE L0 团队将协助架起 H3C CE 和 Nimble 技术支援之间的对话桥梁。"
+            </td>
+        </tr>
+    </table>
+</apex:page>

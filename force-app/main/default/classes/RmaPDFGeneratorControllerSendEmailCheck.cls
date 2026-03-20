@@ -1,0 +1,15 @@
+/*
+* Created by Exafort for the JIRA TS-10419
+*/ 
+public class RmaPDFGeneratorControllerSendEmailCheck {
+    private static boolean run = true;
+    public static boolean runOnce(){
+        
+        if(run){
+            run = false;
+            return true;
+        }else{
+            return run;
+        }
+    }
+}

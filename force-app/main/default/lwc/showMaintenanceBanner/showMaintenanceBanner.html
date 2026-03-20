@@ -1,0 +1,13 @@
+<template>
+    <template for:each={notifications} for:item="notification">
+        <div 
+            key={notification.id}
+            class="slds-box slds-align_absolute-center slds-text-heading_small hpe-aruba-orange-bg">
+                <p>
+                    <lightning-formatted-rich-text 
+                        value={notification.message}>
+                    </lightning-formatted-rich-text>
+                </p>
+        </div>
+    </template>
+</template>

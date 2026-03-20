@@ -1,0 +1,8 @@
+<apex:page applyHtmlTag="true" showHeader="true" applyBodyTag="false" docType="html-5.0" setup="false" standardStylesheets="false">
+    <div style="margin-left: 10%;">              
+        <c:IYG_VF_Component region="sidebar_2" type="sidebar" />
+    </div>
+ 
+    
+    
+</apex:page>

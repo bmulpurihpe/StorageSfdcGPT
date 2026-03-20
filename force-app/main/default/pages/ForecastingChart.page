@@ -1,0 +1,24 @@
+<apex:page title="Forecasting Chart" showHeader="false" sidebar="false" controller="ForecastingStatsService">
+    <apex:includeScript value="{!URLFOR($Resource.Forecasting, 'js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.Forecasting, 'js/jquery.ba-throttle-debounce.min.js')}"  />
+    <apex:includeScript value="{!URLFOR($Resource.Forecasting, 'js/chart.loader.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.Forecasting, 'js/forecastChart.js')}"  />
+    <apex:stylesheet value="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" />
+
+    <div>
+        <div class="loading" id="loading" style="border: 0px;">
+            <div> 
+                <i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div class="chart" id="forcastChart"></div>
+        <div id="toolBar" style="display: none">
+            <div style="float: right; margin-right: 15%">
+                <button role="button" id="changeFormatBtn" style="line-height: 30px; display: block; background: #fff; border: solid 1px #cccccc; color: #5d5b5b; cursor: pointer;">
+                    Change Format
+                </button>
+            </div>
+        </div>
+    </div>
+</apex:page>

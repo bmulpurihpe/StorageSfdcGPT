@@ -1,0 +1,64 @@
+<!--AbbreviatedCaseDetailPage-->
+<apex:page standardController="Case" id="ThePage" extensions="CaseCommentInsertClass">
+    <apex:form >
+        
+        <apex:pageBlock title="Case Abbreviated Detail">
+            <apex:pageBlockSection columns="2" collapsible="true" title="Case Information">
+                <apex:outputfield value="{!Case.OwnerId}"/>
+                <apex:outputfield value="{!Case.RecordTypeId}"/>
+                <apex:outputfield value="{!Case.AccountId}" />
+                <apex:outputField value="{!Case.CaseNumber}"/>
+                <apex:outputfield value="{!Case.Status}"/>
+                <apex:outputfield value="{!Case.AssetId}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="2" collapsible="true" title="System Information">
+                <apex:outputField value="{!Case.CreatedById}" >,&nbsp; 
+                    <apex:outputField value="{!Case.CreatedDate}" /></apex:outputField>
+                <apex:outputField value="{!Case.LastModifiedById}">,&nbsp; 
+                    <apex:outputField value="{!Case.LastModifiedDate}"/></apex:outputField>
+            </apex:pageBlockSection>
+            
+           <apex:pageBlockSection columns="2" collapsible="true" title="Qualified Handling" rendered="{!HandlingTabVisible}">
+<!--                  <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Documentation URL" for="DocumentationURL"/>
+                      <apex:outputlink value="{!StrDocumentationURL}">{!StrDocumentationURL}</apex:outputlink> 
+                </apex:pageBlockSectionItem>     -->
+				<apex:pageBlockSectionItem dataStyle="width:100%">
+                    <apex:outputLabel value="External Verbiage" for="ExternalVerbiage"/> 
+                    <apex:outputText value="{!strExternalVerbiage}" id="account__name" escape="false" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+         
+         
+         
+        <apex:pageBlock title="Case Comments">
+            <apex:outputPanel >
+                <apex:pageMessages id="NECMessages"/>
+                <apex:outputPanel id="timerPanel">
+                    <apex:actionPoller reRender="NECMessages" interval="10" enabled="{!timer}" action="{!timerOff}"/> 
+                </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!shownew}">
+                <apex:commandButton value="Add New Case Comment" action="{!showNewCommentCreation}" />
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!showcreate}" title="Comment Details">
+                <apex:pageBlockSection columns="1" >
+                    <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Private Comment"/>
+                        <apex:inputCheckbox label="Private Comment" disabled="true" selected="true"/>
+                    </apex:pageblockSectionItem>
+                    <apex:pageblockSectionItem >
+                        <apex:outputLabel value="Comment"/>
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:inputTextarea label="Comment" value="{!CaseCommentBodyText}" cols="80" rows="8" tabindex="3" required="true"/>
+                        </apex:outputPanel>
+                    </apex:pageblockSectionItem>
+                </apex:pageBlockSection>
+                <center><apex:commandButton value="Save" action="{!SaveAbbCaseComment}"/></center>
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

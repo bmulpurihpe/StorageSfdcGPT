@@ -1,0 +1,35 @@
+<apex:page controller="CampaignRegionController" tabStyle="Campaign"  id="pg">
+    <apex:pageMessages id="msgs"/>
+    <apex:form id="form">     
+        <apex:pageBlock id="pb1"> 
+            <apex:selectList size="1" value="{!SelectedValue}" >
+                <apex:selectOptions value="{!CMonths}"></apex:selectOptions>
+            </apex:selectList>
+            <apex:commandButton status="cmdbtnStatus" value="Go" action="{!MyRegionCampaigns}" reRender="pb,msgs" />
+            <apex:outputPanel style="color:#4AA02C;font-weight:bold">
+                <apex:actionStatus id="cmdbtnStatus" startText="Processing..." stopText=""/>
+            </apex:outputPanel> 
+        </apex:pageBlock>
+        <apex:pageBlock title="My Region Campaigns" id="pb" > 
+            <apex:pageBlockTable value="{!CmpnList}" var="cm">
+                <apex:column value="{!cm.Name}"/>
+                <apex:column value="{!cm.Status}"/>
+                <apex:column value="{!cm.Category__c}"/>
+                <apex:column value="{!cm.Sales_Region__c}"/>
+                <apex:column value="{!cm.Sales_Area__c}"/>
+                <apex:column value="{!cm.StartDate}"/>
+            </apex:pageBlockTable>
+            <apex:panelGrid columns="7">
+                <apex:commandButton status="fetchStatus" reRender="pb" value="|<" action="{!setCon.first}" disabled="{!!setCon.hasPrevious}" title="First Page"/>
+                <apex:commandButton status="fetchStatus" reRender="pb" value="<" action="{!setCon.previous}" disabled="{!!setCon.hasPrevious}" title="Previous Page"/>
+                <apex:commandButton status="fetchStatus" reRender="pb" value=">" action="{!setCon.next}" disabled="{!!setCon.hasNext}" title="Next Page"/>
+                <apex:commandButton status="fetchStatus" reRender="pb" value=">|" action="{!setCon.last}" disabled="{!!setCon.hasNext}" title="Last Page"/>
+                <apex:outputText >{!(setCon.pageNumber * size)+1-size}-{!IF((setCon.pageNumber * size)>noOfRecords, noOfRecords,(setCon.pageNumber * size))} of {!noOfRecords}</apex:outputText>
+                <apex:commandButton status="fetchStatus" reRender="pb" value="Refresh" action="{!refresh}" title="Refresh Page"/>
+                <apex:outputPanel style="color:#4AA02C;font-weight:bold">
+                    <apex:actionStatus id="fetchStatus" startText="Processing..." stopText=""/>
+                </apex:outputPanel>
+           </apex:panelGrid>
+       </apex:pageBlock>
+    </apex:form>
+</apex:page>

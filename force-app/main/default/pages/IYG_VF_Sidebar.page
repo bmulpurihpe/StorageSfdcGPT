@@ -1,0 +1,22 @@
+<apex:page >            
+    <!--applyHtmlTag="true" showHeader="true" applyBodyTag="false" docType="html-5.0" setup="false"-->
+   <apex:variable var="uiTheme" value="lightningDesktop"
+        rendered="{!$User.UIThemeDisplayed == 'Theme4d'}">
+        <apex:stylesheet value="{!URLFOR($Resource.iyg_res, '/boss/iyg_sliderposition.css')}" />
+    </apex:variable>
+    <!-- Salesforce mobile theme -->
+    <apex:variable var="uiTheme" value="SalesforceApp"
+        rendered="{!$User.UIThemeDisplayed == 'Theme4t'}">
+       <apex:stylesheet value="{!URLFOR($Resource.iyg_res, '/boss/iyg_sliderposition.css')}" />
+    </apex:variable>
+     <apex:variable var="uiTheme" value="SalesforceApp"
+        rendered="{!$User.UIThemeDisplayed == 'Theme4u'}">
+       <apex:stylesheet value="{!URLFOR($Resource.iyg_res, '/boss/iyg_sliderposition.css')}" />
+    </apex:variable>
+    <c:IYG_VF_Component region="sidebar_1" type="panel"/>
+   <!-- <div style="margin-left: 27px;position: relative;">        
+        <c:IYG_VF_Component region="sidebar_1" type="panel"/>
+    </div>-->
+   
+    
+</apex:page>

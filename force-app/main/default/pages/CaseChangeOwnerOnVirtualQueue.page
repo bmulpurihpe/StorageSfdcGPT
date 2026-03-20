@@ -1,0 +1,43 @@
+<apex:page id="thePage" controller="CaseChangeOwnerOnVirtualQueueController" tabStyle="Virtual_Queue__tab">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        function redirectToVirtualQueue(){
+        window.location.href = '{!URLFOR($Page.VirtualQueue)}';
+    }
+    function clearInputField(){
+        document.getElementById('thePage:theForm:pb1:ps1:Owner').value= '';
+        document.getElementById('thePage:theForm:pb1:pbb1:saveButton').disabled = false;
+        document.getElementById('thePage:theForm:pb1:pbb1:cancelButton').disabled = false;
+        
+    }
+    function disableSaveButton(){
+        document.getElementById('thePage:theForm:pb1:pbb1:saveButton').disabled = true;
+        document.getElementById('thePage:theForm:pb1:pbb1:cancelButton').disabled = true;
+    }
+    </script>
+    <apex:sectionheader title="Change Case Owner"/>
+    This screen allows you to transfer cases from one user or queue to another. When you transfer ownership, the new owner will own:<br/>
+    <ul>
+        <li>all open activities (tasks and events) for this case that are assigned to the current owner</li>
+    </ul>
+    Note that completed activities will not be transferred. Open activities will not be transferred when assigning this case to a queue.
+    <apex:form id="theForm">
+        <apex:actionStatus id="loadingViewActionStatus" >
+            <apex:facet name="start" >
+                <img src="/img/loading.gif" /> 
+                <sub>Loading Cases...</sub>                   
+            </apex:facet>
+        </apex:actionStatus>
+        <apex:pageBlock Id="pb1" mode="edit" title="" >
+            <apex:pageblockbuttons id="pbb1" location="Bottom" >
+                <apex:commandbutton id="saveButton" value="Save" action="{!updateCaseOwner}" onclick="disableSaveButton();" reRender="thePageMessage" status="loadingViewActionStatus" onComplete="clearInputField();" />
+                <apex:commandbutton id="cancelButton" value="Cancel" onclick="redirectToVirtualQueue();" rerender="none"/>
+            </apex:pageblockbuttons>
+            <apex:pageMessages id="thePageMessage"/>
+            <apex:pageBlockSection id="ps1" title="Select New Owner">
+                <apex:inputField id="Owner" value="{!cas.OwnerId}" />
+            </apex:pageBlockSection>
+            <apex:inputCheckbox id="sendNotificationEmail" value="{!notificationEmail}"></apex:inputCheckbox>Send Notification Email
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

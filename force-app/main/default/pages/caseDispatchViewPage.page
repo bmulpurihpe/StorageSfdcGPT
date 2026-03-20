@@ -1,0 +1,11 @@
+<apex:page standardController="Case"
+           extensions="caseExtensionsWithSharing"
+           action="{!caseDispatchViewUrl}">
+    <apex:form >
+        <!--Added by vishnu on 22th May 2019 for TS-5755-->
+        <!--<apex:outputText value="{!Case.caseQH_Requirements__c}" rendered="false"/>-->
+        <!--Added by vishnu on 27th Aug 2019 for TS-5980-->
+        <apex:outputText value="{!Case.AssetId}" rendered="false"/>
+        <apex:outputText value="{!Case.AccountId}" rendered="false"/>
+    </apex:form>
+</apex:page>

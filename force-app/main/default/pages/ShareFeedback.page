@@ -1,0 +1,47 @@
+<apex:page controller="ShareFeedbackController">
+  <style>
+.care-qualtrics-survey__images {
+    margin: 0 auto;
+    text-align: center;
+    display: inline-block;
+}
+.care-qualtrics-survey__ok {
+    background: url(https://support.bold360.com/assets/images/care/meh-face.png) no-repeat;
+}
+.care-qualtrics-survey__good {
+    background: url(https://support.bold360.com/assets/images/care/happy-face.png) no-repeat;
+}
+.care-qualtrics-survey__poor {
+    background: url(https://support.bold360.com/assets/images/care/sad-face.png);
+}
+</style>   
+    <script>
+    	function callFeedback(var1){
+            feed(var1);
+        }
+    </script>
+<apex:form id="frm">
+    <apex:actionFunction name="feed" action="{!createFeedback}" reRender="frm">
+        <apex:param name="rating" value=""/>
+    </apex:actionFunction>
+<center>
+<div class="col-xs-2 care-qualtrics-survey__heading" style="font-weight:bold">Rate your Experience</div>
+<br/>
+<div class="col-xs-8 care-qualtrics-survey__images">
+      <a href="" onclick="callFeedback('good')">
+          <div class="care-qualtrics-survey__good" style="height:60px; width:60px;"></div>
+      </a>
+      <br/>
+    <a href="" onclick="callFeedback('ok')">
+      <div class="care-qualtrics-survey__ok"  style="height:60px; width:60px;">
+      </div>
+    </a>
+      <br/>
+      <a href="" onclick="callFeedback('poor')">
+          <div class="care-qualtrics-survey__poor" style="height:60px; width:60px;"></div>
+      </a>
+    </div>
+
+</center>
+</apex:form>
+</apex:page>

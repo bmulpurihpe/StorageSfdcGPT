@@ -1,0 +1,5 @@
+<aura:component implements="force:hasRecordId,flexipage:availableForAllPageTypes">
+    <div  style="margin-left: 3%;margin-top: 3%;">        
+        <a  href="{!'/apex/nimbleServicePortal?id='+v.recordId}" target="_blank">Click here -> OPS Service Portal</a>       
+    </div>
+</aura:component>

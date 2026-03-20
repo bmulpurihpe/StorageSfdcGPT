@@ -1,0 +1,3 @@
+<apex:page showHeader="false" sidebar="false" controller="RequestPopupController" id="Page" action="{!redirectPage}">
+
+</apex:page>

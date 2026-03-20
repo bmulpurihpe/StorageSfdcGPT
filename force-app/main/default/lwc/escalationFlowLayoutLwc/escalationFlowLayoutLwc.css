@@ -1,0 +1,11 @@
+.my-modal-header {
+    --sds-c-modal-header-color-background: rgb(1, 169, 130);
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}
+.my-modal-footer {
+    --sds-c-modal-footer-color-background: rgb(1, 169, 130);
+}
+.slds-box {
+    border: none;
+}

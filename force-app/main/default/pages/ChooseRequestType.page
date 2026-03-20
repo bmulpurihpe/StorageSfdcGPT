@@ -1,0 +1,19 @@
+<apex:page id="page" controller="RequestPopupController">
+	<apex:form id="frm">
+		<apex:pageBlock title="Select Request Type">
+			<apex:pageBlockSection columns="1" id="pbSection">
+				<apex:pageBlockSectionItem id="pbSectionItem">
+					<apex:outputLabel >Request Type</apex:outputLabel>
+					<apex:selectList value="{!selected}" size="1" id="requestTypeSelectList">
+			            <apex:selectOptions value="{!requestObject}"/>
+			        </apex:selectList>
+		        </apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockButtons location="bottom">
+				
+					<apex:commandButton value="Next" action="{!goNext}" id="btnNext"/>
+				
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

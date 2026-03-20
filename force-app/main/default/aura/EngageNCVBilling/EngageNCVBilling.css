@@ -1,0 +1,13 @@
+.THIS.slds-modal__container {
+    margin: 0 auto;
+    width: 50%;
+    max-width: 40rem;
+    min-width: 20rem;
+}
+.THIS .loading_image{
+  position: fixed;
+}
+.THIS .slds-spinner_container{
+  width: 100vw;
+  left: min(-25vw, calc(-50vw + 20rem));
+}

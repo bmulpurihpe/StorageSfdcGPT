@@ -1,0 +1,11 @@
+<apex:page standardController="Account">
+    <apex:form >
+        <apex:pageblock >
+            <apex:pageblocksection >
+                <apex:repeat value="{!$ObjectType.Account.FieldSets.Data_com}" var="f">
+                    <apex:outputfield value="{!Account[f]}" /><br/>
+                </apex:repeat>
+            </apex:pageblocksection>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

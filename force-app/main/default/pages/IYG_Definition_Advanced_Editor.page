@@ -1,0 +1,71 @@
+<apex:page standardController="IYG_Definition__c">
+
+    <style type="text/css" media="screen">
+        #aceeditor {
+            height: 400px;
+            width: 800px;
+        }
+    </style>
+
+    <apex:sectionHeader title="In Your Grid (IYG)" subtitle="Defintion Editor" help="/066m0000000FxWa" />
+
+    <apex:form >
+        <apex:pageBlock title="Logic Editor">
+            <table>
+                <tr>
+                    <td>
+                        <apex:inputField id="logic__c" value="{!IYG_Definition__c.Logic__c}" />
+                        <div id="aceeditor"></div>
+                        <div id="acestatusbar"></div>
+                        <input type="button" value="Beautify" onclick="doBeautify();" class="btn" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+
+        <apex:commandButton value="Save" action="{!save}" />
+        <apex:commandButton value="Cancel" action="{!cancel}" />
+    </apex:form>
+
+    <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/jquery_3.5.1.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/ace_1.4.12/ace.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/ace_1.4.12/ext-beautify.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/ace_1.4.12/ext-language_tools.js')}" />
+
+    <script>
+        $(document).ready(function() {
+            var lid = $('textarea[name$="logic__c"]'); //.attr('id');
+            lid.hide();
+
+            ace.config.set("basePath", "{!URLFOR($Resource.iyg_res, '/ace_1.4.12/}')}");
+
+            var beautify = ace.require("ace/ext/beautify");
+            var langTools = ace.require('ace/ext/language_tools');
+            var editor = ace.edit("aceeditor");
+
+            editor.setTheme("ace/theme/monokai");
+            editor.session.setMode("ace/mode/javascript");
+            editor.setFontSize(16);
+            editor.setHighlightActiveLine(true);
+            editor.setShowInvisibles(true);
+            editor.session.setOption("useWorker", true);
+
+            editor.getSession().setValue(lid.val());
+            editor.getSession().on('change', function() {
+                lid.val(editor.getSession().getValue());
+            });
+
+            var langTools = ace.require('language_tools');
+            editor.setOptions({
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true,
+            });
+
+            doBeautify = function() {
+                beautify.beautify(editor.session);
+            };
+
+        });
+    </script>
+
+</apex:page>

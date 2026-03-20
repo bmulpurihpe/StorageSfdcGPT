@@ -1,0 +1,386 @@
+<apex:page id="thePage" standardcontroller="Case" extensions="caseClosePageController">
+    <!-- Added by Exafort for TS-10325 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- The below script holds "Save" button enable disable functionality -->
+    <apex:includeScript value="{!$Resource.CaseCloseSaveButtonControl}"/>
+    <!-- End of changes for TS-10325 -->
+    <script>
+        var previousOnload = window.onload;
+    window.onload = function() 
+    { 
+        if (previousOnload) { 
+            previousOnload();
+        } 
+        var condition = true; // condition
+        if(condition) {
+            document.getElementById("thePage:theForm:pb:caseinfo:inputCaseSummay").blur();
+        }
+    }
+   
+    </script>
+    <style>
+        .ui-autocomplete-category {
+        font-weight: bold;
+        padding: .2em .4em;
+        margin: .8em 0 .2em;
+        line-height: 1.5;
+        }
+        .ui-autocomplete {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 20px;
+        } 
+        #message{
+        font-family: Verdana,Arial,sans-serif;
+        font-size: 1.1em;
+        color:#222222;
+        display: list-item;
+        overflow-y: auto;
+        overflow-x: hidden;
+        text-align: -webkit-match-parent;
+        }
+        #noResults {
+        background-color: white;
+        margin-left: 190px;
+        width: 100%;
+        height: 20px;
+        }
+        
+    </style>
+
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:sectionheader title="Close {!$ObjectType.Case.label}"/>
+    <apex:form id="theForm">
+        <apex:pageMessages id="thePageMessage" escape="false"/>
+        <apex:pageblock id="pb" mode="edit" title="{!$ObjectType.Case.label} Edit">
+            <apex:pageblockbuttons >
+                <apex:commandbutton value="Save" id="saveButton" action="{!myCustomSave}" reRender="thePageMessage"/>
+                <apex:commandbutton value="Cancel" action="{!Cancel}"/>
+            </apex:pageblockbuttons>
+            
+            <!-- **********   [Record Type : Master ]   **********  -->
+            
+            <apex:outputPanel id="outputPanel">
+                <apex:pageblocksection id="caseinfo" title="Case Information" showheader="true" columns="1">
+                    <apex:outputText value="{!Case.caseAssetNimbleOSVersion__c}" rendered="false"/>
+                    <apex:outputText value="{!Case.AssetId}" rendered="false"/>
+                    <apex:outputText value="{!Case.Auto_Close__c}" rendered="false"/>
+                    <apex:outputText value="{!Case.Asset}" rendered="false"/>
+                    <!--<apex:inputfield value="{!Case.Status}" id="status" required="true"/>-->
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Status" for="caseStatus"/>
+                        <apex:outputPanel styleClass="requiredInput" layout="block">
+                            <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                            <apex:selectList size="1" id="caseStatus" multiselect="false" value="{!Case.Status}" required="true">
+                                <apex:selectOptions value="{!ClosedStatus}"></apex:selectOptions>
+                            </apex:selectList>
+                        </apex:outputPanel>
+                    </apex:pageBlockSectionItem>
+                    <apex:inputfield value="{!Case.Type}" required="true"/>
+                    <!--<apex:inputField value="{!casecomment.caseInternalComments__c}" style="width:473px;height:90px;" required="false"/>-->
+                     <!--<apex:inputfield value="{!Case.Nimble_Version__c}" required="true"/> -->
+                    <!-- Added By Exafort for SFDC-307 -->
+                    <apex:pageBlockSectionItem >
+                        <label  id="Version">Software Version</label>
+                        <apex:selectList required="true" size="1" multiselect="false" id="Version" style="border-left: 3px solid #c00;" value="{!selectedVersion}">
+                            <apex:selectOptions value="{!supportedVersions}"  >
+                            </apex:selectOptions>
+                        </apex:selectList>
+                    </apex:pageBlockSectionItem>
+                    <!-- End of SFDC-307 -->
+                    <apex:inputfield value="{!Case.Severity__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Notify_Account_Team__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseToolsUsedToSolve__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseClosureEstimatedEffort__c}" required="true"/>
+                    <apex:inputfield id="inputCaseSummay" value="{!Case.caseCaseSummary__c}"  style="width:473px" required="true"/>
+                    <apex:inputField value="{!Case.caseKbNeeded__c}"/>
+                    <apex:inputField value="{!Case.caseKbTopicNeeded__c}"/>
+                    <apex:inputField value="{!Case.caseKbCreated__c}"/>
+                    <apex:inputField value="{!Case.caseKbCreatedNumber__c}"/>
+                    
+                    <!--Added by Exafort for TS-10147 -->
+                    <apex:inputfield value="{!Case.Data_Unavailability__c}" required="false"/>                    
+                    <apex:inputfield value="{!Case.Data_Loss__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Data_Inconsistency__c}" required="false"/>
+                    <!-- End of TS-10147 -->
+                    
+                </apex:pageblocksection>
+                <apex:pageBlockSection id="pbcaseeffortsection" title="Case Effort (Minutes)" showheader="true" columns="1">                                                         
+                    <apex:inputField value="{!Case.Case_Owner_Time_Effort__c}"/>
+                    <apex:inputField value="{!Case.Non_Case_Owner_Time_Effort__c}"/>
+                    <apex:inputField value="{!Case.Case_Effort_Summary_Total__c}"/>
+                    <apex:inputField value="{!Case.Current_comment_activity__c}"/>                    
+                    <apex:inputField value="{!Case.Case_closure_time_spent__c}" />
+                    
+                </apex:pageBlockSection>
+                <apex:pageBlockSection id="pbsection" title="Closure Information" showheader="true" columns="2">
+                    <apex:pageBlockSectionItem >
+                        <div class="bootstrap-iso">
+                            <div>
+                                <label for="search" style="margin-left:190px">Search for Technical and Sub Technical Area:</label>
+                                <input id="search" placeholder="Search for TA/TSA Combination" style="margin-left:190px;" class="form-control"/>
+                                <div id="noResults" style="display:none;">
+                                    <span id="message" style="margin-left:190px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <!--Added by Exafort for TS-10325: The following action status will be executed when the user changes the TA/TSA value.-->
+                        <apex:actionStatus id="loadingViewActionStatus2" style="margin: auto;" onstart="disableSaveButton()" onstop="enableSaveButton()" >
+                            <apex:facet name="start" >
+                                <img src = "/img/loading.gif" /> 
+                                <sub>Loading...</sub>                   
+                            </apex:facet>
+                        </apex:actionStatus>  
+                        <!--End of TS-10325-->
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem id="pbsectionItemTechArea">
+                        <apex:outputLabel value="Technical Area" for="techArea"/>
+                        <apex:actionRegion >
+                            <apex:outputPanel styleClass="requiredInput" layout="block">
+                                <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                <apex:selectList size="1" multiselect="false" id="techArea" value="{!SelectedTaValue}" onchange="dispatcherToCallActionFunction()">
+                                    <apex:actionFunction name="dispatchForTSALoad" oncomplete="bindValueFromSearch()" action="{!allTsaMappingss}" reRender="subTechArea" status="loadingViewActionStatus2"/>
+                                    <apex:selectOptions value="{!allTaMappings}">
+                                    </apex:selectOptions>
+                                </apex:selectList>
+                            </apex:outputPanel>
+                        </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+                    
+                    <!-- Added by exafort for TS-10325 Help text for the field 'Was the solution at fault?'> -->
+                    <apex:inputfield id="text1" value="{!Case.Is_this_a_Storage_issue__c}" required="true"/>   
+                    <!-- End of TS-10325 -->
+                    
+                    <apex:pageBlockSectionItem id="pbsectionItemSubTechArea">
+                        <apex:outputLabel value="Technical Sub-Area" for="techArea"/>
+                        <apex:actionRegion >
+                            <apex:outputPanel styleClass="requiredInput" layout="block">
+                                <apex:outputPanel styleClass="requiredBlock" layout="block"/>
+                                <apex:selectList size="1" multiselect="false" id="subTechArea" value="{!SelectedTsaValue}">
+                                    <apex:selectOptions value="{!allTsaMappings}">
+                                    </apex:selectOptions>
+                                </apex:selectList>
+                            </apex:outputPanel>
+                        </apex:actionRegion>
+                    </apex:pageBlockSectionItem>
+                    
+                    <!-- Added by exafort for TS-10222 Help text for the field 'casCatClosureRootCause__c'> --> 
+                        <apex:inputfield value="{!Case.casCatClosureRootCause__c}" required="true"/>
+                    <!-- End of TS-10222 -->
+                    
+                    <!--<apex:inputfield value="{!Case.Technology_Area__c}" id="techArea1" onchange="techAreaOnchange()"  style="display:none;" rendered="false" required="false"/>-->
+                    <!--<apex:inputfield value="{!Case.caseIsThisCaseRelatedToANimbleProduct__c}" required="true"/>-->
+                    <!--<apex:inputfield value="{!Case.Sub_Technology_Area__c}" id="subTechArea1"  style="display:none;" rendered="false" required="false"/>-->
+                    <!--<apex:inputfield value="{!Case.casCatClosureRootCause__c}" required="false"/>-->
+                    <!--Added by vishnu for showing the Blacklist reason in the case close page -8th Feb 2019-->
+                    <apex:inputField value="{!Case.caseBlacklistReason__c}" style="width:240px;" required="false"/>
+                    <apex:inputField value="{!Case.caseSpecificDetails__c}" style="width:263px;" required="false"/>
+                    <apex:outputfield value="{!Case.caseVendorEngaged__c}"/>
+                    <apex:inputfield value="{!Case.Case_Type__c}" required="false"/>
+                    <apex:outputfield value="{!Case.caseVendorCaseNumberOptional__c}"/>
+                    <apex:inputField value="{!Case.caseClosureArrayDowntimeMinutes__c}" required="false"/>
+                    <apex:inputField value="{!Case.caseClosureBusinessImpact__c}" style="width:263px;" required="false"/>
+                    <apex:inputField value="{!Case.caseClosureEnvironmentDowntimeMinutes__c}" style="width:263px;" required="false"/>
+                    <apex:inputfield value="{!Case.US_Support__c}" required="false"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Customer Portal Facing Fields" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.casePortalResolutionNotes__c}"  style="width:473px" required="false"/>
+                </apex:pageBlockSection>
+                <apex:pageBlockSection title="Solution Information"  showheader="true" columns="1">
+                    <apex:inputField value="{!caseSolution.IsPublishedInPublicKb}"/>
+                    <apex:inputField value="{!caseSolution.SolutionName}" style="width:558px" required="false"/>
+                    <apex:inputField value="{!caseSolution.SolutionNote}" style="width:473px;height:90px;"/>
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+            
+        </apex:pageblock>
+    </apex:form>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js">
+    </script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js">
+    </script>    
+    
+    <apex:stylesheet value="{!URLFOR($Resource.bootstrapiso, 'bootstrap-iso/bootstrap-iso.css')}"/>
+    <script>
+    $('#search').on('keydown', function(e){
+        if(e.keyCode == 32 && $(this).val().indexOf('  ') >= 0){
+            return false;
+        }
+    });
+    </script>
+    <script>
+    /* var selectobject=document.getElementById('thePage:theForm:pb:caseinfo:status');
+      var length = selectobject.length;
+    
+        for (var i=0; i<=length; i++){
+            debugger;
+            if(selectobject.options[i].value == 'New'){
+                selectobject.remove(i);
+            }if(selectobject.options[i].value == 'Awaiting Engineering'){
+                selectobject.remove(i);
+            }if(selectobject.options[i].value == 'Open'){
+                selectobject.remove(i);
+            }if(selectobject.options[i].value == 'Wait-Fix'){
+                selectobject.remove(i);
+            }if(selectobject.options[i].value == 'Awaiting Customer'){
+                selectobject.remove(i);
+            }if(selectobject.options[i].value == 'Handover'){
+                selectobject.remove(i);
+            }if(selectobject.options[i].value == 'On Hold'){
+                selectobject.remove(i);
+            }if(selectobject.options[i].value == 'Resolved'){
+                selectobject.remove(i);
+            }
+            /*if(selectobject.options[i].value != 'Closed' && selectobject.options[i].value != 'Closed(Duplicate)'){
+                selectobject.remove(i);
+            }*/
+    /*    i--;
+    }*/
+    $(function(){
+        
+        $.widget( "custom.catcomplete", $.ui.autocomplete, {
+            _create: function() {
+                this._super();
+                this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+            },
+            _renderItem: function (ul, item) {
+                return $("<li>")
+                .attr("data-value",item.subtecharea)
+                .append(item.subtecharea)
+                .appendTo(ul);
+            },
+            _renderMenu: function( ul, items ) {
+                var that = this,
+                    currentTechArea = "";
+                $.each( items, function( index, item ) {
+                    var li;
+                    if ( item.techarea != currentTechArea ) {
+                        ul.append( "<li class='ui-autocomplete-category'>" + item.techarea + "</li>" );
+                        currentTechArea = item.techarea;
+                    }
+                    li = that._renderItemData( ul, item );
+                    if ( item.techarea ) {
+                        li.attr( "aria-label", item.techarea + " : " + item.subtecharea );
+                    }
+                });
+            }
+        });
+        $.ajax({
+            'async': true,
+            'global': false,
+            //'url': "{!URLFOR($Resource.techareasubtecharea, '/techandsubtechareacombinations.json')}",
+            'dataType': "text",
+            'success': function (data) {
+                $("#search").catcomplete({
+                    delay: 0,
+                    source: {!fieldDependencies},
+                    select: function (event, ui) {
+                        $('#search').val(ui.item.techarea + " : " + ui.item.subtecharea);
+                        
+                        var techsubtech= $('#search').val();
+                        if(techsubtech != null && techsubtech != ''){
+                            var splitting = techsubtech.split(' : ');
+                            takeTSAValue = splitting[1];
+                            var controllingField = document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemTechArea:techArea');
+                            /*controllingField.options.add( new Option(splitting[0],splitting[0]) );
+                            controllingField.value = splitting[0];
+                            controllingField.onchange();*/
+                            var isFound = false;
+                            for(i=0; i<controllingField.options.length;i++){
+                                console.log(controllingField.options[i].value);
+                                if(controllingField.options[i].value == splitting[0]){
+                                    isFound = true;
+                                }
+                            }
+                            if(isFound == false){
+                                controllingField.options.add( new Option(splitting[0],splitting[0]) );
+                            }
+                            
+                            controllingField.value = splitting[0];
+                            controllingField.onchange();
+                            /*if(controllingField.value == '' || controllingField.value == null){
+                                alert('Selected Technical Area value is not available for the current record type');
+                            }*/
+                            //document.getElementById('thePage:theForm:pb:pbsection:subTechArea').value = splitting[1];
+                            /*document.getElementById('thePage:theForm:pb:pbsection:subTechArea').options.add( new Option(splitting[1],splitting[1]) );
+                            document.getElementById('thePage:theForm:pb:pbsection:subTechArea').value = splitting[1];*/
+                            var isFoundTSA = false;
+                            for(i=0; i<document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').options.length;i++){
+                                console.log(document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').options[i].value);
+                                if(document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').options[i].value == splitting[1]){
+                                    isFoundTSA = true;
+                                }
+                            }
+                            if(isFoundTSA == false){
+                                document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').options.add( new Option(splitting[1],splitting[1]) );
+                            }
+                            document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value = splitting[1];
+                            /*if(document.getElementById('thePage:theForm:pb:pbsection:subTechArea').value == '' || document.getElementById('thePage:theForm:pb:pbsection:subTechArea').value == null){
+                                alert('Selected Sub-Technical Area value is not available for the current record type');
+                            }*/
+                            
+                        }
+                        return false;
+                    },
+                    response: function(event, ui) {
+                        if (!ui.content.length) {
+                            $('#noResults').show();
+                            $("#message").text("No Suggestions Found");
+                        } else {
+                            $('#noResults').hide();
+                            $("#message").empty();
+                        }
+                    }
+                })
+            }
+            
+        });
+    })
+    
+    function bindValueFromSearch(){
+        if(takeTSAValue != ''){
+            document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value = takeTSAValue;
+            if(document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value == ''){
+                document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value = '--None--';
+            }
+        }
+        if(takeTSAValue == null){
+            document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value = '--None--';
+        }
+    }
+    </script>
+    <script>
+    function techAreaOnchange(){
+        if(document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemTechArea:techArea').value != null && document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value != null){
+            if($('#search').val() != null){
+                $('#search').val('');
+            }
+        }
+    }
+    function checkAuoComplete(){
+        if($('#search').val() != null){
+            var splitting = $('#search').val().split(' : ');
+            document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value = splitting[1];
+        }  
+    }
+    var getTechnicalArea;
+    function dispatcherToCallActionFunction(){
+        dispatchForTSALoad();
+        if(document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemTechArea:techArea').value != null && document.getElementById('thePage:theForm:pb:pbsection:pbsectionItemSubTechArea:subTechArea').value != null){
+            if($('#search').val() != null){
+                $('#search').val('');
+            }
+        }
+    }
+    
+    </script>
+</apex:page>

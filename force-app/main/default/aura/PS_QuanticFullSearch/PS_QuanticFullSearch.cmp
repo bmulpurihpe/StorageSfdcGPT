@@ -1,0 +1,15 @@
+<aura:component implements="forceCommunity:searchInterface,force:appHostable" access="global">
+    <!--<aura:component implements="force:appHostable,force:hasRecordId,force:hasSObjectName,flexipage:availableForRecordHome,flexipage:availableForAllPageTypes,lightning:isUrlAddressable" 
+        access="global">-->
+    <aura:attribute name="engineId" type="String" access="global" default="quantic-fullsearch-engine" />
+
+    
+
+    <c:psQuanticFullSearchPage engineId="{!v.engineId}"/>
+    <!--
+        This is the aura component
+    <c:psTest engineId="{!v.engineId}"/>
+        -->
+
+    
+</aura:component>

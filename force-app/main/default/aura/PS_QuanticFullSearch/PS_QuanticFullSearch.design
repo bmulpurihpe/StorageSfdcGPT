@@ -1,0 +1,3 @@
+<design:component label='Quantic Full Search'>
+  <design:attribute name="engineId" label="Engine Id" default="quantic-fullsearch-engine"/> 
+</design:component>

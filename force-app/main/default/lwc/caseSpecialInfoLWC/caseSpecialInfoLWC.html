@@ -1,0 +1,35 @@
+<template>
+  <div class="slds-card slds-scrollable_y">
+      <div class="slds-p-around_small slds-p-top_x-small">
+          <div class="slds-page-header" style="background-color:#C4DED9;">
+              <h1><p class=" slds-text-title_bold ">Case Special Info</b></p></h1>
+          </div>
+          <div class="slds-grid slds-grid_vertical ">
+          <div class="slds-col slds-box slds-box_x-small">
+            <span><p>Number of Open Cases with this Asset: <span style="color: red;">&nbsp; {assetCount} </span></p></span>
+          </div>
+          <div class="slds-col slds-box slds-box_x-small">
+            <span><p>Number of Open Cases with this Contact: <span style="color: red;">&nbsp; {contactCount} </span></p></span>
+          </div>
+          </div>
+          <!--<div class="slds-p-left_small slds-p-top_x-small slds-p-bottom_x-small"></div>-->
+          
+
+      <template if:true={hasRecords}>
+        <div class="slds-p-top_x-small">
+          <p class="slds-p-bottom_x-small"><b>Cases for this Asset (Newest First)</b></p>
+          <div style="max-height: 160px;overflow-y:scroll;">
+            <lightning-datatable
+              class="slds-p-top_x-small "
+                key-field="Id"
+                data={cases}
+                columns={columns}
+                hide-checkbox-column = "true">
+            </lightning-datatable>  
+            </div>
+        </div>                           
+    </template>
+      </div>
+  </div>  
+      
+</template>

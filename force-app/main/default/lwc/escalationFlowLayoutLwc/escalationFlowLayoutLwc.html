@@ -1,0 +1,32 @@
+<template>
+    <lightning-modal-header
+        class="my-modal-header"
+        >
+        <lightning-layout>
+            <lightning-layout-item size="5"></lightning-layout-item>
+            <lightning-layout-item size="5">
+                <div class="slds-text-heading_medium slds-float_left">
+                    Case Manager
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="2">
+                <div class="slds-float_right">
+                    <lightning-button label="Close" onclick={handleClose}></lightning-button>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </lightning-modal-header>
+    <lightning-modal-body>
+        <lightning-flow flow-api-name="Case_Manager_Escalation_Flow"
+            flow-input-variables={inputVariables}
+            flow-output-variables={outputVariables}
+            onstatuschange={handleStatusChange}>
+        </lightning-flow>
+    </lightning-modal-body>
+    <lightning-modal-footer
+        class="my-modal-footer"
+        >
+        <div class="slds-box">
+        </div>
+    </lightning-modal-footer>
+</template>

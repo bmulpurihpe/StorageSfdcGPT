@@ -1,0 +1,56 @@
+<apex:page standardController="Ops_RMA__c"   sidebar="false" showHeader="true" contentType="application/vnd.ms-excel#MRBTraveler-{!Ops_RMA__c.RMA_Number__c}.xls"  >
+<!-- contentType="application/vnd.ms-excel#SalesForceExport.xls" -->
+<style type="text/css">
+    
+    .TableTitle {background-color: #32CD32; font-weight: bold;font-size: 400% }
+    .TablerowHeader{font-weight: bold;font-size: 100%;height: 50px;width:100px}
+    .Tablerowvalue{font-weight: bold;font-size: 100%;height: 50px;width:100px}
+    .TableFirstrowvalue{font-weight: bold;font-size: 300%;height: 50px;width: 500px}
+    .TableCommentsHeader{font-weight: bold;font-size: 100%;height: 50px;width: 100px}
+</style>
+
+        <table border="1">
+              <tr>
+                  <td colspan="6" class="TableTitle"><center> MRB </center></td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> P/N: </td>
+                  <td colspan="5" class="TableFirstrowvalue"> {!Ops_RMA__c.OpsRMA_Part__c}</td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> S/N: </td>
+                  <td class="Tablerowvalue"> {!Ops_RMA__c.Component_Serial__c}</td>
+                  <td colspan="4" rowspan="4"> </td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> RMA#: </td>
+                  <td> {!Ops_RMA__c.RMA_Number__c} </td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> FA Required: </td>
+                  <td>{!Ops_RMA__c.FA_required__c}</td>
+              </tr>
+            
+              <tr>
+                  <td class="TablerowHeader"> EFA Priority: </td>
+                  <td>{!Ops_RMA__c.EFA_Priority__c}  </td>
+              </tr>
+               <tr>
+                  <td class="TablerowHeader"> Pre-EFA Required: </td>
+                  <td>{!Ops_RMA__c.Pre_EFA_Required__c}  </td>
+              </tr>
+              <tr>
+                  <td class="TablerowHeader"> Test Status: </td>
+                  <td> </td>
+                  <td  rowspan="2" class="TableCommentsHeader"> Comment: </td>
+                  <td rowspan="2" colspan="3"> </td>
+              </tr>
+               <tr>
+                  <td class="TablerowHeader"> Nimble OS Version </td>
+                  <td> {!Ops_RMA__c.Nimble_Version__c} </td>
+              </tr>
+        </table>
+
+
+   
+</apex:page>

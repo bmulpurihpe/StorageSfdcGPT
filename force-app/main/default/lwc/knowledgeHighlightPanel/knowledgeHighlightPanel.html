@@ -1,0 +1,68 @@
+<template>
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid slds-page-header">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-custom-custom18" title={title}>
+                        <lightning-icon icon-name="standard:knowledge"></lightning-icon>
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <span>Knowledge</span>
+                    <span class="slds-page-header__title slds-truncate" title={title}>{title}</span>
+                </div>
+            </header>
+        </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <lightning-record-view-form
+                    record-id={recordId}
+                    object-api-name={objectApiName}
+                    density="auto">
+                <div class="slds-grid">
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Article Record Type</label>
+                        <lightning-output-field 
+                            variant="label-hidden" 
+                            field-name="RecordTypeId">
+                        </lightning-output-field>
+                    </div>
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Article Number</label>
+                        <lightning-output-field 
+                            variant="label-hidden" 
+                            field-name="ArticleNumber">
+                        </lightning-output-field>
+                    </div>
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Status</label>
+                        <lightning-output-field 
+                            variant="label-hidden" 
+                            field-name="Status__c">
+                        </lightning-output-field>
+                    </div>
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Verification Status</label>
+                        <lightning-output-field 
+                            variant="label-hidden" 
+                            field-name="Verification_Status__c">
+                        </lightning-output-field>
+                    </div>
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Last Modified Date</label>
+                        <lightning-output-field 
+                            variant="label-hidden" 
+                            field-name="LastModifiedDate">
+                        </lightning-output-field>
+                    </div>
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Next Review Date</label>
+                        <lightning-output-field 
+                            variant="label-hidden" 
+                            field-name="NextReviewDate">
+                        </lightning-output-field>
+                    </div>
+                </div>
+            </lightning-record-view-form>
+        </div>
+    </article>
+</template>

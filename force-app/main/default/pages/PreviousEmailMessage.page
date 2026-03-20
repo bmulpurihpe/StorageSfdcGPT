@@ -1,0 +1,4 @@
+<apex:page standardController="EmailMessage" extensions="EmailMessageActions" action="{!previousMsg}" showHeader="false" showQuickActionVfHeader="false">
+    <h1 style="font-size:1.125rem;">{!statusMsg}</h1>
+    <base target="_parent" />
+ </apex:page>

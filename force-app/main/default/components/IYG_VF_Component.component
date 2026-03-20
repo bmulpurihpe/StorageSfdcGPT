@@ -1,0 +1,44 @@
+<apex:component >
+  <apex:attribute name="region" type="String" required="true" description="" />
+  <apex:attribute name="type"   type="String" required="true" description="" />
+<!-- iyg component start "{!type}" "{!region}" -->
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/jquery_3.5.1.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/async_3.2.0.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/jsforce_1.10.0.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/luxon_1.25.0.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/mustache_4.0.1.min.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/popper_2.5.2.min.js')}" loadOnReady="true" />
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/tippy-bundle_6.2.6.umd.min.js')}" loadOnReady="true" />
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/fontawesome_5.14.0.min.js')}" loadOnReady="true" />
+  <apex:stylesheet value="{!URLFOR($Resource.iyg_res, '/boss/iyg.css')}" />
+<!-- <apex:includeScript value="https://networknomicon.com/sfdc/iyg/script.js?user={!$User.Username}&profile={!$Profile.Id}" /> -->
+  <apex:includeScript value="{!URLFOR($Resource.iyg_res, '/iyg/script.js')}" />
+
+<script>    
+iyg({
+  type:    "{!type}",
+  region:  "{!region}",
+  sid:     "{!$Api.Session_Id}",
+  pageid:  "{!$CurrentPage.parameters.Id}",
+  isprod:  {!if($Organization.Id == "00D80000000aba6EAA", true, false)},
+  user: {
+     id:          "{!$User.Id}",
+     login:       "{!$User.Username}",
+     name:        "{!$User.FirstName} {!$User.LastName}",
+     email:       "{!$User.Email}",
+     managerid:   "{!$User.ManagerId}",
+     profileid:   "{!$Profile.Id}",
+     profilename: "{!$Profile.Name}",
+     istse: {!if(or($Profile.Id == "00e2H0000011xUtQAI",
+                    $Profile.Id == "00e2H0000011xUsQAI",
+                    $Profile.Id == "00e800000018mTGAAY"),true, false)},                          
+     ispeak: {!if(or($Profile.Id == "00e340000018wvmAAA",
+                     $Profile.Id == "00e2H0000011xUsQAI"),true, false)}, 
+     istsm: {!if(or($Profile.Id == "00e800000018oixAAA",
+                    $Profile.Id == "00e800000018pDPAAY"),true, false)},                          
+  },
+});
+</script>
+<ul id="iyg_{!region}" class="iyg iyg{!type} fa-ul"></ul>
+<!-- iyg component end "{!type}" "{!region}" -->
+</apex:component>

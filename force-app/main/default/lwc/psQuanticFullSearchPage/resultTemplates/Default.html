@@ -1,0 +1,52 @@
+<template>
+    <c-quantic-result-template>
+      <!-- <c-quantic-result-label  label="Default" icon="utility:light_bulb" result={result}></c-quantic-result-label> -->
+      <template if:true={result.raw.documenttype}> 
+        <c-quantic-result-field slot="label" result={result} field="documenttype" type="string" class="psResultBadge"></c-quantic-result-field>
+      </template>
+      
+      <div slot="badges" class="slds-grid slds-grid_vertical-align-center">
+        <div class="slds-m-right_xx-small">
+          <c-quantic-result-badge variant="recommended" result={result}></c-quantic-result-badge>
+        </div>
+        <c-quantic-result-badge variant="featured" result={result}></c-quantic-result-badge>
+      </div>
+
+      <div slot="badge" class="slds-truncate">
+
+      </div>
+      
+      <div slot="actions" class="slds-grid slds-grid_vertical-align-center floatingtest">
+        <template if:true={resultHasPreview}>
+          <c-quantic-result-quickview 
+            preview-button-label="" 
+            engine-id={engineId}
+            tooltip ="Quick View"
+            result={result}>
+          </c-quantic-result-quickview>
+        </template>
+      </div>
+
+      <p slot="date" class="slds-size_xx-small">
+        <lightning-formatted-date-time value={result.raw.date}></lightning-formatted-date-time>
+      </p>
+      <div slot="title" class="slds-truncate">
+        <c-quantic-result-link result={result} engine-id={engineId}></c-quantic-result-link>
+      </div>
+      <div slot="excerpt">
+        {result.Excerpt}
+      </div>
+      <div slot="bottom-metadata" class="bottom-metadata slds-m-top_x-small">
+        <template if:true={result.raw.kcs_doc_id}> 
+          <c-quantic-result-field result={result} label="KCS ID" field="kcs_doc_id" type="string" style="color:#313a45"></c-quantic-result-field>
+        </template>
+        <template if:true={result.raw.nimble_public_uri}> 
+          <label for="public-url">Public URL: </label>
+          <a id="public-url" href={result.raw.nimble_public_uri} aria-label="Opens in the browser tab" target="_blank" tabindex="0" role="link">
+            {result.raw.nimble_public_uri}
+          </a>
+          <!-- <c-quantic-result-field result={result} label="Public URL" field="nimble_public_uri" type="string" style="color:#313a45"></c-quantic-result-field> -->
+        </template>
+      </div>
+    </c-quantic-result-template>
+  </template>

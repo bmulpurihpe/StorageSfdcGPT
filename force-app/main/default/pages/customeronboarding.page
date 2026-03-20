@@ -1,0 +1,169 @@
+<apex:page controller="CustomerOnBoarding" sidebar="true">
+<style type="text/css">
+        p { font-weight: bold; }
+        nline { white-space: pre-line;}
+        Tstyle{
+            font-size: 16px;
+            font-weight: bold;
+        }
+        Tspace{
+            padding-top: 25px;
+            padding-right: 50px;
+            padding-bottom: 25px;
+            padding-left: 50px;
+        }              
+</style>
+<script type="text/javascript">
+  function selectCheckboxes(inpt,receivedInptID)
+   {
+     var inputCheckBox = document.getElementsByTagName("input");                 
+     for(var i=0; i<inputCheckBox.length; i++)
+      {         
+       if(inputCheckBox[i].id.indexOf(receivedInptID)!=-1){                                    
+          inputCheckBox[i].checked = inpt.checked;
+       }
+     }
+   }
+</script>
+ <apex:form >
+ <apex:pageMessages ></apex:pageMessages>
+
+ <apex:pageBlock title="Customer Onboarding Instructions:">
+    Thank you for enrolling your customer into Nimble’s Customer Onboarding Program. Please follow the steps provided below to enroll your customer contacts into the program.
+
+    <p>Step 1: Confirm Account and Opportunity Information</p>
+         Please take a second to glance over the account and opportunity information below and make sure you are updating the correct contact and account records in SFDC.
+
+    <p>Step 2: Enrolling Existing Contacts</p>
+        A list of existing contacts associated to your customer account has been provided below. Please review the list and identify which contacts you would like to enroll in the onboarding process. Make sure the email and phone for your contact is correct and then enroll the contact by selecting the checkbox to the left of their name and selecting an onboarding program (listed as contact role) from the drop down to the right.
+
+    <p>Step 3: Enrolling New Contacts</p>
+        Couldn’t find your guy in the list of existing contacts? Not program, just follow the instructions below to add a new contact to the account and enroll the person in an onboarding process. Please remember to add a contact role for each new contact to ensure they are enrolled into the correct program.
+
+    <p>Step 4: Click the Save button and you’re done.</p> 
+       
+    <p>Additional Questions</p>
+        Have questions about the specifics of Nimble’s onboarding process? Want to know exactly what materials are scheduled to be sent and when? Click on the links below to learn more about the details of the program.
+
+    <br/>
+<!--
+	<br/>
+    <apex:outputLink value="https://www.salesforce.com" id="theLink">www.salesforce.com</apex:outputLink>
+    <br/>
+    <apex:outputLink value="https://www.salesforce.com" id="tLink">www.salesforce.com</apex:outputLink>
+   --> 
+<br/><br/>
+<b>
+Account Name: </b>{!opp.Account.name}
+<br/><b>
+Opportunity Name:</b>{!opp.name}
+<br/><br/>
+<div >
+
+<!--<apex:commandButton value="Existing Contacts" action="{!ExistContact}" immediate="true"/> -->
+<span style="padding-left:20px;">
+Add #<apex:inputText value="{!conNo}" style="width:30px;" />
+<apex:commandButton value="New Contacts" action="{!NewContact}"/></span>
+</div>
+ </apex:pageBlock>
+ <apex:outputPanel rendered="{!if(Existcon=true || newcon= true,true,false)}">
+ <div align="center"> <apex:commandButton value="Save" action="{!saverecord}"/></div>
+ </apex:outputPanel>
+ <apex:pageBlock title="Add New Contacts" rendered="{!newcon}">
+<apex:pageBlockTable value="{!newconlist}" var="co" > 
+      
+      <apex:column headerValue=" First Name" >    
+        <apex:inputfield value="{!co.con.firstname}"/>
+      </apex:column>
+      <apex:column headerValue=" Last Name" >    
+        <apex:inputfield value="{!co.con.lastname}" />
+      </apex:column>
+      <apex:column headerValue="Title" >    
+        <apex:inputfield value="{!co.con.title}"/>
+      </apex:column>
+      <apex:column headerValue=" Phone" >    
+        <apex:inputfield value="{!co.con.Phone}"/>
+      </apex:column>
+      <apex:column headerValue=" Email" >    
+        <apex:inputfield value="{!co.con.email}" required="true"/>
+      </apex:column>
+      <apex:column headerValue="Contact Role">    
+ <!--   <apex:inputField value="{!co.oppconrol.Role}" /> -->
+         <apex:inputField value="{!co.con.Contact_Role__c}" /> 
+
+        <!--<apex:selectList value="{!co.oppconrol.Role}" multiselect="false" size="1" >
+            <apex:selectOptions value="{!oprolelist}"/>
+        </apex:selectList>-->     </apex:column> 
+    
+
+
+    </apex:pageBlockTable>
+    <apex:commandButton action="{!removerecord}" immediate="true" value="Remove" rendered="{!showremovelink}"/>    
+</apex:pageBlock>
+ 
+<apex:pageBlock title="Enroll Existing Contacts " rendered="{!Existcon}">
+<!-- <apex:facet name="header">
+        <span style="padding-top: 50px;"><Tstyle><B>Enroll Existing Contacts </B></Tstyle> - use this Section to Enroll existing contacts into the onboarding program</span> 
+   </apex:facet> -->  
+ <div align="left" style="display:{!IF(NOT(ISNULL(wrapperlst)),'block','none')}">
+           <font size="1pt">  Page size </font><apex:selectList value="{!pagesize}" multiselect="false" size="1" onchange="showdetail();">
+            <apex:selectOptions value="{!pagesize1}"/>
+        </apex:selectList>
+   <apex:actionFunction action="{!refreshpagesize}" name="showdetail"/>   
+</div>
+<div align="right" style="display:{!IF(NOT(ISNULL(wrapperlst)),'block','none')}">
+
+
+
+                <font size="1pt">Total Records Found:&nbsp;<apex:outputLabel value="{!totalrecord}"/>,&nbsp;Page #:&nbsp;<apex:outputLabel value="{!PageNumber}"/>&nbsp;out of&nbsp;<apex:outputLabel value="{!totalPageNumber}"/>&nbsp;&nbsp;&nbsp;&nbsp;</font>
+                    <apex:commandButton value="Previous" action="{!previousBtnClick}" disabled="{!previousButtonEnabled}"></apex:commandButton>
+                    <apex:commandButton value="Next" action="{!nextBtnClick}" disabled="{!nextButtonDisabled}" ></apex:commandButton>
+
+       
+         </div>           
+      
+<apex:pageBlockTable value="{!wrapperlst}" var="co" > 
+      <apex:column headerValue="Check to Enroll">
+        <!--<apex:facet name="header">
+                <apex:inputCheckbox onclick="selectCheckboxes(this,'checkedone')"/>
+                </apex:facet>-->
+           
+          <apex:inputCheckbox id="checkedone" value="{!co.isSelected}" />
+       </apex:column>
+       
+       <apex:column headerValue="Customer Onboarding Contact Role">    
+       <!-- <apex:inputField value="{!co.oppconrol.Role}" /> -->
+        <apex:inputField value="{!co.con.Contact_Role__c}" /> 
+
+        <!--<apex:selectList value="{!co.oppconrol.Role}" multiselect="false" size="1" >
+            <apex:selectOptions value="{!oprolelist}"/>
+        </apex:selectList>-->     </apex:column>
+      <apex:column headerValue=" First Name" >    
+        <apex:inputfield value="{!co.con.firstname}"/>
+      </apex:column>
+      <apex:column headerValue=" Last Name" >    
+        <apex:inputfield value="{!co.con.lastname}"/>
+      </apex:column>
+      <apex:column headerValue="Title" >    
+        <apex:inputfield value="{!co.con.title}"/>
+      </apex:column>
+      <apex:column headerValue=" Phone" >    
+        <apex:inputfield value="{!co.con.Phone}"/>
+      </apex:column>
+      <apex:column headerValue=" Email" >    
+        <apex:inputfield value="{!co.con.email}"/>
+      </apex:column>
+     
+    
+
+
+    </apex:pageBlockTable>      
+</apex:pageBlock>
+
+  
+    
+<apex:outputPanel rendered="{!if(Existcon=true || newcon= true,true,false)}">
+ <div align="center"> <apex:commandButton value="Save" action="{!saverecord}"/></div>
+ </apex:outputPanel>
+ </apex:form>
+</apex:page>

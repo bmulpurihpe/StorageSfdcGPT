@@ -1,0 +1,68 @@
+<!--                              <<<< === Visualforce Page for Ops Case MassClose === >>>>
+=============================================================================================================
+Name                    : caseMassClosePage
+Description             : To capture the field values related to close the OPS case
+Created Date            : 30th August 2021
+Author                  : Guru Dev(Exafort)
+Version                 : 1.0
+Modification History    : Initial Version
+==============================================================================================================
+-->
+<apex:page standardController="Case" extensions="caseMassClosePageController" recordSetVar="caseval" > 
+<style>
+.nope { color:red !important; text-decoration: line-through; }
+</style>
+    <script type="text/javascript">
+    function disableSaveButtons()
+    {
+        var requestValue = document.getElementsByClassName("btn");
+        for(var i=0 ; i < requestValue.length ; i++){
+            requestValue[i].disabled = true;
+            requestValue[i].setAttribute("style", "background:#c1bebe;");
+        }                                
+    }
+    </script>
+    <apex:sectionheader title="Close {!$ObjectType.Case.label}"/>
+    <apex:form id="theForm">
+        <apex:pageMessages id="thePageMessage" escape="false"/>
+        <apex:pageblock id="pb" mode="edit" title="{!$ObjectType.Case.label} Edit">
+            <center>
+                <apex:actionStatus id="SaveStatusId"  >
+                    <apex:facet name="start" >
+                        <b>Saving ...Please Wait....!</b>&nbsp;<img src="/img/loading.gif" /> 
+                    </apex:facet>
+                </apex:actionStatus>
+            </center>
+            <apex:pageblockbuttons >
+                <apex:commandbutton value="Save" action="{!myCustomSave}" status="SaveStatusId" reRender="thePageMessage" 
+                                    onclick="disableSaveButtons()" rendered="{!buttonHide == True}"/>
+                <apex:commandbutton value="Cancel" action="{!myCustomCancel}"/>
+            </apex:pageblockbuttons>
+            <apex:outputPanel id="outputPanel">    
+                <apex:pageblocksection id="caseinfo" title="Case Information" showheader="true" columns="1" rendered="{!IF(AND(caseList.size>0,recid != null),false,null)}">
+                    <apex:pageBlockTable value="{!caseList}" var="cas" >
+                       <!-- <apex:column value="{!cas.CaseNumber}" styleClass="{!IF(cas.recordtypeid!='0122H000000GJYeQAO','nope',null)}"/>-->
+                        <apex:column value="{!cas.CaseNumber}" styleClass="{!IF(or(cas.Is_My_BU__c==false,cas.recordtypeid!='0122H000000GJYeQAO'),'nope',null)}"/>
+                        <apex:column value="{!cas.status}"/>
+                        <apex:column value="{!cas.subject}"/>
+                        <apex:column value="{!cas.recordtypeid}" styleClass="{!IF(or(cas.Is_My_BU__c==false,cas.recordtypeid!='0122H000000GJYeQAO'),'nope',null)}"/>
+                         <apex:column value="{!cas.Is_My_BU__c}"/>
+                         <apex:column value="{!cas.OwnerId}"/>
+                        <apex:column value="{!cas.casePachinkoCaseType__c}"/>
+                    </apex:pageBlockTable>
+                </apex:pageblocksection>
+                <apex:pageblocksection id="caseupdates" title="Case Updates" showheader="true" columns="1"  rendered ="{!caseList.size>0}">
+                    <apex:repeat value="{!fieldsetlist}" var="field">
+                        <apex:inputField value="{!caseobj[field]}" style="width:450px"></apex:inputField>
+                    </apex:repeat>
+                </apex:pageblocksection>
+               <!-- <apex:pageblocksection id="caseactions" title="Closure Actions" showheader="true" columns="1"  rendered="false">
+                    <apex:inputCheckbox value="{!ChangeOwner}" label="Change owner to me"/>
+                    <apex:inputCheckbox value="{!ChangeClosedby}" label="Change closedby to me"/>
+                </apex:pageblocksection>-->
+            </apex:outputPanel>
+            
+        </apex:pageblock>
+    </apex:form>
+    
+</apex:page>

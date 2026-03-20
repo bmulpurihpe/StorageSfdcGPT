@@ -1,0 +1,227 @@
+<template>
+    <div style="background-color: white;"
+      class="search__container slds-p-around_medium"
+      onquantic__registerresulttemplates={handleResultTemplateRegistration}
+    >
+      <c-ps-quantic-search-interface
+        engine-id={engineId}
+        search-hub={searchHub}
+        pipeline={pipeline}
+        disable-state-in-url={disableStateInUrl}
+        skip-first-search={skipFirstSearch}
+      >
+        <c-quantic-aria-live></c-quantic-aria-live>
+        <div class={currentTab}>
+          <div class="slds-grid slds-grid_vertical slds-grid_align-center">
+  
+            <div class="psTabBar">
+              <c-ps-quantic-tab
+                label="All"
+                caption="All Content"
+                engine-id={engineId}
+                is-active
+              ></c-ps-quantic-tab>
+              <c-ps-quantic-tab
+                label="SFK1"
+                caption="SF Knowledge"
+                engine-id={engineId}
+              ></c-ps-quantic-tab>
+              <c-ps-quantic-tab
+                label="Confluence1"
+                caption="Confluence"
+                engine-id={engineId}
+              ></c-ps-quantic-tab>
+              <c-ps-quantic-tab
+                label="SalesforceCase"
+                caption="Cases"
+                engine-id={engineId}
+              ></c-ps-quantic-tab>
+              <c-ps-quantic-tab
+                label="Documents1"
+                caption="Documents"
+                engine-id={engineId}
+              ></c-ps-quantic-tab>
+    
+            </div>
+            <div class="slds-m-vertical_small psSearchBox">
+              <c-quantic-search-box engine-id={engineId}></c-quantic-search-box>
+            </div>
+            <div class="slds-m-vertical_small psNotifications">
+              <c-quantic-notifications engine-id={engineId}></c-quantic-notifications>
+            </div>
+            <div class="slds-col">
+              <div
+                class="slds-grid slds-gutters_direct slds-wrap main slds-grid_align-center"
+              >
+                <div class="slds-col slds-order_2 slds-large-order_1 slds-size_1-of-1 slds-large-size_3-of-12 facets_container slds-show_large" >
+  
+                  <c-quantic-facet
+                    class="source"
+                    field="source"
+                    label="Source"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                  >
+                    <c-quantic-facet-caption slot="captions" value="hpe-nimble-sf-cases" caption="HPE Nimble Cases"></c-quantic-facet-caption>
+                    <c-quantic-facet-caption slot="captions" value="hpe-nimble-onprem-kcs" caption="HPE Nimble KCS"></c-quantic-facet-caption>
+                    <c-quantic-facet-caption slot="captions" value="dce-km-document-blue" caption="Documents"></c-quantic-facet-caption>
+                  </c-quantic-facet>
+
+
+                  <c-quantic-facet
+                    class="kcs_categorie"
+                    field="kcs_categorie"
+                    label="KCS Category"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+
+                  <c-quantic-facet
+                    class="sftech_skillset__c"
+                    field="sftech_skillset__c"
+                    label="Technical Skillset"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+
+                  <c-quantic-facet
+                    class="sfdisclosure_level__c"
+                    field="sfdisclosure_level__c"
+                    label="Disclosure Level"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+
+                  <c-quantic-facet
+                    class="sfproduct_support_profile__c"
+                    field="sfproduct_support_profile__c"
+                    label="Support Profile"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+  
+                  <c-quantic-facet
+                    class="conflabels"
+                    field="conflabels"
+                    label="Conf Label"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+                    
+                  <c-quantic-facet
+                    class="sfrecordtypename"
+                    field="sfrecordtypename"
+                    label="Case Record Type"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+                    
+                  <c-quantic-facet
+                    class="sftechnology_area__c"
+                    field="sftechnology_area__c"
+                    label="Case Tech Area"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+                    
+                  <c-quantic-facet
+                    class="sfsub_technology_area__c"
+                    field="sfsub_technology_area__c"
+                    label="Case Sub Tech Area"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+                    
+                  <c-quantic-facet
+                    class="sfsupport_profile__c"
+                    field="sfsupport_profile__c"
+                    label="Case Support Profile"
+                    engine-id={engineId}
+                    data-cy="checkbox"
+                    sort-criteria="occurrences"
+                    lwc:if={isNotAllTab}
+                  ></c-quantic-facet>
+                 
+              </div>
+  
+              <div
+                class="slds-col slds-order_1 slds-large-order_2 slds-size_1-of-1 slds-large-size_9-of-12"
+                >
+ 
+                <c-quantic-no-results engine-id={engineId} ></c-quantic-no-results>
+                  <div class="slds-grid slds-var-m-top_small">
+                    <c-quantic-summary
+                      class="slds-var-m-vertical_x-small slds-small-size_8-of-12 slds-large-size_7-of-12"
+                      engine-id={engineId}
+                    >
+                    </c-quantic-summary>
+                    <c-quantic-sort
+                      class="slds-var-m-vertical_xxx-small slds-large-size_5-of-12 slds-show_large"
+                      engine-id={engineId}
+                    >
+                    </c-quantic-sort>
+                    <div
+                      class="slds-small-size_4-of-12 slds-clearfix slds-hide_large"
+                    >
+                      <div class="slds-float_right">
+                        <c-quantic-refine-toggle
+                          engine-id={engineId}
+                          full-screen
+                        ></c-quantic-refine-toggle>
+                      </div>
+                    </div>
+                  </div>
+                  <c-quantic-query-error
+                    engine-id={engineId}
+                  ></c-quantic-query-error>
+                  <c-quantic-breadcrumb-manager
+                    engine-id={engineId}
+                  ></c-quantic-breadcrumb-manager>
+                  <c-quantic-did-you-mean
+                    engine-id={engineId}
+                  ></c-quantic-did-you-mean>
+                  <div class="slds-var-m-vertical_small">
+                    <c-quantic-smart-snippet
+                      engine-id={engineId}
+                    ></c-quantic-smart-snippet>
+                  </div>
+                  <div class="slds-var-m-vertical_small">
+                    <c-quantic-smart-snippet-suggestions
+                      engine-id={engineId}
+                    ></c-quantic-smart-snippet-suggestions>
+                  </div>
+                  <c-quantic-folded-result-list
+                    engine-id={engineId}
+                  ></c-quantic-folded-result-list>
+                  <div class="slds-var-m-vertical_medium">
+                    <c-quantic-pager engine-id={engineId}></c-quantic-pager>
+                    <c-quantic-results-per-page
+                      engine-id={engineId}
+                    ></c-quantic-results-per-page>
+                  </div>
+                </div>
+              </div>
+            </div>
+     
+        </div>
+     </div>
+      </c-ps-quantic-search-interface>
+    </div>
+  </template>

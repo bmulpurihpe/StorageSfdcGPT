@@ -1,0 +1,43 @@
+:host {
+    --lwc-spacingMedium: 5px;
+    --slds-c-button-spacing-inline-end: 15px;
+    --slds-c-button-spacing-inline-start: 15px;
+}
+
+.psTable {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+c-quantic-result-field {
+    width: calc(100% / 3);
+}
+
+.psResultBadge {
+    text-transform: capitalize !important;
+    background-color: #80539C;
+    margin-right: 10px;
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    display: inline-block;
+    margin: 0 0 10px;
+    padding: 5px 10px;
+    color: white;
+    border-radius: 2px;
+    letter-spacing: 1px;
+}
+
+.psTitleRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.psExcerpt{
+    line-height: 1.25em;
+    display: table-cell;
+    vertical-align: top;
+    color: #313a45;
+}

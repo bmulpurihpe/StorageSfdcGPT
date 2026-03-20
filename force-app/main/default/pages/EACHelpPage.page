@@ -1,0 +1,13 @@
+<!--                             <<<< === Visualforce page === >>>>
+    =============================================================================================================
+        Name                    : EACHelpPage
+        Description             : Help page displayed in the Asset related list.
+        Created Date            : 17th october 2018
+        Author                  : Vishnu R
+        Version                 : 1.0
+        Modification History    : Initial Version
+    ==============================================================================================================  
+** Added this page as a help page for the NEC Records object as we are not using EAC records object.
+-->
+<apex:page action="https://nimblejira.nimblestorage.com/secure/Dashboard.jspa">
+</apex:page>

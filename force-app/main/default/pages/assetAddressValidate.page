@@ -1,0 +1,99 @@
+<!--                              <<<< === Visualforce Page for Asset AddressBook Validate === >>>>
+=============================================================================================================
+Name                    : assetAddressValidate
+Description             : To display the asset and addressbook related information
+Created Date            : 06/15/2021
+Author                  : Guru Dev(Exafort)
+Version                 : 1.0
+Modification History    : Initial Version
+==============================================================================================================
+-->
+<apex:page controller="assetAddressValidateController" tabStyle="asset">
+    <script type="text/javascript">
+    function DisableButton() {
+        console.log("inside Disable on");
+        var requestValue = document.getElementsByClassName("btn");
+        for(var i=0 ; i < requestValue.length ; i++){
+            requestValue[i].disabled = true;
+            requestValue[i].setAttribute("style", "background:#c1bebe;");
+        }       
+    }
+    </script>
+    <style>
+        #col1,#col2{width:49%;display:inline-block;}
+        .pbSubheader {
+        margin-top: 0px;
+        }
+        body .bEditBlock .pbBottomButtons, body .apexp .bPageBlock.apexDefaultPageBlock .pbBottomButtons {
+        margin-top: 0px;
+        }
+    </style>
+    
+    <apex:sectionheader title="{!$ObjectType.Asset.label} PSAB Validation Page"/>
+    <apex:form id="theForm">
+        <apex:pageMessages id="thePageMessage" escape="false"/>
+        <apex:pageblock id="pb" mode="edit" title="{!$ObjectType.Asset.label} PSAB Validation: {!asst.serialNumber}" rendered="{!IF(objectName =='Asset',True,false)}">
+            <center>
+                <apex:actionStatus id="SaveStatusId"  >
+                    <apex:facet name="start" >
+                        <b>Saving ...Please Wait....!</b>&nbsp;<img src="/img/loading.gif" /> 
+                    </apex:facet>
+                </apex:actionStatus>
+            </center>
+            <apex:pageblockbuttons rendered="{!IF(asst.assetPartShipAddressBook__c != null,True,false)}">
+                <apex:commandbutton value="Validate" onclick="DisableButton()" action="{!validateAsset}" status="SaveStatusId" reRender="outputPanel,pb" oncomplete="window.location.reload();" />
+                <apex:commandbutton value="Cancel" action="{!myCustomCancel}" reRender="outputPanel"/>
+            </apex:pageblockbuttons>
+            <apex:outputPanel id="outputPanel">
+                <apex:outputPanel id="ErrorMessages">
+                    <apex:pageMessages />
+                </apex:outputPanel>
+                <apex:actionRegion >
+                    <apex:outputPanel id="timerPanel">
+                        <apex:actionPoller reRender="ErrorMessages" interval="5" enabled="{!timer}" action="{!timerOff}"/> 
+                    </apex:outputPanel>
+                </apex:actionRegion>
+                
+                <apex:outputPanel >
+                    <div id="col1">
+                        <apex:pageblocksection title="Asset Information" showheader="true" columns="1" collapsible="false">
+                            <apex:repeat value="{!$ObjectType.Asset.FieldSets.assetAddressValidatePageAssetFields}" var="field">
+                                <apex:outputText rendered="{!IF(CONTAINS(field.label, 'Asset Name'),true, false)}" label="{!field.label}" >
+                                     <a href='/{!asst.id}' target="_blank"> {!asst[field]}</a>
+                                </apex:outputText>
+                                <apex:outputField rendered="{!IF(!CONTAINS(field.label, 'Asset Name'),true, false)}" value="{!asst[field]}" />
+                            </apex:repeat>             
+                        </apex:pageblocksection>
+                    </div>
+                    <div id="col2">
+                        <apex:pageblocksection title="Part ship address book Information" showheader="true" columns="1" collapsible="false"> 
+                            <apex:repeat value="{!$ObjectType.Asset.FieldSets.assetAddressValidatePageABFields}" var="field">
+                                <apex:outputField value="{!asst[field]}" />
+                            </apex:repeat>                     
+                        </apex:pageblocksection>
+                    </div>
+                </apex:outputPanel>
+                <br/><br/>
+                <apex:pageBlockSection title="{!if(isParent, 'Parent', 'Child')} Asset Information" showheader="true" collapsible="false"></apex:pageBlockSection>
+                    <apex:dataTable var="fieldValue" value="{!relatedAssets}" cellspacing="20px">
+                            <apex:column >
+                                <apex:facet name="header">Asset</apex:facet>
+                                <apex:outputLink value="/{!fieldValue.Id}" target="_blank">{!fieldValue.name}</apex:outputLink>                            
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">Type</apex:facet>
+                                <apex:outputText value="{!if(isParent, 'Parent', 'Child')}"/>
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">AAV</apex:facet>
+                                <apex:outputLink target="_blank" value="assetAddressValidate?id={!fieldValue.Id}">AAV</apex:outputLink>                            
+                            </apex:column>
+                            <apex:column >
+                                <apex:facet name="header">Part Ship Address Book</apex:facet>
+                                <apex:outputText ><a href='/{!fieldValue.assetPartShipAddressBook__c}' target="_blank">{!fieldValue.assetPartShipAddressBook__r.name}</a></apex:outputText>
+                            </apex:column>
+                    </apex:dataTable>				
+            </apex:outputPanel>
+        </apex:pageblock>
+    </apex:form>
+</apex:page>

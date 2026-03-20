@@ -1,0 +1,29 @@
+.tab_button{
+    padding: 0;
+    margin: 0 0px;
+    padding:0 10px;
+    max-width: 150px;
+    height: 100%;
+}
+
+.slds-tabs_default__item .slds-tabs_default__link {
+    font-weight: 400;
+
+}
+
+.slds-tabs_default__item.slds-is-active:after {
+    background-color: #E07C50;
+}
+
+.slds-tabs_default__link, .slds-tabs--default__link {
+    border: 0;
+}
+
+.slds-button:active {
+    border: 0;
+}
+
+:host {
+    --sds-c-tabs-list-sizing-border: 2px;
+    --sds-c-tabs-item-color-border-hover: none;
+}

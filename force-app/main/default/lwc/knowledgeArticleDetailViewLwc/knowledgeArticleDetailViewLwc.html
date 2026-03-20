@@ -1,0 +1,192 @@
+<template>
+    <lightning-layout>
+        <lightning-layout-item size="12">
+            <div class="slds-p-bottom_small">
+                <c-knowledge-highlight-panel-lwc
+                    object-api-name={objectApiName}
+                    record-id={articleId}
+                    title={title}>
+                </c-knowledge-highlight-panel-lwc>
+            </div>
+            <lightning-card>
+                <lightning-record-view-form
+                    object-api-name={objectApiName}
+                    record-id={articleId}
+                    density="auto">
+                    <lightning-accordion 
+                        allow-multiple-sections-open
+                        active-section-name={activeSections}>
+                        <div class="slds-p-around_small">
+                            <lightning-accordion-section
+                                name="Information"
+                                label="Information"
+                                class="slds-p-bottom_medium">
+                                <div class="slds-p-around_xsmall">
+                                    <lightning-output-field 
+                                        field-name="Title"
+                                        class="slds-form-element slds-form-element_readonly">
+                                    </lightning-output-field>
+                                    <lightning-output-field 
+                                        field-name="UrlName"
+                                        class="slds-form-element slds-form-element_readonly">
+                                    </lightning-output-field>
+                                    <lightning-output-field 
+                                        field-name="KB_Summary__c"
+                                        class="slds-form-element slds-form-element_readonly">
+                                    </lightning-output-field>
+                                </div>
+                            </lightning-accordion-section>
+                            <lightning-accordion-section
+                                name="Environment"
+                                label="Environment"
+                                class="slds-p-bottom_medium">
+                                <div class="slds-p-around_xsmall">
+                                    <lightning-output-field 
+                                        field-name="Product_Support_Profile__c"
+                                        class="slds-form-element slds-form-element_readonly">
+                                    </lightning-output-field>
+                                    <lightning-output-field 
+                                        field-name="Technical_Skillset__c"
+                                        class="slds-form-element slds-form-element_readonly">
+                                    </lightning-output-field>
+                                    <lightning-output-field 
+                                        field-name="Software_Version__c"
+                                        class="slds-form-element slds-form-element_readonly">
+                                    </lightning-output-field>
+                                </div>
+                            </lightning-accordion-section>
+                            <lightning-accordion-section
+                                name="Details"
+                                label="Details"
+                                class="slds-p-bottom_medium">
+                                <div class="slds-p-around_xsmall">
+                                    <template if:true={recordTypeHowTo}>
+                                        <lightning-output-field 
+                                            field-name="Procedure_Overview__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                        <lightning-output-field 
+                                            field-name="Procedure__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                    </template>
+                                    <template if:true={recordTypeTroubleshooting}>
+                                        <lightning-output-field 
+                                            field-name="Issue__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                        <lightning-output-field 
+                                            field-name="Cause__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                        <lightning-output-field 
+                                            field-name="Resolution__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                    </template>
+                                    <template if:true={recordTypeInformational}>
+                                        <lightning-output-field 
+                                            field-name="Question__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                        <lightning-output-field 
+                                            field-name="Answer__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                    </template>
+                                    <template if:true={recordTypeStorageLegacy}>
+                                        <lightning-output-field 
+                                            field-name="Body__c"
+                                            class="slds-form-element slds-form-element_readonly">
+                                        </lightning-output-field>
+                                    </template>
+                                </div>
+                            </lightning-accordion-section>
+                            <lightning-accordion-section
+                                name="Internal Notes"
+                                label="Internal Notes"
+                                class="slds-p-bottom_medium">
+                                <div class="slds-p-around_xsmall">
+                                    <lightning-output-field 
+                                        field-name="Internal_Notes__c"
+                                        class="slds-form-element slds-form-element_readonly">
+                                    </lightning-output-field>
+                                </div>
+                            </lightning-accordion-section>
+                            <lightning-accordion-section
+                                name="Attributes"
+                                label="Attributes"
+                                class="slds-p-bottom_medium">
+                                <div class="slds-p-around_xsmall">
+                                    <lightning-layout multiple-rows="false">
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="Disclosure_Level__c"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="Periodic_Review_Months__c"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="Review_Date__c"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="LastModifiedDate"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="Last_Reviewed_By__c"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="LastPublishedDate"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="Original_Author__c"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                        <lightning-layout-item size="12">
+                                            <lightning-output-field 
+                                                field-name="Language"
+                                                class="slds-form-element slds-form-element_readonly">
+                                            </lightning-output-field>
+                                        </lightning-layout-item>
+                                    </lightning-layout>
+                                </div>
+                            </lightning-accordion-section>
+                        </div>
+                    </lightning-accordion>
+                </lightning-record-view-form>
+            </lightning-card>
+        </lightning-layout-item>
+        <lightning-layout-item size="4">
+            <div class="slds-p-left_small">
+                <!--<lightning-card>
+                    <afl-afl_-article-feedback-form
+                        record-id={articleId}
+                        feedback-form-behavior="Always Show"
+                    ></afl-afl_-article-feedback-form>
+                </lightning-card>
+                <c-knowledge-article-feedback-lwc
+                    record-id={articleId}>
+                </c-knowledge-article-feedback-lwc>-->
+            </div>
+        </lightning-layout-item>
+    </lightning-layout>
+</template>

@@ -1,0 +1,185 @@
+<apex:page standardController="WorkOrder__c" >
+<style>
+             .bread-table { padding: 0px; margin: 0px; width: 100%; border-spacing: 0px !important;}
+            .bread-before { width: 10%; background-color: #FFF;  margin: 0; padding: 0;
+                border-top: 21px solid red;
+                border-bottom: 21px solid red;
+                border-left: 15px solid #fff;
+            }
+            .bread { width: 80%; background-color: red; height: 30px; margin: 0; padding: 2px 4px; color: #FFF; font-size: 8pt; text-align: center; cursor: pointer;}
+            .bread a { color: #FFF !important; text-decoration: none }
+            .bread a:hover { text-decoration: underline;}
+            .bread-after {width: 10%; background-color: #FFF;  margin: 0; padding: 0;
+                border-top: 21px solid #FFF;
+                border-bottom: 21px solid #FFF;
+                border-left: 15px solid red;
+            }
+            .bread-active { width: 80%; background-color: green; height: 30px; margin: 0; padding: 2px 4px; color: #FFF; font-size: 8pt; text-align: center;}           
+            .bread-before-active { width: 10%; background-color: green; margin: 0; padding: 0;
+                border-top: 21px solid green;
+                border-bottom: 21px solid green; 
+                border-left: 15px solid #fff;
+            }
+            .bread-after-active {width: 10%; background-color: #FFF; margin: 0;
+                border-top: 21px solid #FFF;
+                border-bottom: 21px solid #FFF;
+                border-left: 15px solid green;
+            }
+            .bread-inactive { width: 80%; background-color: grey; height: 30px; margin: 0; padding: 2px 4px; color: #FFF; font-size: 8pt; text-align: center;}          
+            .bread-before-inactive { width: 10%; background-color: grey; margin: 0; padding: 0;
+                border-top: 21px solid grey;
+                border-bottom: 21px solid grey; 
+                border-left: 15px solid #fff;
+            }
+            .bread-after-inactive {width: 10%; background-color: #FFF; margin: 0;
+                border-top: 21px solid #FFF;
+                border-bottom: 21px solid #FFF;
+                border-left: 15px solid grey;
+            }
+        </style>
+    <apex:form >
+      
+     <!-- <apex:outputText value="{!WorkOrder__c.Date_installer_confirms_receipt_of_work__c}"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.initial_customer_contact_response__c}"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.Escalation_Date_Time1__c}"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.Escalation_Date_Time__c}"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.Readiness_Questions_Completed__c}"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.Installer_approves_pre_installation_chec__c"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.installation_scheduled_for_date_time__c"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.Installation_validation_complete_Summ__c"></apex:outputText>
+      <apex:outputText value="{!WorkOrder__c.Post_installation_Report_attached__c"></apex:outputText>
+
+       -->
+      
+        <apex:panelGrid columns="9" id="theGrid">
+            <apex:panelGroup id="theGroup1-Active" rendered="{!NOT(ISNUll(WorkOrder__c.Date_installer_confirms_receipt_of_work__c))}">
+                <table class="bread-table" ><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Installer Confirm Receipt of w/o </b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup1-Inactive" rendered="{!ISNUll(WorkOrder__c.Date_installer_confirms_receipt_of_work__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive"><b>Installer Confirm Receipt of w/o </b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup2-Active" rendered="{!NOT(ISNUll(WorkOrder__c.initial_customer_contact_response__c))}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Initial Customer Contact </b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup2-Inactive" rendered="{!ISNUll(WorkOrder__c.initial_customer_contact_response__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive"><b>Initial Customer Contact</b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table>
+            </apex:panelGroup>
+            
+            <apex:panelGroup id="theGroup3-Active" rendered="{!NOT(ISNUll(WorkOrder__c.Escalation_1_Reason__c)) && WorkOrder__c.Escalation_closed1__c}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Escalation Phase Status #1</b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup3-Inactive" rendered="{!ISNUll(WorkOrder__c.Escalation_1_Reason__c)&& NOT(WorkOrder__c.Escalation_closed1__c)}">
+                <table class="bread-table" ><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive" ><b>Escalation Phase Status #1</b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup3-Escalate" rendered="{!NOT(ISNUll(WorkOrder__c.Escalation_1_Reason__c)) && NOT(WorkOrder__c.Escalation_closed1__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before"></td>
+                    <td class="bread"><b>Escalation Phase Status #1</b></td>
+                    <td class="bread-after"></td>
+                </tr></table>
+            </apex:panelGroup>
+
+            <apex:panelGroup id="theGroup4-Active" rendered="{!NOT(ISNUll(WorkOrder__c.Escalation_2_Reason__c)) && WorkOrder__c.Escalation_closed2__c}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Escalation Phase Status #2 </b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup4-Inactive" rendered="{!ISNUll(WorkOrder__c.Escalation_2_Reason__c) && NOT(WorkOrder__c.Escalation_closed2__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive"><b>Escalation Phase Status #2</b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup4-Escalate" rendered="{!NOT(ISNUll(WorkOrder__c.Escalation_2_Reason__c)) && NOT(WorkOrder__c.Escalation_closed2__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before"></td>
+                    <td class="bread"><b>Escalation Phase Status #2 </b></td>
+                    <td class="bread-after"></td>
+                </tr></table>
+            </apex:panelGroup>        
+            <apex:panelGroup id="theGroup6-Active" rendered="{!NOT(ISNUll(WorkOrder__c.Installer_approves_pre_installation_chec__c))}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Installer approves pre-install checklist </b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup6-Inactive" rendered="{!ISNUll(WorkOrder__c.Installer_approves_pre_installation_chec__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive"><b>Installer approves pre-install checklist </b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table> 
+                </apex:panelGroup>
+                <apex:panelGroup id="theGroup7-Active" rendered="{!NOT(ISNUll(WorkOrder__c.installation_scheduled_for_date_time__c))}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Installation scheduled </b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup7-Inactive" rendered="{!ISNUll(WorkOrder__c.installation_scheduled_for_date_time__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive"><b>Installation scheduled </b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table>
+                </apex:panelGroup> 
+                <apex:panelGroup id="theGroup8-Active" rendered="{!NOT(ISNUll(WorkOrder__c.Installation_validation_complete_Summ__c))}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Installation and validation complete  </b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup8-Inactive" rendered="{!ISNUll(WorkOrder__c.Installation_validation_complete_Summ__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive"><b>Installation and validation complete  </b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table> 
+                </apex:panelGroup>
+                <apex:panelGroup id="theGroup9-Active" rendered="{!NOT(ISNUll(WorkOrder__c.Post_installation_Report_attached__c))}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-active"></td>
+                    <td class="bread-active"><b>Post installation report attached</b></td>
+                    <td class="bread-after-active"></td>
+                </tr></table>
+            </apex:panelGroup>
+            <apex:panelGroup id="theGroup9-Inactive" rendered="{!ISNUll(WorkOrder__c.Post_installation_Report_attached__c)}">
+                <table class="bread-table"><tr>
+                    <td class="bread-before-inactive"></td>
+                    <td class="bread-inactive"><b>Post installation report attached</b></td>
+                    <td class="bread-after-inactive"></td>
+                </tr></table>
+                </apex:panelGroup> 
+        </apex:panelGrid>
+    </apex:form>
+</apex:page>

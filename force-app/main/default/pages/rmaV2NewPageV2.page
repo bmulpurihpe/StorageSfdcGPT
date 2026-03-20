@@ -1,0 +1,1498 @@
+<apex:page standardcontroller="RMAv2__c" id="Page" extensions="rmav2ExtensionsWithSharingNewV2">
+    <style>
+        .panelColumn1 {
+        width: 215px;
+        }
+        .panelColumn2 {
+        width: 400px;
+        }
+        .tab-container {
+        width: 100%; 
+        }
+        
+    </style>
+
+    <style>
+        .popup {
+        position: relative;
+        z-index: 1;
+        display: none;
+        background-color: #f9f9f9;
+        width: 700px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        }
+    </style>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>    
+        $(document).ready(function() {
+        // Your function call here
+        displayNote();
+    });
+    function showPopup(event) {
+        var optionValue = document.getElementById('Page:myForm:pageBlockID:ComponentReloadId:reasonSection:reasonValue').options;
+        var mapValues = {!stringReasonWithToolTipMap};
+        var popupString='<table><tr><td><b>Reason</b></td><td><b>Description</b></td></tr>';
+        
+        for(i=0;i<optionValue.length;i++){
+            var value = mapValues[optionValue[i].text];
+            if(value!= undefined){
+                //                popupString = popupString + '<em>' + optionValue[i].text + '</em>&nbsp;&nbsp;-&nbsp;&nbsp;' + value + '<br/>';
+                popupString = popupString + '<tr><td>' + optionValue[i].text + '</td><td>' + value + '</td></tr>';                
+            }
+            else if(optionValue[i].text != '--None--'){
+                popupString = popupString + '<tr><td>' + optionValue[i].text + '</td><td>' + '-' + '</td></tr>';
+            }
+        }
+        popupString+='</table>';
+        var inputField = event.target;
+        var popup = document.createElement('div');
+        popup.className = 'popup';
+        popup.innerHTML = popupString;
+        //        popup.innerHTML = '<em>Reason</em>  -  Description<br/><b>----------------------------</b><br/>'+popupString;
+        inputField.parentNode.appendChild(popup);
+        var inputWidth = document.getElementById('Page:myForm:pageBlockID:ComponentReloadId:reasonSection:reasonValue').offsetWidth;
+        // console.log(inputWidth+10)
+        popup.style.left = inputWidth+10+'px';
+        popup.style.top ='35px';
+        
+        popup.style.position ='absolute';
+        popup.style.display = 'block';
+    }
+    
+    function hidePopup() {
+        var popup = document.getElementsByClassName('popup')[0];
+        popup.parentNode.removeChild(popup);
+    }
+    function displayNote(){
+        var indexValue = document.getElementById('Page:myForm:pageBlockID:ComponentReloadId:reasonSection:reasonValue').selectedIndex;
+        var reasonValue = document.getElementById('Page:myForm:pageBlockID:ComponentReloadId:reasonSection:reasonValue').options[indexValue].text;
+        // console.log('reasonValue = '+reasonValue);
+        var mapValues = {!stringReasonWithToolTipMap};
+        // console.log(mapValues);
+        var key = reasonValue;
+        var value = mapValues[key];
+        //  console.log('Value for ' + key + ': ' + value);
+        if(reasonValue != '' && value != undefined){
+            var unHide = document.getElementById('Page:myForm:pageBlockID:ComponentReloadId:reasonSection:displayPanel');
+            unHide.style.display='';
+            document.getElementById("name").innerHTML = value;
+        }
+        else{
+            var unHide = document.getElementById('Page:myForm:pageBlockID:ComponentReloadId:reasonSection:displayPanel');
+            unHide.style.display='None';
+        }
+    }
+    function initMap() {}
+    (function() {
+        try {
+            var s = document.createElement('style');
+            s.innerHTML = "html,html body{overflow: auto;-webkit-overflow-scrolling:touch;}body{position:absolute;left:0;right:0;top:0;bottom:0;}";
+            document.getElementsByTagName('head')[0].appendChild(s);
+        } catch (e) {}
+    })();
+
+    </script>   
+    
+    <script> function setFocusOnLoad() {} </script>
+    
+    <script type="text/javascript">
+        
+        
+        $(document).ready(function() {         
+        var componentType = document.getElementById('Page:myForm:pageBlockID:ComponentReloadId:componentTypeId');  
+        $(componentType).attr("disabled","disabled");
+        
+        var overrideAccountName = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideAccountNameId');
+        if(overrideAccountName.value != '')
+        {
+            document.getElementById('divAccountNameId').innerText = overrideAccountName.value;
+            document.getElementById('divAccountNameId').style.color = 'blue';
+        }
+        
+        var overrideStreet1 = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideStreet1Id');
+        if(overrideStreet1.value != '')
+        {
+            document.getElementById('divStreet1Id').innerText = overrideStreet1.value;
+            document.getElementById('divStreet1Id').style.color = 'blue';
+        }
+        
+        var overrideStreet2 = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideStreet2Id');
+        if(overrideStreet2.value != '')
+        {
+            document.getElementById('divStreet2Id').innerText = overrideStreet2.value;
+            document.getElementById('divStreet2Id').style.color = 'blue';
+        }
+        
+        var overrideCity = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideCityId');
+        if(overrideCity.value != '')
+        {
+            document.getElementById('divCityId').innerText = overrideCity.value + ', ';
+            document.getElementById('divCityId').style.color = 'blue';
+        }
+        
+        var overrideState = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideStateId');
+        if(overrideState.value != '')
+        {
+            document.getElementById('divStateId').innerText = overrideState.value;
+            document.getElementById('divStateId').style.color = 'blue';
+        }
+        
+        var overridePostalCode = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overridePostalCodeId');
+        if(overridePostalCode.value != '')
+        {
+            document.getElementById('divPostalCodeId').innerText = overridePostalCode.value;
+            document.getElementById('divPostalCodeId').style.color = 'blue';
+        }
+        
+        var overrideCountry = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideCountryId');
+        if(overrideCountry.value != '')
+        {
+            document.getElementById('divCountryId').innerText = overrideCountry.value;
+            document.getElementById('divCountryId').style.color = 'blue';
+        }
+        
+        var overrideAttn = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideAttnId');
+        if(overrideAttn.value != '')
+        {
+            document.getElementById('divAssetContactId').innerText = 'Attn: ' +  overrideAttn.value;
+            document.getElementById('divAssetContactId').style.color = 'blue';
+        }
+        
+        var overridePhone = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overridePhoneId');
+        if(overridePhone.value != '')
+        {
+            document.getElementById('divContactPhoneId').innerText = 'Contact Phone: ' + overridePhone.value;
+            document.getElementById('divContactPhoneId').style.color = 'blue';
+        }
+        
+        var overrideEmail = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideEmailId');
+        if(overrideEmail.value != '')
+        {
+            document.getElementById('divContactEmailId').innerText = 'Contact Email: ' + overrideEmail.value;
+            document.getElementById('divContactEmailId').style.color = 'blue';
+        }
+        // var deliveryDate = document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:SLAUpliftSectionItemId:SLADeliveryDateId');
+        <!-- $(deliveryDate).next().remove() -->
+            //    $(deliveryDate).parent().find('.dateFormat').remove();
+            
+            var assetDateTime = document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDateTimeId');
+        $(assetDateTime).parent().find('.dateFormat').remove();
+        
+        setAssetTimeZoneFieldsReadOnly();
+        getAssetLocalDateTime();
+        SLAOnChange();
+    });
+    
+    function getAssetLocalDateTime() {
+        
+        
+        //alert('onchange of addressbook fired');
+        
+        var rmaStatus = '{!RMAv2__c.rmaStatus__c}';
+        
+        /*if(rmaStatus == 'Draft' || rmaStatus == '')
+            {*/
+        
+        var overrideCountry = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overrideCountryId').value;
+        
+        var actualCountry = document.getElementById('divCountryId').innerText;
+        
+        var overridePostalCode = document.getElementById('Page:myForm:pageBlockID:rmaShipmentAddressId:overridePostalCodeId').value;
+        var actualPostalCode = document.getElementById('divPostalCodeId').innerText;
+        
+        
+        if ((overrideCountry == '' && actualCountry == '') || (overridePostalCode == '' && actualPostalCode == '')) {
+            resetAssetTimeZoneFields();
+            return;
+        }
+        
+        
+        if (overrideCountry != '')
+            searchCountry = overrideCountry;
+        else
+            searchCountry = actualCountry;
+        
+        if (overridePostalCode != '')
+            searchPostalCode = overridePostalCode;
+        else
+            searchPostalCode = actualPostalCode;
+        
+        
+        
+        if(searchCountry.toUpperCase() == 'Serbia and Montenegro'.toUpperCase())
+            searchCountry = 'Serbia';
+        
+        
+        findAssetGeoLocationWithCountryandPostalCode();
+        // }
+        
+    }
+    /*TS-7467 --- START --- 
+    July 13, 2020 Find the Latitude and Longitude based on the Country/Postal Code */
+    function findAssetGeoLocationWithCountryandPostalCode() {   
+        
+        if(searchPostalCode != null  && searchCountry != null && searchPostalCode != "" && searchCountry != "" && searchPostalCode != '' && searchCountry != '')
+        {
+            getlatlongMappedFunctionwithcountry(searchCountry+','+searchPostalCode);
+        }
+        else
+        { 
+            getlatlongMappedFunctionwithcountry(searchCountry);
+        }        
+    }
+    //July 13, 2020 Find the Asset local Date and Time based on the captured Latitude and Longitude.
+    function latlongCalculationCompleted(Latitude,Longitude){
+        if (Latitude != null && Longitude != null && Latitude != "" && Longitude != "" ) 
+        {
+            getTimezonetMappedFunction(Latitude, Longitude,getTimeStamp(new Date().getTime())); 
+        }else
+        {
+            resetAssetTimeZoneFields();
+        }                         
+    }
+    
+    //TS-7467--- END --- 
+    
+    function timezoneCalculationCompleted(rawOffset,dstOffset,timeZoneName,Latitude,Longitude){        
+        if (dstOffset != null && rawOffset != null && dstOffset != "" && rawOffset != "" ) {                                        
+            var currentDate = new Date();
+            var assetUTCDate = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(),
+                                                 currentDate.getUTCHours(), currentDate.getUTCMinutes(), currentDate.getUTCSeconds(), currentDate.getUTCMilliseconds()));
+            
+            assetUTCDate = assetUTCDate.addSeconds((parseInt(rawOffset) + parseInt(dstOffset)));
+            
+            actualUTCDateWithoutNearestHalfTime = assetUTCDate;
+            actualdatestring =  actualUTCDateWithoutNearestHalfTime.toGMTString();
+            actualdatestring = convertGMTStringToReadableFormat(actualdatestring);
+            
+            assetUTCDate = correctDateToNearestHalfHour(assetUTCDate);
+            assetdateString = assetUTCDate.toGMTString();
+            assetdateString = convertGMTStringToReadableFormat(assetdateString);
+            
+            /*alert(assetdateString);
+                        
+                        var time = assetdateString.substr(assetdateString.indexOf(' ')+1);
+                        var hour = time.substr(0,time.indexOf(':'));
+                        var inteHour = parseInt(hour);
+                        var fourHouradd = inteHour+4;
+                         
+                        var select = document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:SLAUpliftSectionItemId:deliveryTimeSelectList');
+                        
+                        for (var i =fourHouradd ; i<=24; i++){
+                            var opt = document.createElement('option');
+                            opt.value = i+':00';
+                            opt.innerHTML = i+':00';
+                            select.appendChild(opt);
+                        }
+                        */
+            var dateArr = assetdateString.split(":");
+            assetdateString = dateArr[0].replace("00","12")+":"+dateArr[1];
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDateTimeId').value = assetdateString;
+            
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetActualDateTimeId').value = actualdatestring;
+            
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetLatitudeId').value = Latitude;
+            
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetLongitudeId').value = Longitude;
+            
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetActualOffsetId').value = parseInt(rawOffset) + ' (' + parseInt(rawOffset) / 3600 + ' hours)';
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDstOffsetId').value = parseInt(dstOffset) + ' (' + parseInt(dstOffset) / 3600 + ' hours)';
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetTimeZoneNameId').value = timeZoneName;                                
+        }
+        else {
+            resetAssetTimeZoneFields();
+            
+        }
+    }
+    
+    function setAssetTimeZoneFieldsReadOnly() {
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDateTimeId').readOnly = true;         
+        $(document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDateTimeId')).removeAttr("onfocus"); 
+        
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetActualDateTimeId').readOnly = true;
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetLatitudeId').readOnly = true;
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetLongitudeId').readOnly = true;
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetActualOffsetId').readOnly = true;
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDstOffsetId').readOnly = true;
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetTimeZoneNameId').readOnly = true;
+    }
+    
+    function resetAssetTimeZoneFields() {
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDateTimeId').value = '';
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetActualDateTimeId').value = '';
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetLatitudeId').value = '';
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetLongitudeId').value = '';
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetActualOffsetId').value = '';
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetDstOffsetId').value = '';
+        document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:AssetTimeZoneNameId').value = '';
+    }
+    
+    
+    function getTimeStamp(time) {
+        return Math.round(time / 1000);
+    }
+    
+    function correctDateToNearestHalfHour(utcDate) {
+        
+        var min = utcDate.getMinutes();
+        var h = utcDate.getHours();
+        
+        utcDate.setMinutes(0);
+        
+        if (min < 30)
+            utcDate.setMinutes(30);
+        else if (min <= 60)
+            utcDate.setMinutes(60);
+        
+        return utcDate;
+    }
+    
+    Date.prototype.addSeconds = function(s) {
+        this.setSeconds(this.getSeconds() + s);
+        return this;
+    }
+    
+    function convertGMTStringToReadableFormat(GMTTimeString) {
+        
+        var t = GMTTimeString.match(/[\d\w]+/g);
+        var months = {
+            jan: '1',
+            feb: '2',
+            mar: '3',
+            apr: '4',
+            may: '5',
+            jun: '6',
+            jul: '7',
+            aug: '8',
+            sep: '9',
+            oct: '10',
+            nov: '11',
+            dec: '12'
+        };
+        
+        function pad(n) {
+            return (n < 10 ? '0' : '') + +n;
+        }
+        
+        function meridiem() {
+            if (t[4] >= 12)
+                return 'PM';
+            else
+                return 'AM';
+        }
+        
+        function correctTo12HoursFormat() {
+            var hrs = t[4] % 12;
+            if (t[4] == 12)
+                hrs = 12;
+            return pad(hrs);
+        }
+        
+        return months[t[2].toLowerCase()] + '/' + t[1] + '/' + t[3] + ' ' +
+            correctTo12HoursFormat() + ':' + pad(t[5]) + ' ' + meridiem();
+        
+    }
+    
+    function OnAddressBookChangeComplete() {  
+        getAssetLocalDateTime();
+    }
+    function onAssetChangeComplete() { 
+        getAssetLocalDateTime();
+    }
+    
+    
+    function onCaseNumberChange() {
+        caseNumberParam();
+    }
+    
+    function onDiskShelfChange() {
+        diskShelfParam();
+    }
+    
+    
+    function overrideShipmentLabelDetail(currentOverrideFieldId, currentShipmentLabelFieldId,currentFieldTag,oldShipmentFieldValue){
+        var fieldToOveride = document.getElementById(currentShipmentLabelFieldId);   
+        var overidenFieldValue = document.getElementById(currentOverrideFieldId);
+        
+        if(overidenFieldValue.value == '')
+        { 
+            fieldToOveride.innerText = oldShipmentFieldValue;
+            fieldToOveride.style.color = 'black';
+        }
+        else
+        {
+            if(overidenFieldValue.value != oldShipmentFieldValue)
+            {
+                if(currentOverrideFieldId == 'Page:myForm:pageBlockID:rmaShipmentAddressId:overrideCityId')
+                    fieldToOveride.innerText = currentFieldTag + overidenFieldValue.value + ', ';
+                else
+                    fieldToOveride.innerText = currentFieldTag + overidenFieldValue.value;
+                
+                fieldToOveride.style.color = 'blue';
+            }
+            else
+            {
+                fieldToOveride.innerText = oldShipmentFieldValue;
+                fieldToOveride.style.color = 'black';
+            }
+        }
+        getAssetLocalDateTime();
+        if(currentShipmentLabelFieldId == 'divCountryId'){
+            caseOverrideCountry();
+        }
+    }
+    
+    
+    function onFaRequiredChange()
+    {
+        var faRequired = document.getElementById('Page:myForm:pageBlockID:generalInfo:faRequiredId').value;
+        actionFaRequiredOnChange(faRequired);
+    }
+    function OutgoingShipmentOnChange(){
+        var outgoingshipmentstatus = document.getElementById('Page:myForm:pageBlockID:OutgoingShipmentBlock:rmaOutgoingShipmentStatus').value;
+        actionOutgoingShipmentOnchange(outgoingshipmentstatus);
+    }
+    function SLAOnChange(){
+        var sla = document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:rmaUpliftId').value;
+        var serviceCodeElement  = document.getElementById('Page:myForm:pageBlockID:OnsiteServiceCodeSectionId:OverrideOnsiteSchedulingCodeId');
+        var serviceCode = serviceCodeElement ? serviceCodeElement.value : '';
+        
+        if(sla != 'Scheduled' && sla != 'Pickup Order' && !serviceCode.includes('SCHEDULED-10')){
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:SLAUpliftSectionItemId:SLADeliveryDateId').disabled = true;
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:SLAUpliftSectionItemId:SLADeliveryTimeId').disabled = true;
+        }
+        else if(sla == 'Scheduled' || sla == 'Pickup Order' || serviceCode.includes('SCHEDULED-10')){
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:SLAUpliftSectionItemId:SLADeliveryDateId').disabled = false;
+            document.getElementById('Page:myForm:pageBlockID:SLAUpliftSectionId:SLAUpliftSectionItemId:SLADeliveryTimeId').disabled = false;
+        }
+    }
+    
+    var assetName;
+    function switchMenu(obj,obj1,obj2) 
+    {
+        var el = document.getElementById(obj);                                       
+        if ( el.style.display != 'none' ) {
+            el.style.display = 'none';
+        }
+        else {
+            el.style.display = '';
+        }
+        var e2 = document.getElementById(obj1);                                       
+        if ( e2.style.display != 'none' ) {
+            e2.style.display = 'none';
+        }
+        else {
+            e2.style.display = '';
+        }
+        var e3 = document.getElementById(obj2);                                       
+        if ( e2.style.display != 'none' ) {
+            e3.style.display = 'none';
+        }
+        else {
+            e3.style.display = '';
+        }
+        
+    }
+    
+    function onCheckboxChange(elem,selectionClass,identity,identityValue,assetToProcess,componentType,srPart){
+        // displayNote();
+        var elems = document.getElementsByClassName(selectionClass);
+        var currentState = elem.checked;
+        var elemsLength = elems.length;
+        for(i=0; i<elemsLength; i++)
+        {
+            if(elems[i].type === "checkbox")
+            {
+                elems[i].checked = false;   
+            }
+        }
+        
+        elem.checked = currentState;
+        
+        disableCheckboxesBasedOnPart(selectionClass);
+        
+        
+        if(assetToProcess == 'Spares or Upgrades')
+        {
+            identity = assetToProcess;
+        }
+        
+        
+        if(assetName != assetToProcess || currentState == false)
+        {
+            onAssetChange(identity,identityValue,assetToProcess,currentState,componentType,srPart);
+            assetName = assetToProcess;
+        }
+        else
+        {
+            onComponentTypeChange(identity,identityValue,assetToProcess,currentState,componentType,srPart);
+        }
+        
+    }
+    
+    
+    function disableCheckboxesBasedOnPart(selectionClass)
+    {
+        if(selectionClass == 'componentSelectionClass' )
+        {
+            selectionClass = 'assetSelectionClass';
+        }
+        else if(selectionClass  == 'assetSelectionClass')
+        {
+            selectionClass = 'componentSelectionClass';
+        }
+        
+        var elems = document.getElementsByClassName(selectionClass);
+        var elemsLength = elems.length;
+        
+        for(i=0; i<elemsLength; i++)
+        {
+            if(elems[i].type === "checkbox" && elems[i].checked === true)
+            {
+                elems[i].checked = false;   
+            }
+        }
+    }
+    
+    //	Added By Exafort for TS-10592    
+    /*
+		This Logic is to hide the value 'System/part return' in the rmaType__c Picklist field for All the Profiles except 'NS-BusinessAdmin Support' on edit page.
+        If the NSBusinessAdminSupportProfile is Null then 'System/part return' will not be hiden.
+    */
+    document.addEventListener('DOMContentLoaded', function() {
+        var currentUserProfileId = '{!$User.ProfileId}';
+        var NSBusinessAdminSupportProfile = '{!NSBusinessAdminSupportProfileId}'; 
+        var currentRmaType = '{!RMAv2__c.rmaType__c}';
+        // Get the picklist field values
+        var rmaTypeValues = document.getElementById('Page:myForm:pageBlockID:generalInfo:rmaTypeId');
+        if (rmaTypeValues) {
+            // Loop through the options and hide the System/part return for user's profile not equal to NS-BusinessAdmin Support
+            for (var i = 0; i < rmaTypeValues.options.length; i++) {
+                if (rmaTypeValues.options[i].text == 'System/part return' && NSBusinessAdminSupportProfile != '' && NSBusinessAdminSupportProfile != currentUserProfileId && currentRmaType != 'System/part return') {
+                    rmaTypeValues.remove(i);
+                }
+            }
+        }
+    });
+    //	End of TS-10592
+    // Added by Exafort for SFDC-2058
+    function fixDoubleQuotes() {
+        var errorElements = document.getElementsByClassName("errorMsg");
+        for (var i = 0; i < errorElements.length; i++) {
+            // Decode HTML entities using a textarea
+            var txt = document.createElement("textarea");
+            txt.innerHTML = errorElements[i].innerHTML;
+            var decoded = txt.value;
+            // Replace smart quotes “ and ” with normal "
+            decoded = decoded.replace(/[“”]/g, '"');
+            // Update the error message
+            errorElements[i].innerHTML = decoded;
+        }
+    }
+    // End for SFDC-2058
+    // Added by Exafort for SFDC-2058 for Page scroll up Issue
+    function scrollToTopAnchor() {
+        var anchor = document.getElementById("topOfPage");
+        if(anchor){
+            // Scroll the anchor into view
+            anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+    // End for SFDC-2058
+    // Added by Exfort SFDC-2108
+    // If Asset NRD or CDMR is in effect, hide the picklist value "LEAVE-WITH-PART-10: FE must leave with part
+    // and ship it back" from the Override Onsite Part Disposition Code field.
+    document.addEventListener("DOMContentLoaded", function() {
+        var nrdValue = "{!RMAv2__c.rmaAssetNrdIsInEffect__c}";
+        var cmdrValue = "{!RMAv2__c.rmaAssetCDMRIsInEffect__c}";
+        if (nrdValue === "Yes" || cmdrValue === "Yes") {
+            var selectElement = document.getElementById('Page:myForm:pageBlockID:OnsiteServiceCodeSectionId:dispField');
+            if (selectElement) {
+                for (var i = 0; i < selectElement.options.length; i++) {
+                    if (selectElement.options[i].value === "LEAVE-WITH-PART-10: FE must leave with part and ship it back") {
+                        selectElement.remove(i);
+                        break;
+                    }
+                }
+            }
+        }
+    });
+    // End for Exfort SFDC-2108
+    </script>
+    
+    <style type="text/css"> 
+        .radioOptionClass
+        {
+        color:#4a4a56;
+        }
+        
+        @-moz-document url-prefix(){
+        #Page\:myForm\:pageBlockID\:OutgoingShipmentBlock\:j_id267\:rmaCancelLabel{
+        -moz-margin-start: 16px;
+        }
+        }
+        
+        #Page\:myForm\:pageBlockID\:OutgoingShipmentBlock\:editableBlock
+        {
+        width:161%;
+        }
+        #Page\:myForm\:pageBlockID\:OutgoingShipmentBlock\:editableBlock1
+        {
+        width:161%;
+        }
+        
+    </style>
+    
+    <a id="topOfPage"></a>
+    <apex:sectionheader title="{!$ObjectType.RMAv2__c.label} Edit" subtitle="{!IF(ISNULL(RMAv2__c.Name), 'New RMAv2',RMAv2__c.Name)}"/>
+    <apex:form id="myForm" >
+        <!--Added by vishnu for TS-6426-->
+        <apex:outputfield value="{!RMAv2__c.rmaAssetNimbleVersion__c}" rendered="false"/>
+        <apex:outputfield value="{!RMAv2__c.rmaCaseNimbleVersion__c}" rendered="false"/>
+        <apex:outputfield value="{!RMAv2__c.China_Global_Account_RMA__c}" rendered="false"/>
+        
+        <apex:pageMessages id="PM2" escape="false"/>
+        
+        <apex:pageblock id="pageBlockID" mode="edit" title="{!$ObjectType.RMAv2__c.label} Edit">
+            <apex:pageblockbuttons >
+                <apex:commandButton action="{!saveRMA}"  id="saveRMAButton" value="Save" rerender="PM2,myForm"  oncomplete="fixDoubleQuotes(); scrollToTopAnchor(); " /> <!--Added by Exafort for SFDC-2058 rerender and oncomplete-->
+                <apex:commandbutton value="Cancel" action="{!Cancel}"/>
+            </apex:pageblockbuttons>
+            
+            <apex:outputpanel >
+                
+                <apex:actionRegion >
+                    <apex:actionFunction name="reloadReturnSections" reRender="returnShipmentPanelId"/>
+                    <apex:pageblocksection id="generalInfo" title="General Information Section" showheader="true" columns="2">
+                        <apex:inputfield value="{!RMAv2__c.rmaType__c}" required="true" id="rmaTypeId"/>
+                        
+                        <apex:outputfield value="{!RMAv2__c.rmaStatus__c}" />
+                        <apex:pageblocksectionitem />          
+                        <apex:inputField value="{!RMAv2__c.rmaCaseNumber__c}" onchange="onCaseNumberChange();" id="caseNumValue">
+                            <apex:actionFunction name="caseNumberParam" oncomplete="onAssetChangeComplete()" action="{!caseOnChange}" reRender="srMetaDataInformationId,addressSelectionId,rmaShipmentAddressId,rmaDiskShelfAssetID,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,componentInformationId,returnShipmentPanelId,outPanelEFASource,outPanelNimbleOsVersion,hideorShowSectionsVariablesId,OutgoingShipmentBlock" status="loadingViewActionStatus"> 
+                            </apex:actionFunction>
+                        </apex:inputField>
+                        <apex:inputField value="{!RMAv2__c.rmaFaRequired__c}" id="faRequiredId" onchange="onFaRequiredChange()"  required="true" >
+                            <apex:actionFunction name="actionFaRequiredOnChange" immediate="true" action="{!faRequiredOnChange}" reRender="outPanelEFAPriority">
+                                <apex:param name="rmaFaRequired" value="" />
+                            </apex:actionFunction>
+                        </apex:inputField>
+                    </apex:pageblocksection>
+                    
+                    
+                    <apex:outputPanel id="outPanelEFAPriority">
+                        <apex:outputPanel rendered="{!IF(shownEFAPriority == true,true,false)}">  
+                            <apex:pageBlockSection showheader="false" columns="2">                                   
+                                <apex:inputField id="rmaEFAPriorityId" value="{!RMAv2__c.rmaEFAPriority__c}" required="true" />                             
+                            </apex:pageBlockSection>
+                        </apex:outputPanel>
+                    </apex:outputPanel> 
+                    
+                    <apex:outputPanel id="outPanelAutoEFAOverrrie"> 
+                        <apex:pageBlockSection showheader="false" columns="2">                                                                                     
+                            <apex:inputfield value="{!RMAv2__c.rmaAutoEFAoverride__c}"/> 
+                        </apex:pageBlockSection>            
+                    </apex:outputPanel>
+                    
+                    <apex:outputPanel id="outPanelEFASource">
+                        <apex:pageBlockSection showheader="false" columns="2">                                   
+                            <apex:inputField id="rmaEFASourceId" value="{!RMAv2__c.rmaEFASource__c}" required="false">  
+                                <apex:actionSupport event="onchange" action="{!onEFASourceChange}" reRender="dummySection"/>
+                            </apex:inputField>                        
+                        </apex:pageBlockSection>
+                    </apex:outputPanel> 
+                    <apex:outputPanel id="outPanelNimbleOsVersion"> 
+                        <apex:pageBlockSection showheader="false" columns="2">                                                                                     
+                            <apex:outputField value="{!RMAv2__c.rmaNimbleOSVersionForSubstitution__c}" />                                     
+                        </apex:pageBlockSection>            
+                    </apex:outputPanel>
+                    
+                    <!--CFA onchange render FA to Ops FA -- changed on 22/04/2016-->            
+                    <apex:actionRegion >                         
+                        <apex:pageBlockSection showheader="false" columns="2">
+                            <apex:inputfield value="{!RMAv2__c.rmaCustomerFaRequired__c}" required="false">
+                                <apex:actionSupport event="onchange" action="{!CFAOnChange}" reRender="faRequiredId"/>
+                            </apex:inputfield>
+                        </apex:pageBlockSection>                           
+                    </apex:actionRegion>
+                    <apex:pageblocksection showheader="false" columns="2">   
+                        
+                        <!--<apex:inputfield value="{!RMAv2__c.rmaCustomerFaRequired__c}" required="false"/>-->
+                        <apex:outputfield value="{!RMAv2__c.rmaDateTimeOpened__c}"/>
+                        <apex:inputfield value="{!RMAv2__c.rmaRcaCompleted__c}" required="false"/>
+                        <apex:outputfield value="{!RMAv2__c.rmaDateTimeClosed__c}" />
+                        <apex:inputfield value="{!RMAv2__c.rmaReturnTo__c}" required="false"/>
+                        <apex:outputfield value="{!RMAv2__c.rmaDateTimeCanceled__c}" />    
+                        <!--<apex:pageblocksectionitem />   
+<!--<apex:pageblocksectionitem />-->
+                        <apex:inputfield value="{!RMAv2__c.rmaByPassSRPartMinOSvalidation__c}" required="false"/><!--Added by vishnu for TS-6426-->
+                        <apex:pageblocksectionitem />
+                        <apex:inputfield value="{!RMAv2__c.rmaExcludeFromOpsMetrics__c}" required="false"/>
+                    </apex:pageblocksection>
+                </apex:actionRegion>
+                
+                <apex:actionRegion >
+                    <apex:pageblocksection id="hideorShowSectionsVariablesId" title="Show or Hide Sections Variables" showheader="false" columns="2">            
+                        <apex:inputField value="{!RMAv2__c.rmaShowOnSiteSectionsAlways__c}" required="false">
+                            <apex:actionSupport event="onchange" action="{!showOnSiteSectionOnChange}" reRender="OnSiteSectionID"/>
+                        </apex:inputField>
+                        <!--<apex:inputField value="{!RMAv2__c.rmaCSATCheckbox__c}" />-->
+                        <apex:pageBlockSectionItem />
+                        <apex:inputField value="{!RMAv2__c.rmaShowReturnSectionsAlways__c}" required="false">
+                            <apex:actionSupport event="onchange" action="{!showReturnSectionOnChange}" reRender="returnShipmentPanelId"/>
+                        </apex:inputField>
+                        <apex:pageBlockSectionItem />
+                        <!--<apex:inputField value="{!RMAv2__c.rmaCSATText__c}"/>-->
+                    </apex:pageblocksection>
+                </apex:actionRegion> 
+                
+                
+                <apex:pageblocksection id="partSelectionSectionId" title="Part Selection Section (WHAT)" showheader="true" columns="1"/>
+                 
+                <apex:actionRegion >
+                    
+                    <apex:pageBlockSection >
+                        <apex:pageblockSectionItem >
+                            <apex:selectRadio style="font-size: 91%;text-align:right;font-weight: bold;color:#333;" enabledClass="radioOptionClass"  value="{!partScreenSelection}"  id="theRadio" >
+                                <apex:selectOption itemValue="Component View" itemlabel="Component View"/>
+                                <apex:selectOption itemValue="Flat List View" itemlabel="Flat List View"/>
+                                <apex:actionSupport event="onchange" 
+                                                    action="{!onPartSelectionViewChange}" oncomplete="displayNote();" 
+                                                    reRender="partScreenSelectionId,addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,ComponentReloadId,SLAUpliftSectionId,ComponentReloadId3" status="loadingViewActionStatus"/>
+                            </apex:selectRadio>
+                        </apex:pageblockSectionItem>
+                        <apex:outputLabel />
+                        <apex:actionStatus id="loadingViewActionStatus" >
+                            <apex:facet name="start" >
+                                <img src="/img/loading.gif" /> 
+                                <sub>Loading View...</sub>                   
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <apex:outputLabel />
+                        <apex:actionStatus id="loadingPageActionStatus" >
+                            <apex:facet name="start" >
+                                <img src="/img/loading.gif" /> 
+                                <sub>Loading Assets...</sub>                   
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <apex:pageblocksectionitem /> 
+                    </apex:pageBlockSection>
+                    
+                    <apex:outputPanel id="partScreenSelectionId">
+                        <apex:outputPanel id="srMetaDataInformationId" style="width :100%" rendered="{!IF(partScreenSelection == 'Flat List View',true,false)}">
+                            
+                            <!--- Added by Exafort for TS-9340 -->
+                            <!-- Added three radio buttons under flat list View to display the parts based on radio buttons selection -->
+                            <apex:selectRadio id="filteredRadio" style="width :100%; padding-left: 50px;"  layout="pageDirection"  value="{!flatListSelection}">
+                                <div style ="width:100%" >
+                                    <apex:selectOption itemValue="Based On Head and All Related Assets" itemlabel="Based On Head and All Related Assets"/>                                      
+                                    <div style="width: 25%; float:left;">
+                                        <apex:selectOption itemValue="Specified Asset Only" itemlabel="Specified Asset Only"/>
+                                    </div>
+                                    <div style="width: 75%; float:right">
+                                        <br/>
+                                        <apex:pageBlockSection columns="1" id="rmaDiskShelfAssetID">
+                                            <apex:inputField value="{!RMAv2__c.rmaDiskShelfAsset__c}" onchange="onDiskShelfChange();"  style="width:140px"  required="false">
+                                                <apex:actionFunction name="diskShelfParam" oncomplete="onAssetChangeComplete()" action="{!assetOnChange}" reRender="SrMetaDataPickList,addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,SLAUpliftSectionId" status="addressActionStatus">
+                                                </apex:actionFunction>
+                                            </apex:inputField>
+                                        </apex:pageBlockSection>
+                                    </div>
+                                    <apex:selectOption itemValue="Unfiltered" itemlabel="Unfiltered"/>
+                                </div>
+                                <apex:actionSupport event="onchange" action="{!handleRadioChange}" reRender="SrMetaDataPickList,partScreenSelectionId,addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,ComponentReloadId,SLAUpliftSectionId,ComponentReloadId3"
+                                                    status="loadingViewActionStatus2" >
+                                </apex:actionSupport>
+                            </apex:selectRadio>
+                            <apex:actionStatus id="loadingViewActionStatus2" style="margin: auto;" >
+                                <apex:facet name="start" >
+                                    <img src = "/img/loading.gif" /> 
+                                    <sub>Loading View...</sub>                   
+                                </apex:facet>
+                            </apex:actionStatus>
+                            
+                            <!-- Added end for TS-9340-->
+                            <apex:outputPanel id="SrMetaDataPickList">
+                                <apex:pageBlockSection > 
+                                    <apex:pageblockSectionItem >
+                                        <apex:outputLabel value="SR Flat List"/>
+                                        <apex:selectList size="1" value="{!RMAv2__c.rmaSrFlatList__c}"  style="width:320px"  multiselect="false">
+                                            <apex:selectOptions value="{!SrMetaDataOptions}"></apex:selectOptions>
+                                            <!--Added OnSiteSectionID in rerender vishnu on 23 Jan 2019 tS-5318-->
+                                            <apex:actionSupport event="onchange" action="{!srFlatListOnChange}" oncomplete="displayNote();" reRender="returnShipmentPanelId,outPanelEFASource,ComponentReloadId,OnSiteSectionID,SLAUpliftSectionId,ComponentReloadId3" status="returnActionStatus"/>
+                                        </apex:selectList>  
+                                    </apex:pageblockSectionItem>
+                                </apex:pageBlockSection> 
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                       
+                        <apex:outputPanel id="componentInformationId" rendered="{!IF(partScreenSelection == 'Component View',true,false)}">
+                                              
+                            <apex:pageBlocksection title="Component Information" showheader="false" columns="1">
+                                <apex:actionFunction name="onAssetChange" action="{!checkboxOnChange}" oncomplete="displayNote();"
+                                                     rerender="addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,ComponentReloadId,SLAUpliftSectionId,ComponentReloadId3" status="addressActionStatus">
+                                    <apex:param name="identity" value="" />
+                                    <apex:param name="identityValue" value="" />
+                                    <apex:param name="assetToProcess" value="" />
+                                    <apex:param name="isSelected" value="" />
+                                    <apex:param name="componentType" value="" />
+                                    <apex:param name="srPart" value="" />
+                                </apex:actionFunction>
+                                
+                                <apex:actionFunction name="onComponentTypeChange" action="{!checkboxOnChange}" oncomplete="displayNote();" rerender="returnShipmentPanelId,outPanelEFASource,SLAUpliftSectionId,ComponentReloadId,ComponentReloadId3" status="returnActionStatus">
+                                    <apex:param name="identity" value="" />
+                                    <apex:param name="identityValue" value="" />
+                                    <apex:param name="assetToProcess" value="" />
+                                    <apex:param name="isSelected" value="" />
+                                    <apex:param name="componentType" value="" />
+                                    <apex:param name="srPart" value="" />
+                                </apex:actionFunction>
+                                
+                                <apex:pageBlock id="componentButtons"> 
+                                    <apex:pageBlockTable style="width:100%" value="{!assetOuterMap1}" var="AssetNameKey" >
+                                        
+                                        <apex:column style="width:1%">
+                                            <apex:outputpanel style="display:{!IF(AssetNameKey != 'Spares or Upgrades','', 'none')}">
+                                                
+                                                <apex:outputpanel style="display:{!IF(selectedAssetForRMA == AssetNameKey,'', 'none')}">
+                                                    <apex:inputCheckbox value="{!checkedBox}" title="Select Asset for full RMA" id="assetSelectionTrue" onclick="onCheckboxChange(this,'assetSelectionClass','Asset','{!AssetNameKey}','{!AssetNameKey}','','')" styleClass="assetSelectionClass"/>
+                                                </apex:outputpanel>
+                                                
+                                                <apex:outputpanel style="display:{!IF(selectedAssetForRMA == AssetNameKey,'none', '')}" >
+                                                    <apex:inputCheckbox title="Select Asset for full RMA" id="assetSelectionTrueFalse" onclick="onCheckboxChange(this,'assetSelectionClass','Asset','{!AssetNameKey}','{!AssetNameKey}','','')" styleClass="assetSelectionClass"/>
+                                                </apex:outputpanel>
+                                                
+                                            </apex:outputpanel>
+                                        </apex:column>
+                                        
+                                        
+                                        <apex:column style="width:25%" headerValue="{!currrentAccountName}">
+                                            <apex:outputpanel id="plusimage" style="display:{!IF(assetToExpand == AssetNameKey,'none', '')}">
+                                                <table cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td style="border: none;"> <apex:image url="{!$Resource.Plus_Image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.minusimage}','{!$Component.plusimage}')" title="Expand - Asset's Component"/> </td>
+                                                        <td style="border: none;">
+                                                            
+                                                            <b><apex:outputLabel value="{!AssetNameKey}" /></b><br/>
+                                                            <apex:outputpanel style="display:{!IF(parentAssetMap[AssetNameKey] == 'E','none', '')}">
+                                                                <i><apex:outputLabel style="font-size:10.5px" value="{!parentAssetMap[AssetNameKey]}" /></i><br/>
+                                                            </apex:outputpanel>
+                                                            
+                                                            <apex:outputpanel style="display:{!IF(assetProductNameMap[AssetNameKey] == 'E','none', '')}">
+                                                                <i><apex:outputLabel style="font-size:10.5px" value="{!assetProductNameMap[AssetNameKey]}" /></i>
+                                                            </apex:outputpanel>
+                                                            
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </apex:outputpanel>
+                                            
+                                            <apex:outputpanel id="minusimage" style="display:{!IF(assetToExpand == AssetNameKey,'', 'none')}">
+                                                <table cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td style="border: none;"><apex:image url="{!$Resource.Minus_image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.plusimage}','{!$Component.minusimage}')" title="Collapse - Asset's Component"/> </td>
+                                                        <td style="border: none;">
+                                                            
+                                                            <b><apex:outputLabel value="{!AssetNameKey}" /></b><br/>
+                                                            
+                                                            <apex:outputpanel style="display:{!IF(parentAssetMap[AssetNameKey] == 'E','none', '')}">
+                                                                <i><apex:outputLabel style="font-size:10.5px" value="{!parentAssetMap[AssetNameKey]}" /></i><br/>
+                                                            </apex:outputpanel>
+                                                            
+                                                            <apex:outputpanel style="display:{!IF(assetProductNameMap[AssetNameKey] == 'E','none', '')}">
+                                                                <i><apex:outputLabel style="font-size:10.5px" value="{!assetProductNameMap[AssetNameKey]}" /></i>
+                                                            </apex:outputpanel>
+                                                            
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </apex:outputpanel>
+                                        </apex:column>
+                                        
+                                        <apex:column headerValue="" style="width:70%">
+                                            <apex:outputpanel id="inlinetablesec" style="display:{!IF(assetToExpand == AssetNameKey,'', 'none')}">
+                                                
+                                                <table border='1' cellspacing="0" cellpadding="0" style="width:100%;border-color:#e0e3e5">
+                                                    <tbody>
+                                                        
+                                                        <tr>
+                                                            <th style="width:5%;font-size: .9em;background: #f2f3f3"><b>Type</b></th>
+                                                            <th style="width:10%;font-size: .9em;background: #f2f3f3"></th>
+                                                        </tr>
+                                                        <apex:repeat value="{!assetOuterMap[AssetNameKey]}" var="ComponentType">
+                                                            <tr><td>
+                                                                <apex:outputpanel id="plusimage1" style="display:none">
+                                                                    <apex:image url="{!$Resource.Plus_Image}" onclick="switchMenu('{!$Component.inlinetablethird}','{!$Component.minusimage1}','{!$Component.plusimage1}')" title="Expand - Component's Type"/> 
+                                                                    <b><apex:outputLabel value="{!ComponentType}" /></b>
+                                                                </apex:outputpanel>
+                                                                <apex:outputpanel id="minusimage1">
+                                                                    <apex:image url="{!$Resource.Minus_image}" onclick="switchMenu('{!$Component.inlinetablethird}','{!$Component.plusimage1}','{!$Component.minusimage1}')" title="Collapse - Component's Type"/>
+                                                                    <b><apex:outputLabel value="{!ComponentType}" /></b>
+                                                                </apex:outputpanel></td>
+                                                                <td>
+                                                                    <apex:outputpanel id="inlinetablethird">
+                                                                        
+                                                                        <table border='1' cellspacing="0" cellpadding="5" style="width:100%;border-color:#e0e3e5">
+                                                                            
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <th style="width:5%;font-size: .9em;background: #f2f3f3"></th>
+                                                                                    <th style="width:25%;font-size: .9em;background: #f2f3f3"><b>Service Part Number</b></th>
+                                                                                    <th style="width:30%;font-size: .9em;background: #f2f3f3"><b>Component SN</b></th>
+                                                                                    <th style="width:25%;font-size: .9em;background: #f2f3f3"><b>Status</b></th>
+                                                                                    <th style="width:15%;font-size: .9em;background: #f2f3f3"><b>Location</b></th>
+                                                                                    
+                                                                                </tr>
+                                                                                
+                                                                                <apex:repeat value="{!assetOuterMap[AssetNameKey][ComponentType]}" var="components">
+                                                                                    <apex:repeat value="{!components}" var="allComponentRecord"> <!--TS-6880 Added repeat inside repeat to hold large number of data -->
+                                                                                        <apex:repeat value="{!allComponentRecord}" var="componentRecord">
+                                                                                            <tr>
+                                                                                                <td title="{!componentRecord.componentDescription__c}" style="font-size: 11.5px;width:5%;background-color:{!IF(CONTAINS(componentRecord.componentStatus__c,'Failed'),'#F6D3D3', IF(CONTAINS(componentRecord.componentStatus__c,'Unknown'),'#C4C0C0', ''))}">
+                                                                                                    <apex:outputpanel style="display:{!IF(selectedComponentForRMA == componentRecord.Id,'', 'none')}">
+                                                                                                        <apex:inputCheckbox value="{!checkedBox}" id="componentSelectionTrue" onclick="onCheckboxChange(this,'componentSelectionClass','Component','{!componentRecord.Id}','{!AssetNameKey}','{!componentRecord.componentType__c}','{!componentRecord.componentServicePartNumber__c}')" styleClass="componentSelectionClass"/>
+                                                                                                        
+                                                                                                    </apex:outputpanel>
+                                                                                                    <apex:outputpanel style="display:{!IF(selectedComponentForRMA == componentRecord.Id,'none', '')}" >
+                                                                                                        <apex:inputCheckbox id="componentSelectionFalse" onclick="onCheckboxChange(this,'componentSelectionClass','Component','{!componentRecord.Id}','{!AssetNameKey}','{!componentRecord.componentType__c}','{!componentRecord.componentServicePartNumber__c}')"  styleClass="componentSelectionClass"/>
+                                                                                                        
+                                                                                                    </apex:outputpanel>
+                                                                                                </td>
+                                                                                                <td title="{!componentRecord.componentDescription__c}" style="font-size: 11.5px;width:10%;background-color:{!IF(CONTAINS(componentRecord.componentStatus__c,'Failed'),'#F6D3D3', IF(CONTAINS(componentRecord.componentStatus__c,'Unknown'),'#C4C0C0', ''))}">{!componentRecord.componentServicePartNumber__c}</td>
+                                                                                                <td title="{!componentRecord.componentDescription__c}" style="font-size: 11.5px;width:10%;background-color:{!IF(CONTAINS(componentRecord.componentStatus__c,'Failed'),'#F6D3D3', IF(CONTAINS(componentRecord.componentStatus__c,'Unknown'),'#C4C0C0', ''))}">{!componentRecord.componentComponentSN__c}</td>
+                                                                                                <td title="{!componentRecord.componentDescription__c}" style="font-size: 11.5px;width:10%;background-color:{!IF(CONTAINS(componentRecord.componentStatus__c,'Failed'),'#F6D3D3', IF(CONTAINS(componentRecord.componentStatus__c,'Unknown'),'#C4C0C0', ''))}">{!componentRecord.componentStatus__c}</td>
+                                                                                                
+                                                                                                <td title="{!componentRecord.componentDescription__c}" style="font-size: 11.5px;width:10%;background-color:{!IF(CONTAINS(componentRecord.componentStatus__c,'Failed'),'#F6D3D3', IF(CONTAINS(componentRecord.componentStatus__c,'Unknown'),'#C4C0C0', ''))}">
+                                                                                                    
+                                                                                                    <apex:outputpanel style="display:{!IF((componentRecord.componentType__c == "HDD" || componentRecord.componentType__c == "SSD") ,'', 'none')}">
+                                                                                                        {!componentRecord.componentDiskShelfSlot__c}
+                                                                                                        <!--{!componentRecord.ComponentDiskLocationForRMA__c} -->
+                                                                                                    </apex:outputpanel>
+                                                                                                    <apex:outputpanel style="display:{!IF((componentRecord.componentType__c != "HDD" || componentRecord.componentType__c != "SDD") ,'', 'none')}">
+                                                                                                        {!componentRecord.componentLocation__c}
+                                                                                                    </apex:outputpanel>
+                                                                                                    
+                                                                                                    
+                                                                                                    
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </apex:repeat>
+                                                                                    </apex:repeat>
+                                                                                </apex:repeat>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        
+                                                                    </apex:outputpanel>  
+                                                                </td>   
+                                                            </tr> 
+                                                        </apex:repeat>  
+                                                    </tbody>
+                                                </table>
+                                                
+                                            </apex:outputpanel> 
+                                        </apex:column>
+                                        
+                                    </apex:pageBlockTable>
+                                    
+                                    <apex:pageblockButtons >
+                                        <apex:commandButton title="First Page" oncomplete="displayNote();" value="◄◄" rerender="componentButtons,addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,ComponentReloadId" action="{!FirstPage}" disabled="{!prev}" status="loadingPageActionStatus"/>
+                                        <apex:commandButton title="Previous Page" oncomplete="displayNote();" value="◄ Previous" rerender="componentButtons,addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,ComponentReloadId" action="{!previous}" disabled="{!prev}" status="loadingPageActionStatus"/>
+                                        <apex:commandButton title="Next Page" oncomplete="displayNote();" value="Next ►" rerender="componentButtons,addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,ComponentReloadId" action="{!next}" disabled="{!nxt}" status="loadingPageActionStatus"/>
+                                        <apex:commandButton title="Last Page" oncomplete="displayNote();" value="►►" rerender="componentButtons,addressSelectionId,rmaShipmentAddressId,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,returnShipmentPanelId,outPanelEFASource,ComponentReloadId" action="{!LastPage}" disabled="{!nxt}" status="loadingPageActionStatus"/>
+                                        
+                                        <apex:outputText style="padding-left: 70px;" value="{!PageDetails}"></apex:outputText>
+                                    </apex:pageblockButtons>
+                                </apex:pageBlock>
+                            </apex:pageBlocksection>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:actionRegion>
+                
+                <apex:pageblocksection title="RMA Reason Section (WHY)" showheader="true" columns="1" id="ComponentReloadId">
+                    <script>
+                    
+                    var componentType = document.getElementById('{!$Component.componentTypeId}');
+                    $(componentType).attr("disabled","disabled");
+                    
+                    </script>
+                    <apex:inputfield value="{!RMAv2__c.rmaComponent__c}" id="componentTypeId" required="false"/>
+                    
+                    <apex:pageBlockSectionItem id="reasonSection" >  
+                        <apex:outputLabel value="Reason" for="reasonValue" style="Width:20%;padding-left: 155px;color:#4a4a56;font-family: Arial,Helvetica,sans-serif;font-size: 10.92px;font-weight: bold;" />
+                        <apex:panelGrid columns="2" columnClasses="panelColumn1,panelColumn2">
+                            
+                            <apex:inputfield value="{!RMAv2__c.rmaReason__c}" required="true" id="reasonValue" onchange="displayNote()" onmouseover="showPopup(event)" onmouseout="hidePopup()"/>
+                            
+                            <apex:outputPanel id="displayPanel" style="Display:None;width:80%">
+                                <apex:image value="{!$Resource.Info_Icon}" style="height:20px; width:20px;"/>
+                                <span id="name"></span> 
+                            </apex:outputPanel>
+                        </apex:panelGrid>
+                    </apex:pageBlockSectionItem>
+                </apex:pageblocksection>
+                <apex:pageblocksection columns="1" id="ComponentReloadId2" showheader="false" >
+                    <apex:inputfield value="{!RMAv2__c.DOA__c}" />
+                    <apex:inputField value="{!RMAv2__c.rmaCSATCheckbox__c}" />
+                    
+                    <apex:inputField value="{!RMAv2__c.rmaCSATText__c}" />
+                </apex:pageblocksection>
+                <apex:pageblocksection columns="1" id="ComponentReloadId3" title="RMA Reason Section (WHY)" showheader="false" >
+                    
+                    <apex:inputfield value="{!RMAv2__c.rmaGeneralFailureDetails__c}" style="width:550px"  required="{!chinaGlobalAccount}"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaDetailedReason__c}" style="width:450px" required="true"/>
+                    
+                </apex:pageblocksection>
+                
+                
+                
+                <apex:actionRegion >
+                    <apex:pageblocksection id="addressSelectionId"  title="Address Selection Section (WHERE)" showheader="true"  columns="2"> 
+                        
+                        <apex:actionStatus id="addressActionStatus" >
+                            <apex:facet name="start" >
+                                <img src="/img/loading.gif" /> 
+                                <sub>Section Rendering</sub>                   
+                            </apex:facet>
+                        </apex:actionStatus>
+                        <apex:pageblocksectionitem /> 
+                        
+                        <apex:pageblockSectionItem >
+                            <apex:outputLabel value="Address Book"/>
+                            <apex:outputPanel styleClass="requiredInput"  layout="block" id="pwPanel" > 
+                                <apex:outputPanel styleClass="requiredBlock"/>
+                                <apex:selectList size="1" value="{!RMAv2__c.rmaAddressBook__c}"  style="width:320px"  multiselect="false">
+                                    <apex:selectOptions value="{!addressOptions}"></apex:selectOptions>
+                                    <apex:actionSupport event="onchange" oncomplete="OnAddressBookChangeComplete()" action="{!addressBookOnChange}" reRender="rmaShipmentAddressId,rmaValidatedDateID,shipLabelDetailID,OnSiteSectionID,returnShipmentPanelId,SLAUpliftSectionId"/>
+                                </apex:selectList>  
+                            </apex:outputPanel>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblocksectionitem /> 
+                        
+                        <apex:pageblockSectionItem >
+                            <apex:outputLabel style="font-size:11px;font-weight:bold;color:#4a4a56;height:150px;" value="Shipment Location Validated On"/>
+                            <apex:outputText style="font-size:12px;height:100px;" id="rmaValidatedDateID" value="{!strShipmentLocationValidatedOn}"/>
+                        </apex:pageblockSectionItem>
+                        
+                        <apex:pageblocksectionitem /> 
+                        <apex:pageblocksectionitem /> 
+                        
+                        <apex:outputPanel id="shipLabelDetailID">
+                            <div style='border:solid 1px black;padding:10px;font-size: 14px;'>  
+                                <div style='width:50%;margin:0 auto;font-weight:bold;font-size: 13px;color:#4a4a56'>Current Shipping Label Details</div> <br/> 
+                                <div id="divAccountNameId" >{!shpAccountName}</div>      
+                                <div id="divAssetContactId" >{!shpLabelAssetContact}</div>
+                                <div id="divStreet1Id">{!shpLabelStreet1}</div>
+                                <div id="divStreet2Id">{!shpLabelStreet2}</div>
+                                <div><span id="divCityId">{!shpLabelCity}</span> <span id="divStateId">{!shpLabelState}</span> <span id='divPostalCodeId'>{!shpLabelPostalCode}</span></div>
+                                <div id="divCountryId">{!shpLabelCountry}</div><br/>
+                                <div id="divContactPhoneId">{!shpLabelContactPhone}</div> 
+                                <div id="divContactEmailId">{!shpLabelContactEmail}</div>   
+                            </div> 
+                        </apex:outputPanel>
+                        
+                    </apex:pageblocksection> 
+                    
+                    <apex:pageblocksection id="rmaShipmentAddressId" columns="1">  
+                        <apex:inputfield id="rmaAddressLastTouchedID" value="{!RMAv2__c.rmaAddOverriddenAddressToAddressBook__c}"/>  
+                        <apex:pageblocksectionitem /> 
+                        <apex:inputField id="overrideAccountNameId" onchange="overrideShipmentLabelDetail('{!$Component.overrideAccountNameId}','divAccountNameId','','{!shpAccountName}')" value="{!RMAv2__c.rmaOverrideShipmentAccountName__c}" required="false"/>
+                        <apex:inputField id="overrideStreet1Id" onchange="overrideShipmentLabelDetail('{!$Component.overrideStreet1Id}','divStreet1Id','','{!shpLabelStreet1}')" value="{!RMAv2__c.rmaOverrideShipmentStreet1__c}" required="false"/>
+                        <apex:inputfield id="overrideStreet2Id" onchange="overrideShipmentLabelDetail('{!$Component.overrideStreet2Id}','divStreet2Id','','{!shpLabelStreet2}')" value="{!RMAv2__c.rmaOverrideShipmentStreet2__c}" required="false"/>
+                        <apex:inputfield id="overrideCityId" onchange="overrideShipmentLabelDetail('{!$Component.overrideCityId}','divCityId','','{!shpLabelCity}')" value="{!RMAv2__c.rmaOverrideShipmentCity__c}" required="false"/>
+                        <apex:inputfield id="overrideStateId" onchange="overrideShipmentLabelDetail('{!$Component.overrideStateId}','divStateId','','{!shpLabelState}')" value="{!RMAv2__c.rmaOverrideShipmentState__c}" required="false"/>
+                        <apex:inputfield id="overridePostalCodeId" onchange="overrideShipmentLabelDetail('{!$Component.overridePostalCodeId}','divPostalCodeId','','{!shpLabelPostalCode}')" value="{!RMAv2__c.rmaOverrideShipmentPostalCode__c}" required="false"/>
+                        <apex:inputfield id="overrideCountryId" onchange="overrideShipmentLabelDetail('{!$Component.overrideCountryId}','divCountryId','','{!shpLabelCountry}')" value="{!RMAv2__c.rmaOverrideShipmentCountry__c}" required="false">
+                            <!--<apex:actionFunction name="caseOverrideCountry" oncomplete="onAssetChangeComplete()" action="{!overrideCountryOnChange}" reRender="SLAUpliftSectionId,srMetaDataInformationId,addressSelectionId,rmaShipmentAddressId,rmaDiskShelfAssetID,OnSiteSectionID,rmaTransmitRmaShisWithOrderId,rmaOnsiteTechStatusID,componentInformationId,returnShipmentPanelId,outPanelEFASource,outPanelNimbleOsVersion" status="loadingViewActionStatus">
+                            </apex:actionFunction>-->
+                        </apex:inputfield>
+                        <apex:inputfield id="overrideAttnId" onchange="overrideShipmentLabelDetail('{!$Component.overrideAttnId}','divAssetContactId','Attn: ','{!shpLabelAssetContact}')" value="{!RMAv2__c.rmaOverrideShipmentAttn__c}" required="false"/>
+                        <apex:inputfield id="overridePhoneId" onchange="overrideShipmentLabelDetail('{!$Component.overridePhoneId}','divContactPhoneId','Contact Phone: ','{!shpLabelContactPhone}')" value="{!RMAv2__c.rmaOverrideShipmentPhone__c}" required="false"/>
+                        <apex:inputfield id="overrideEmailId" onchange="overrideShipmentLabelDetail('{!$Component.overrideEmailId}','divContactEmailId','Contact Email: ','{!shpLabelContactEmail}')" value="{!RMAv2__c.rmaOverrideShipmentEmail__c}" required="false"/>
+                        <apex:inputfield id="recalculateNearbyDepot" value="{!RMAv2__c.rmaRecalculateNearbyDepot__c}" required="false"/>
+                        <apex:inputfield id="dontCalculateDepot" value="{!RMAv2__c.rmaDontCalculateDepot__c}" required="false">
+                            <!--<apex:actionSupport event="onchange" action="{!showOnOutputOrInputOutgShipOrder}" reRender="OutShipOrderDepotOutField, OutShipOrderDepotInField"/>-->
+                            <apex:actionSupport event="onchange" rerender="editableBlock, editableBlock1" />
+                        </apex:inputfield>
+                    </apex:pageblocksection>
+                </apex:actionRegion>
+                
+                <apex:actionRegion >
+                    <!--TS-7467 July 13, 2020 START-->
+                    <apex:actionFunction name="getTimezonetMappedFunction" action="{!calculateAssetTimeZone}"
+                                         rerender="none" oncomplete="timezoneCalculationCompleted('{!assetrawOffset}','{!assetdstOffset}','{!timeZoneName}','{!assetLatitude}','{!assetLongitude}')">
+                        <apex:param name="assetlat" assignTo="{!assetLatitude}" value=""/>
+                        <apex:param name="assetlong" assignTo="{!assetLongitude}" value=""/>
+                        <apex:param name="currenttimestamp" assignTo="{!assettimeStamp}" value=""/>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="getlatlongMappedFunctionwithcountry" action="{!calculateGeolocationBasedOnCountry}"
+                                         rerender="none" oncomplete="latlongCalculationCompleted('{!assetLatitude}','{!assetLongitude}')">
+                        <apex:param name="assetlat" assignTo="{!assetCountry}" value=""/>                        
+                    </apex:actionFunction>
+                    <!--TS-7467 July 13, 2020 END-->
+                    <apex:pageblocksection id="SLAUpliftSectionId" title="SLA/Uplift Selection Section (WHEN)"  showheader="true" columns="2">
+                        
+                        
+                        
+                        <apex:inputfield value="{!RMAv2__c.rmaUplift__c}" onchange="SLAOnChange()" id="rmaUpliftId" required="true">
+                        </apex:inputfield>
+                        
+                        <apex:inputfield value="{!RMAv2__c.rmaMissedSla__c}" required="false"/>
+                        <apex:inputfield value="{!RMAv2__c.rmaUpliftApprovedBy__c}" required="false"/>
+                        <apex:inputfield value="{!RMAv2__c.rmaMissedSlaReason__c}" required="false"/>
+                        
+                        <apex:inputField style="border-Style:none;background-color:transparent" id="AssetActualDateTimeId" label="Asset local Date and Time" value="{!RMAv2__c.Asset_Date_and_Time__c}"  />
+                        <apex:inputField style="border-Style:none;background-color:transparent" id="AssetDateTimeId" label="Asset local Date and Time (rounded up to closest 30 min interval)" value="{!RMAv2__c.rmaAssetLocalDateTime__c}"  />
+                        
+                        <apex:inputField style="border-Style:none;background-color:transparent" id="AssetLatitudeId" label="RMA Latitude" value="{!RMAv2__c.rmaLatitude__c}" />
+                        
+                        <apex:inputField style="border-Style:none;background-color:transparent" id="AssetLongitudeId" label="RMA Longitude" value="{!RMAv2__c.rmaLongitude__c}"/>
+                        
+                        <apex:inputField style="border-Style:none;background-color:transparent" id="AssetActualOffsetId" label="RMA Time Zone Actual Offset" value="{!RMAv2__c.rmaTimeZoneActualOffset__c}" />
+                        
+                        <apex:inputField style="border-Style:none;background-color:transparent" id="AssetDstOffsetId" label="RMA Time Zone DST Offset" value="{!RMAv2__c.rmaTimeZoneDSTOffset__c}" />
+                        
+                        <apex:inputField style="border-Style:none;background-color:transparent;width:200px" id="AssetTimeZoneNameId" label="RMA Time Zone Name" value="{!RMAv2__c.rmaTimeZoneName__c}" />
+                        
+                        
+                        <apex:pageBlockSectionItem id="SLAUpliftSectionItemId">
+                            <apex:outputLabel style="font-size:11px;font-weight:bold;color:#4a4a56;" value="Delivery Date Time" title="Schedule Delivery Date and Time. This date and time should be set to after 4 hours for 4-hour SLA from Asset local date and time" />
+                            <apex:panelGrid id="SLADeliveryPanelId" columns="2">
+                                <apex:inputfield id="SLADeliveryDateId" value="{!RMAv2__c.rmaDeliveryDate__c}" />
+                                <apex:inputfield id="SLADeliveryTimeId" value="{!RMAv2__c.rmaDeliveryTimes__c}"/>
+                                
+                            </apex:panelGrid>
+                            
+                        </apex:pageBlockSectionItem>
+                        <apex:inputField value="{!RMAv2__c.rmaSLADueDateTime__c}" required="false"/>
+                        
+                        <apex:pageBlockSection rendered="{!chinaGlobalAccount}" columns="1">
+                            <apex:inputField value="{!RMAv2__c.rmaOnsite_Task__c}" style="width:250px"  required="True"/>
+                            <apex:inputField value="{!RMAv2__c.China_GA_Fault_Location__c}" style="width:220px;height:80px;" required="True" rendered="{!assetSlaisNotOnsite}" html-placeholder="Onsite Controller/Expander Slot: A/B
+                                                                                                                                                                                                 Onsite HDD/SSD Slot: 1 or 2 or 3 etc.
+                                                                                                                                                                                                 Onsite Power Supply Slot: Left or Right
+                                                                                                                                                                                                 Onsite NIC Card Slot: Controller A Slot 1 or Controller A Slot 2 etc."/>
+                        </apex:pageBlockSection>
+                      
+                    </apex:pageblocksection>
+                </apex:actionRegion>
+                
+                <apex:pageblocksection title="Expected Delayed RMA Returns"  showheader="true" columns="1">
+                    <apex:inputfield value="{!RMAv2__c.rmaExpectedActualNewPartInstallation__c}"   required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaReasonForDelayedInstallation__c}"   required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaReasonforDelayedInstallationOfPart__c}" style="width:320px;"  required="false"/>    
+                </apex:pageblocksection>
+                
+                <apex:actionRegion >
+                    <apex:outputPanel id="rmaTransmitRmaShisWithOrderId">
+                        <apex:pageblocksection title="SHI Section" showheader="true" columns="1">
+                            <apex:pageblockSectionItem >
+                                <apex:outputLabel value=""/>
+                                <apex:selectCheckboxes style="font-size:11.2px;font-weight:bold;color:#4a4a56;" value="{!checkboxTransmitRMASelections}">
+                                    <apex:selectOptions id="shiRMASHISelectedValue" value="{!TransmitRMASHICheckboxes}"></apex:selectOptions>
+                                </apex:selectCheckboxes> 
+                            </apex:pageblockSectionItem>                            
+                            <apex:inputfield value="{!RMAv2__c.rmaShi__c}" id="rmaSHIId" style="width:500px" required="false"/>                             
+                        </apex:pageblocksection>
+                    </apex:outputPanel>
+                </apex:actionRegion>
+                
+                <apex:actionRegion >
+                    
+                    <apex:outputPanel id="OnSiteSectionID" rendered="{!NOT(assetSlaisNotOnsite)}">
+                        
+                        <apex:outputPanel rendered="{!IF(alwaysShownOnSiteSection == true,true,(hideOnSiteSections != true))}">
+                            <apex:pageblocksection title="Onsite Service Info Section"  showheader="true" columns="2" rendered="{!IF(chinaGlobalAccount != true,true,false)}">
+                                <!--<apex:inputfield id="rmaOnsiteTechStatusID" value="{!RMAv2__c.rmaOnsiteTechStatus__c}" required="false"/>-->
+                                <apex:selectList value="{!RMAv2__c.rmaOnsiteTechStatus__c}" size="1">
+                                    <apex:selectOptions value="{!onsiteTechStatusOptions}"/>
+                                </apex:selectList>
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeOrderConfirmed__c}" required="false"/>
+                                <apex:pageblocksectionitem />   
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeArrivalEta__c}" required="false"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteTechOrderNumber__c}" required="false"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeArrivalActual__c}" required="false"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteTechName__c}" required="false"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeReleased__c}" required="false"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteTechDateTimeReleased__c}" required="false"/>
+                                
+                                <apex:inputfield value="{!RMAv2__c.Local_Onsite_Tech_Arrival_Time_Actual__c }" required="false"/>
+                                <apex:inputfield value="{!RMAv2__c.Onsite_Tech_Contact_Number__c}" required="false"/>
+                                
+                                <apex:inputfield value="{!RMAv2__c.Local_Onsite_Tech_Date_Time_Arrival_ETA__c }" required="false"/>
+                                
+                                <apex:inputfield value="{!RMAv2__c.Local_Onsite_Tech_Date_Time_Released__c }" required="false"/>
+                                <apex:inputfield value="{!RMAv2__c.Local_Onsite_Tech_DateTime_Ord_Confirmed__c }" required="false"/>
+                                <apex:outputField value="{!RMAv2__c.rmaCaseNumber__r.casePachinkoCaseType__c}" rendered="false"/>
+                                
+                                
+                            </apex:pageblocksection>
+                            
+                            <apex:pageblocksection id="OnsiteServiceCodeSectionId" title="Onsite Service - Codes/Notes"  showheader="true" columns="2" rendered="{!IF(chinaGlobalAccount != true,true,false)}">
+                                <!-- Added by Exafort for TS-10402 -->
+                                <apex:outputField value="{!RMAv2__c.rmaAssetSla__c}" rendered="false"/>
+                                <apex:outputField value="{!RMAv2__c.createddate}" rendered="false"/>
+                                <apex:selectList value="{!RMAv2__c.rmaOverrideOnsiteSchedulingCode__c}" 
+                                                 size="1" 
+                                                 id="OverrideOnsiteSchedulingCodeId"
+                                                 onchange="SLAOnChange()">
+                                    
+                                    <apex:selectOptions value="{!overrideSchedulingOptions}" />
+                                </apex:selectList>
+                                <apex:outputText label="Onsite Scheduling Code" value="{!onsiteSchedulingCode}"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteSchedulingNotes__c}" required="false"/>
+                                <apex:outputText label="Onsite Scheduling Notes" value="{!onsiteSchedulingNotes}"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsitePartHandoverCode__c}" required="false"/>
+                                <apex:outputText label="Onsite Part Handover Code" value="{!onsitePartHandoverCode}"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsitePartHandoverNotes__c}" required="false"/>
+                                <apex:outputText label="Onsite Part Handover Notes" value="{!onsitePartHandoverNotes}"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteCheckInCode__c}" required="false"/>
+                                <apex:outputText label="Onsite Check-In Code" value="{!onsiteCheckInCode}"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteCheckInNotes__c}" required="false"/>
+                                <apex:outputText label="Onsite Check-In Notes" value="{!onsiteCheckInNotes}"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsitePartDispositionCode__c}" required="false" id="dispField"/> <!-- Added Id for Exafort SFDC-2108 -->
+                                <apex:outputText label="Onsite Part Disposition Code" value="{!onsitePartDispositionCode}"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsitePartDispositionNotes__c}" required="false"/>
+                                <apex:outputText label="Onsite Part Disposition Notes" value="{!onsitePartDispositionNotes}"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <!--End of TS-10402 -->
+                            </apex:pageblocksection>
+                            
+                            <apex:pageblocksection title="Onsite Service - FE Arrival Address"  showheader="true" columns="2" rendered="{!IF(chinaGlobalAccount != true,true,false)}">
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalStreet1__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalStreet2__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalCity__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalState__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalPostalCode__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideOnsiteArrivalCountry__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                            </apex:pageblocksection>
+                            
+                            <apex:pageblocksection title="Onsite Service - Array Location"   showheader="true" columns="2" rendered="{!IF(chinaGlobalAccount != true,true,false)}">
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideAssetLocBuilding__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideAssetLocFloor__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideAssetLocDatacenter__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideAssetLocAreaOrGrid__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideAssetLocRow__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideAssetLocRack__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOverrideAssetLocPositionInRack__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                            </apex:pageblocksection>
+                        
+                            
+                            <apex:pageblocksection title="Onsite Service - Component Slots"  showheader="true" columns="2">
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteControllerExpanderSlot__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteHddSsdSlot__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsitePowerSupplySlot__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaOnsiteNicCardSlot__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                            </apex:pageblocksection>
+                           </apex:outputPanel> 
+                        </apex:outputPanel>
+                  
+                </apex:actionRegion>
+                
+                <apex:pageblocksection id="OutgoingShipmentBlock" title="Outgoing Shipment Info Section" showheader="true" columns="2">
+                    
+                    <apex:inputfield id="rmaOutgoingShipmentStatus" value="{!RMAv2__c.rmaOutgoingShipmentStatus__c}" onchange="OutgoingShipmentOnChange()" required="true">
+                        <apex:actionFunction name="actionOutgoingShipmentOnchange" immediate="true" action="{!showRMACancellationReason}" reRender="rmaCancelationReasonCode">
+                            <apex:param name="rmaOutgoingShipmentStatusParam" value="" />
+                        </apex:actionFunction>
+                    </apex:inputfield>
+                    <apex:pageblocksectionitem />
+                    
+                    <apex:pageBlockSectionItem >
+                        <apex:outputPanel id="rmaCancelationReasonCode">
+                            <apex:outputPanel rendered="{!IF(rmaCancelationReasonShowOrHide == true,true,false)}">
+                                <apex:outputLabel id="rmaCancelLabel" value="{!$ObjectType.RMAv2__c.fields.rmaRMACancellationReason__c.label}" for="rmaCancellation" style="float:left;color:#4a4a56;font-family: Arial,Helvetica,sans-serif;text-align: right;font-size: 91%;font-weight: bold;padding-left: 4px;"/>
+                                <div id="styleRMAcancel" style="float: left;margin-left: 19px;">
+                                   <apex:selectList value="{!RMAv2__c.rmaRMACancellationReason__c}" size="1" required="true" id="rmaCancellation">
+                                       <apex:selectOptions value="{!cancellationPicklistOptions}" />
+                                    </apex:selectList>
+                                </div>
+                            </apex:outputPanel>
+                        </apex:outputPanel> 
+                    </apex:pageBlockSectionItem>
+                    
+                    
+                    <apex:pageblocksectionitem /> 
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentDateTimeOpened__c}" />
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentDateTimeClosed__c}"/>
+                    <apex:pageBlockSection id="editableBlock">
+                        <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentOrderProvider__c}" rendered="{!NOT(RMAv2__c.rmaDontCalculateDepot__c)}"/>
+                        <apex:inputField value="{!RMAv2__c.rmaOutgoingShipmentOrderProvider__c}" rendered="{!RMAv2__c.rmaDontCalculateDepot__c}"/>
+                    </apex:pageBlockSection>
+                    <apex:inputfield value="{!RMAv2__c.rmaOutgoingShipmentDateTimeCanceled__c}" required="false"/>
+                    
+                    
+                    <apex:pageBlockSection id="editableBlock1" >  
+                        <!--<apex:panelGrid columns="2">
+<apex:outputLabel>Outgoing Shipment Order Depot</apex:outputLabel>-->
+                        <apex:outputField id="outgoingshipmentOrderDepotClass1" value="{!RMAv2__c.rmaOutgoingShipmentOrderDepot__c}" rendered="{!NOT(RMAv2__c.rmaDontCalculateDepot__c)}"/>
+                        <apex:inputField id="outgoingshipmentOrderDepotClass2" value="{!RMAv2__c.rmaOutgoingShipmentOrderDepot__c}" rendered="{!RMAv2__c.rmaDontCalculateDepot__c}"/>
+                        <!-- </apex:panelGrid>-->
+                        
+                    </apex:pageBlockSection>
+                    
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentAfterShipStatus__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentOrder4HrDepotFound__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.rmaOutgoingShipmentAfterShipLastUpdate__c}"/>
+                    <apex:inputfield value="{!RMAv2__c.rma4HourDepotDistanceMiles__c}" required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.Local_Out_Ship_Date_Time_Delivered__c }"/>
+                    <apex:inputfield value="{!RMAv2__c.Local_Out_Ship_Date_Time_ETA__c}"/>
+                    <apex:inputfield value="{!RMAv2__c.Local_Out_Ship_Date_Time_Shipped__c}"/>
+                    <apex:outputfield value="{!RMAv2__c.OutgoingShipmentAfterShipSignedBy__c}"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutShipProviderOrderNumber__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:selectList value="{!RMAv2__c.rmaOutgoingShipmentDepot__c}" required="false" size="1" style="width: 400px;">
+                        <apex:selectOptions value="{!depotOptions}"/>
+                    </apex:selectList>
+                    <apex:pageBlockSectionItem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutgoingShipmentCarrier__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutgoingShipmentTrackingNumber__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutgoingShipmentPartSn__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <!--<apex:inputfield value="{!RMAv2__c.rmaFulfilledPartNumber__c}" required="false"/>-->
+                    <apex:outputField value="{!RMAv2__c.rmaFulfilledPartNumber__c}" 
+                                      rendered="{!OR(ISNULL(RMAv2__c.rmaOutgoingShipmentStatus__c),
+                                                RMAv2__c.rmaOutgoingShipmentStatus__c = 'DRAFT-10: Waiting to order')}" 
+                                      />
+                    
+                    <apex:inputField value="{!RMAv2__c.rmaFulfilledPartNumber__c}" 
+                                     required="false"
+                                     rendered="{!NOT( OR(ISNULL(RMAv2__c.rmaOutgoingShipmentStatus__c),
+                                               RMAv2__c.rmaOutgoingShipmentStatus__c = 'DRAFT-10: Waiting to order') )}" 
+                                     />
+                    
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutgoingShipmentNotes__c}" style="width:250px"  required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutShipDateTimeOrderConfirmed__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutShipDateTimeShipped__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutShipDateTimeEta__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutShipDateTimeDelivered__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!RMAv2__c.rmaOutShipSignedForBy__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                </apex:pageblocksection>
+                
+                <apex:actionRegion >
+                    <apex:outputPanel id="returnShipmentPanelId">
+                        <apex:outputPanel rendered="{!IF(chinaGlobalAccount != true,true,false)}">
+                        <apex:outputPanel id="returnShipmentSectionId" rendered="{!IF(alwaysShownReturnSection == true,true,(hideReturnSections != true))}">
+                            <apex:pageBlockSection title="Return Shipment Info Section (Customer to Provider)" showheader="true" columns="2" >
+                                
+                                <apex:actionStatus id="returnActionStatus" >
+                                    <apex:facet name="start" >
+                                        <img src="/img/loading.gif" /> 
+                                        <sub>Section Rendering</sub>                   
+                                    </apex:facet>
+                                </apex:actionStatus>
+                                <apex:pageblocksectionitem /> 
+                                
+                                <apex:inputfield value="{!RMAv2__c.rmaReturnShipmentStatus__c}" required="true"/>
+                                <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentDateTimeOpened__c}"/>
+                                <apex:pageblocksectionitem />
+                                <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentDateTimeClosed__c}"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShipProviderOrderNumber__c}" required="false"/>
+                                <apex:outputfield value="{!RMAv2__c.rmaReturnShipmentDateTimeCanceled__c}"/>
+                                <apex:inputfield value="{!RMAv2__c.rmaReturnShipmentCarrier__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaReturnShipmentTrackingNumber__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaReturnShipmentNotes__c}" style="width:250px" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShipDateTimeDelivered__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShipSignedForBy__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                            </apex:pageBlockSection>
+                            
+                            <apex:pageblocksection title="Return Shipment 2 Info Section (Provider to Nimble)" showheader="true" columns="2" >
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShip2Status__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShip2Carrier__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShip2TrackingNumber__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShip2DateTimeShipped__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShip2DateTimeEta__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShip2DateTimeDelivered__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                                <apex:inputfield value="{!RMAv2__c.rmaRetShip2SignedForBy__c}" required="false"/>
+                                <apex:pageblocksectionitem />
+                            </apex:pageblocksection>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    </apex:outputPanel>
+                </apex:actionRegion>
+                
+                <apex:pageBlockSection rendered="false" title="Debugging Section (ignore)" showheader="true" columns="1">
+                    
+                    <apex:inputfield value="{!RMAv2__c.rmaPartNumber__c}" style="width:550px" required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaShipmentEmailInEmailField__c}" style="width:550px" required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaFaLogicHistory__c}" style="width:450px" required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaOnsiteCompiledNotes__c}" style="width:450px" required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaDeliveryInstructions__c}" style="width:450px" required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaNote__c}" style="width:450px" required="false"/>
+                    <apex:inputfield value="{!RMAv2__c.rmaAssetStatus__c}" style="width:450px" required="false"/>
+                    
+                </apex:pageBlockSection>                
+            </apex:outputpanel>
+        </apex:pageblock>
+    </apex:form>   
+</apex:page>

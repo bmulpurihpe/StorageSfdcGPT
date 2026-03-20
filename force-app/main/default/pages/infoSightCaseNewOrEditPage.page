@@ -1,0 +1,406 @@
+<apex:page id="page" extensions="caseNewOrEditPageController" standardcontroller="Case">
+    <!-- Added by Exafort for TS-10325 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- The below script holds "Save" button enable disable functionality -->
+        <apex:includeScript value="{!$Resource.CaseCloseSaveButtonControl}"/>
+            <!-- End of changes for TS-10325 -->
+                <script>
+                var previousOnload = window.onload;
+                window.onload = function() 
+                                         { 
+                                             if (previousOnload) { 
+                                             previousOnload();
+                                         } 
+                                         var condition = true; // condition
+                                         if(condition) {
+                    var url = window.location.href;
+                    var acctId = 'acctId';
+                    var contId = 'contId';
+                    var asstId = 'asstId';
+                    if(url.indexOf(acctId + '=') != -1){
+                        document.getElementById('page:form:block:section:acctId').value =  "{!$CurrentPage.parameters.acctId}";
+                    }
+                    if(url.indexOf(contId + '=') != -1){
+                        document.getElementById('page:form:block:section:contId').value =  "{!$CurrentPage.parameters.contId}";
+                    }
+                    if(url.indexOf(asstId + '=') != -1){
+                        document.getElementById('page:form:block:section2:asstId').value =  "{!$CurrentPage.parameters.asstId}";
+                    }
+                    document.getElementById('page:form:block:section:duplicateCaseId').blur();
+                    document.getElementById('page:form:block:section:acctId').blur();
+                    if('{!Case.Status}' != 'Closed'){
+                        var options = document.getElementById('page:form:block:section:caseStatus');
+                        for(var i=0; i<options.length; i++) {
+                            if(options[i].innerHTML == 'Closed' || options[i].innerHTML == 'Closed(Duplicate)') {
+                                options.removeChild(options[i]);
+                                i--; // options have now less element, then decrease i
+                            }
+                            
+                        }
+                    }
+                }
+    }
+    </script>
+    <style>
+        .ui-autocomplete-category {
+        font-weight: bold;
+        padding: .2em .4em;
+        margin: .8em 0 .2em;
+        line-height: 1.5;
+        }
+        .ui-autocomplete {
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 20px;
+        } 
+        #message{
+        font-family: Verdana,Arial,sans-serif;
+        font-size: 1.1em;
+        color:#222222;
+        display: list-item;
+        overflow-y: auto;
+        overflow-x: hidden;
+        text-align: -webkit-match-parent;
+        }
+        #noResults {
+        background-color: white;
+        margin-left: 156px;
+        width: 100%;
+        height: 20px;
+        }
+        
+    </style>
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:sectionheader title="{!$ObjectType.Case.label} Edit" subtitle="{!IF(ISNULL(Case.CaseNumber), 'New Case',Case.CaseNumber)}"/>
+    <apex:form id="form">
+        <!--<apex:pageblock id="block" mode="edit" title="{!$ObjectType.Case.label} Edit">-->
+        <apex:pageblock id="block" mode="edit" >
+            <apex:pageblockbuttons >
+                <apex:commandbutton value="Save" id="saveButton" action="{!myCustomSave}"/>
+                <apex:commandbutton value="Cancel" action="{!Cancel}"/>
+            </apex:pageblockbuttons>
+            
+            <!-- **********   [Record Type : Master ]   **********  -->
+            <apex:outputpanel id="panel">
+                <apex:pageblocksection id="section" title="Case Information" showheader="true" columns="2">
+                    <apex:outputfield value="{!Case.OwnerId}"/>
+                    <apex:outputfield value="{!Case.RecordTypeId}"/>
+                    <apex:inputfield id="acctId" value="{!Case.AccountId}" required="true"/>
+                    <apex:inputfield id="caseStatus" value="{!Case.Status}"  required="true"/>
+                    <apex:inputfield id="contId" value="{!Case.ContactId}" required="false"/>
+                    <apex:inputfield id="duplicateCaseId" value="{!Case.Duplicate_Case__c}" required="false"/>
+                    <apex:inputfield id="asstId" value="{!Case.AssetId}" rendered="false"/>
+
+                    
+                    
+                    <apex:outputField value="{!Case.CaseNumber}"/>
+                    <apex:inputfield value="{!Case.Closed_By__c}" required="false"/>
+                    <apex:outputfield value="{!Case.ClosedDate}" rendered="false"/>
+                    <apex:inputfield value="{!Case.Priority}" required="false"/>
+                    <!--<apex:outputField value="{!Case.TSE_Days__c}"/>-->
+                    <apex:inputfield value="{!Case.SuppliedEmail}" required="false"/>
+                    <apex:inputfield value="{!Case.Severity__c}" required="false"/>
+                    <!--   <apex:pageBlockSectionItem /> -->
+                    <apex:inputfield value="{!Case.Origin}" required="true"/>
+                    <apex:outputField value="{!Case.Support_Profile__c}" rendered="false"/>
+                    <apex:outputField value="{!Case.Case_Effort_Summary_Total__c}" rendered="false"/>
+                    <apex:outputField value="{!Case.Current_comment_activity__c}" rendered="false"/>
+                    <apex:outputField value="{!Case.Case_Owner_Time_Effort__c}" rendered="false"/>
+                    <apex:outputField value="{!Case.Non_Case_Owner_Time_Effort__c}" rendered="false"/>
+                    <!--  <apex:pageBlockSectionItem /> -->
+                    <apex:inputfield value="{!Case.Case_Type__c}" required="false"/>
+                    <apex:outputText value="{!Case.Timer_Expiry_Date__c}" rendered="false"/>
+                    
+                    <!--Added by Exafort for TS-10147 -->
+                    <apex:inputfield value="{!Case.Data_Unavailability__c}" required="false"/>                    
+                    <apex:inputfield value="{!Case.Data_Loss__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Data_Inconsistency__c}" required="false"/>
+                    <!-- End of TS-10147 -->
+                    
+                    <!--Added by Exafort for TS-10404 -->
+                    <apex:inputfield value="{!Case.Peer_Flag_Inactive__c}" required="false"/>
+                    <!-- End of TS-10404 -->
+                    
+                </apex:pageblocksection>
+                <apex:pageblocksection id="ISsection" title="InfoSight Tracking" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.Infosight_Account__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Infosight_Contact_Name__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Infosight_Contact_Email__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Impact_Audience__c}" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection id="blocksection" title="Case Categorization" showheader="true" rendered="{!IF(displayFieldsForEditPage, true, false)}" columns="2">
+                    <apex:pageBlockSectionItem rendered="{!IF(displayFieldsForEditPage, true, false)}"></apex:pageBlockSectionItem>
+                    <apex:outputPanel id="show" rendered="{!IF(displayFieldsForEditPage, true, false)}" >
+                        <!--rendered="{!If(displayProductSymptomsForEditPage , true, false)}"-->
+                        <apex:outputPanel id="outputPanelToDisplayDamageSymptoms"  style="display:{!IF(displayProductSymptomsForEditPage, 'block', 'none')}">
+                            <div class="bootstrap-iso">
+                                <div class="bootstrap-iso form-group"  >
+                                    <label for="multiselectPanel" id="Productdamagesymptomslabel" style="margin-left: 52px;">Product Damage Symptoms</label>
+                                    <div style="margin-left: 230px;">  
+                                        <c:multiselectPicklist leftOption="{!allProductSymptoms}" leftLabel="Available" rightOption="{!SelectedProductSymptoms}" rightLabel="Selected" size="5" width="150px" rendered="{!IF(displayFieldsForEditPage, true, false)}"/>
+                                    </div>       
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:outputPanel>
+                    
+                    <apex:pageBlockSectionItem rendered="{!IF(displayFieldsForEditPage, true, false)}"></apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem rendered="{!IF(displayFieldsForEditPage, true, false)}"></apex:pageBlockSectionItem>
+                    <div class="bootstrap-iso" style="display:{!searchBoxdisplay}">
+                        <div>
+                            <label for="search" style="margin-left:156px">Search for Technical and Sub Technical Area:</label>
+                            <input id="search" placeholder="Search for TA/TSA Combination" style="margin-left:156px;" class="form-control"/>
+                            <div id="noResults" style="display:none;">
+                                <span id="message" style="margin-left:156px;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <apex:pageBlockSectionItem >  
+                        <!--Added by Exafort for TS-10325: The following action status will be executed when the user changes the TA/TSA value.-->
+                        <apex:actionStatus id="loadingViewActionStatus2" style="margin: auto;" onstart="disableSaveButton()" onstop="enableSaveButton()" >
+                            <apex:facet name="start" >
+                                <img src = "/img/loading.gif" /> 
+                                <sub>Loading...</sub>                   
+                            </apex:facet>
+                        </apex:actionStatus>  
+                        <!--End of TS-10325-->
+                    </apex:pageBlockSectionItem>
+                    <apex:actionRegion >
+                        <apex:outputPanel rendered="{!IF(displayFieldsForEditPage, true, false)}">
+                            <div class="bootstrap-iso">
+                                <div class="form-group">
+                                    <label for="techArea" id="technicalAreaLabel" style="margin-left: 130px">Technical Area</label>
+                                    <apex:selectList size="1" multiselect="false" id="techArea" value="{!SelectedTaValue}" style="margin-left: 20px;border-left: 3px solid #c00;width: 200px;" onchange="dispatcherToCallActionFunction()" >
+                                        <!--<apex:actionSupport event="onchange" action="{!allTsaMappingss}" reRender="Pbs"/>-->
+                                        <apex:actionFunction name="dispatchForTSALoad" oncomplete="bindValueFromSearch()" action="{!allTsaMappingss}" reRender="subTechArea" status="loadingViewActionStatus2"/>
+                                        <apex:selectOptions value="{!allTaMappings}"  >
+                                        </apex:selectOptions>
+                                    </apex:selectList>
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                    <apex:pageBlockSectionItem rendered="{!IF(displayFieldsForEditPage, true, false)}"></apex:pageBlockSectionItem>
+                    <apex:actionRegion >
+                        <apex:outputPanel rendered="{!IF(displayFieldsForEditPage, true, false)}">
+                            <div class="bootstrap-iso">
+                                
+                                <div class="form-group">
+                                    <label for="subTechArea" id="technicalsubAreaLabel" style="margin-left:103px;">Technical Sub-Area</label>
+                                    <apex:selectList size="1" multiselect="false" id="subTechArea" value="{!SelectedTsaValue}" style="margin-left:20px;border-left: 3px solid #c00;">
+                                        <apex:selectOptions value="{!allTsaMappings}"  >
+                                        </apex:selectOptions>
+                                        <apex:actionSupport event="onchange" action="{!productsymptoms}"  reRender="show" />
+                                    </apex:selectList>
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                    </apex:actionRegion>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Description Information" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.Subject}"  style="width:558px" required="false"/>
+                    <apex:inputfield value="{!Case.Description}"  style="width:473px;height:90px;" required="false"/>
+                    <apex:inputfield value="{!Case.caseCurrentStatus__c}" style="width:558px" required="false"/>
+                    <apex:inputfield value="{!Case.casePlanOfAction__c}"  style="width:473px" required="false"/>
+                    <apex:inputfield value="{!Case.caseCaseSummary__c}"  style="width:473px" required="false"/>
+                    <apex:inputfield value="{!Case.Instructions__c}"  style="width:558px" required="false"/>
+                    <apex:inputfield value="{!Case.Case_closure_time_spent__c}" rendered="false"/>
+                    <!--  <apex:inputfield value="{!Case.Comments}"  style="width:473px" required="false"/> -->
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Customer Portal Facing Fields" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.casePortalResolutionNotes__c}"  style="width:473px" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Additional Information" showheader="true" columns="2">
+                    <apex:inputfield value="{!Case.caseKbNeeded__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseKbCreated__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseKbTopicNeeded__c}" required="false"/>                  
+                    <apex:inputfield value="{!Case.caseKbCreatedNumber__c}" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageBlockSection title="Attn Req Information" rendered="{!IF(displayFieldsForEditPage, false, false)}" showheader="true" columns="1">
+                    <apex:inputField value="{!Case.caseAttnReq__c}"/>
+                    <apex:inputField value="{!Case.caseAttnReqDateTime__c}"/>
+                    <apex:inputField value="{!Case.caseAttnReqSource__c}"/>
+                    <apex:inputField value="{!Case.caseAttnReqCreator__c}"/>
+                </apex:pageBlockSection>
+                <apex:pageblocksection title="Web Information" showheader="false" columns="2">
+                </apex:pageblocksection>
+            </apex:outputpanel>
+        </apex:pageblock>
+    </apex:form>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js">
+    </script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js">
+    </script>
+    <apex:stylesheet value="{!URLFOR($Resource.bootstrapiso, 'bootstrap-iso/bootstrap-iso.css')}"/>
+    <script>
+    $('#search').on('keydown', function(e){
+        if(e.keyCode == 32 && $(this).val().indexOf('  ') >= 0){
+            return false;
+        }
+    });
+    </script>
+    <script>
+    
+    $(function(){
+        $.widget( "custom.catcomplete", $.ui.autocomplete, {
+            _create: function() {
+                this._super();
+                this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+            },
+            _renderItem: function (ul, item) {
+                return $("<li>")
+                .attr("data-value",item.subtecharea)
+                .append(item.subtecharea)
+                .appendTo(ul);
+            },
+            _renderMenu: function( ul, items ) {
+                var that = this,
+                    currentTechArea = "";
+                $.each( items, function( index, item ) {
+                    var li;
+                    if ( item.techarea != currentTechArea ) {
+                        ul.append( "<li class='ui-autocomplete-category'>" + item.techarea + "</li>" );
+                        currentTechArea = item.techarea;
+                    }
+                    li = that._renderItemData( ul, item );
+                    if ( item.techarea ) {
+                        li.attr( "aria-label", item.techarea + " : " + item.subtecharea );
+                    }
+                });
+            }
+        });
+        $.ajax({
+            'async': true,
+            'global': false,
+            //'url': "{!URLFOR($Resource.techareasubtecharea, '/techandsubtechareacombinations.json')}",
+            'dataType': "text",
+            
+            'success': function (data) {
+                
+                $("#search").catcomplete({
+                    delay: 0,
+                    source: {!fieldDependencies},
+                    select: function (event, ui) {
+                        
+                        $('#search').val(ui.item.techarea + " : " + ui.item.subtecharea);
+                        
+                        var techsubtech= $('#search').val();
+                        if(techsubtech != null && techsubtech != ''){
+                            var splitting = techsubtech.split(' : ');
+                            takeTSAValue = splitting[1];
+                            var controllingField = document.getElementById('page:form:block:blocksection:techArea');
+                            var isFound = false;
+                            for(i=0; i<controllingField.options.length;i++){
+                                console.log(controllingField.options[i].value);
+                                if(controllingField.options[i].value == splitting[0]){
+                                    isFound = true;
+                                }
+                            }
+                            if(isFound == false){
+                                controllingField.options.add( new Option(splitting[0],splitting[0]) );
+                            }
+                            
+                            controllingField.value = splitting[0];
+                            controllingField.onchange();
+                            /*if(controllingField.value == '' || controllingField.value == null){
+                                alert('Selected Technical Area value is not available for the current record type');
+                            }*/
+                            var isFoundTSA = false;
+                            for(i=0; i<document.getElementById('page:form:block:blocksection:subTechArea').options.length;i++){
+                                console.log(document.getElementById('page:form:block:blocksection:subTechArea').options[i].value);
+                                if(document.getElementById('page:form:block:blocksection:subTechArea').options[i].value == splitting[1]){
+                                    isFoundTSA = true;
+                                }
+                            }
+                            if(isFoundTSA == false){
+                                document.getElementById('page:form:block:blocksection:subTechArea').options.add( new Option(splitting[1],splitting[1]) );
+                            }
+                            document.getElementById('page:form:block:blocksection:subTechArea').value = splitting[1];
+                            if(document.getElementById('page:form:block:blocksection:subTechArea').value == 'Damaged in shipping' || document.getElementById('page:form:block:blocksection:subTechArea').value =='Damaged at customer site not shipping related'){
+                                document.getElementById('page:form:block:blocksection:outputPanelToDisplayDamageSymptoms').style.display = 'block';
+                            }
+                            else{
+                                document.getElementById('page:form:block:blocksection:outputPanelToDisplayDamageSymptoms').style.display = 'none';
+                            }
+                            /*if(document.getElementById('page:form:block:blocksection:subTechArea').value == '' || document.getElementById('page:form:block:blocksection:subTechArea').value == null){
+                                alert('Selected Sub-Technical Area value is not available for the current record type');
+                            }*/
+                        }
+                        return false;
+                    },
+                    response: function(event, ui) {
+                        if (!ui.content.length) {
+                            $('#noResults').show();
+                            $("#message").text("No Suggestions Found");
+                        } else {
+                            $('#noResults').hide();
+                            $("#message").empty();
+                        }
+                    }
+                })
+            }
+        });
+    })
+    
+    function bindValueFromSearch(){
+        if(takeTSAValue != ''){
+            document.getElementById('page:form:block:blocksection:subTechArea').value = takeTSAValue;
+            if(document.getElementById('page:form:block:blocksection:subTechArea').value == ''){
+                document.getElementById('page:form:block:blocksection:subTechArea').value = '--None--';
+            }
+        }
+        if(takeTSAValue == null){
+            document.getElementById('page:form:block:blocksection:subTechArea').value = '--None--';
+        }
+    }
+    </script>
+    <script>
+    function techAreaOnchange(){
+        if(document.getElementById('page:form:block:blocksection:techArea').value != null && document.getElementById('page:form:block:blocksection:subTechArea').value != null){
+            if($('#search').val() != null){
+                $('#search').val('');
+            }
+        }
+    }
+    function checkAuoComplete(){
+        if($('#search').val() != null){
+            var splitting = $('#search').val().split(' : ');
+            document.getElementById('page:form:block:blocksection:subTechArea').value = splitting[1];
+        }  
+    }
+    //var getTechnicalArea;
+    function dispatcherToCallActionFunction(){
+        dispatchForTSALoad();
+        if(document.getElementById('page:form:block:blocksection:techArea').value != null && document.getElementById('page:form:block:blocksection:subTechArea').value != null){
+            if($('#search').val() != null){
+                $('#search').val('');
+            }
+        }
+    }
+    /*function onTSAChangeJS()
+    {
+        var elemId = document.getElementById('page:form:block:blocksection:techArea').value;
+        alert('TSA on change is called');
+        onTSAChangePassParam(elemId);
+    }*/
+    /*function bindValueFromSearch(){
+        if($('#search').val() != ''){
+            var splitting = $('#search').val().split(' : ');
+            document.getElementById('page:form:block:blocksection:subTechArea').value = splitting[1];
+        }  
+    }*/
+    </script>
+    <script>
+    /* window.onload = function() 
+    { 
+        document.getElementByTagName("input").blur();
+    }*/
+    </script>
+    
+</apex:page>

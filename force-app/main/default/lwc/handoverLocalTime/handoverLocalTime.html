@@ -1,0 +1,54 @@
+<!--
+  @description       : 
+  @author            : Nagalaxmi Telkar
+  @group             : 
+  @last modified on  : 11-18-2025
+  @last modified by  : Nagalaxmi Telkar
+  Modifications Log
+  Ver   Date         Author             Modification
+  1.0   04-11-2025   Nagalaxmi Telkar   Initial Version
+-->
+<template>
+    <article class="slds-card"><div class="slds-card__header slds-grid slds-page-header">
+        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+            <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-custom-custom18" title="SearchDetails">
+                    <lightning-icon icon-name="custom:custom18"></lightning-icon>
+                </span>
+            </div>
+            <div class="slds-media__body">
+                <h2 class="slds-card__header-title">
+                    <a href="#" class="slds-card__header-link slds-truncate" title="Search Details">
+                        <span>Handover Information</span>
+                    </a>
+                </h2>
+            </div>
+        </header>
+    </div>
+        <div class="slds-card__body slds-card__body_inner">
+            <lightning-record-view-form
+                    record-id={recordId}
+                    object-api-name="Case"
+                    density="comfy">
+                <div class="slds-grid">
+                    <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Customer Requested Handover Time</label>
+                        <lightning-output-field variant="label-hidden" field-name="Customer_Requested_Handover_Time__c"></lightning-output-field>
+                    </div>
+                </div>
+            </lightning-record-view-form>
+            <lightning-record-view-form
+                    record-id={recordId}
+                    object-api-name="Case"
+                    density="comfy">
+                <div class="slds-grid">
+                   <div class="slds-form-element slds-form-element_stacked">
+                        <label class="slds-form-element__label">Handover User Local Time</label>
+                        <lightning-output-field variant="label-hidden" field-name="HandoverLocalTime__c"></lightning-output-field>
+                    </div>
+                </div>
+            </lightning-record-view-form>
+        </div>
+    </article>
+    
+</template>

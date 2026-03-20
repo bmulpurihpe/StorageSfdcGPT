@@ -1,0 +1,26 @@
+<!--
+  @description       : 
+  @author            : Nagalaxmi Telkar
+  @group             : 
+  @last modified on  : 08-01-2022
+  @last modified by  : Nagalaxmi Telkar 
+  Modifications Log
+  Ver   Date         Author             Modification
+  1.0   08-01-2022   Nagalaxmi Telkar   Initial Version
+-->
+<apex:page id="thePage" standardcontroller="Case" extensions="CaseManagerPageController" lightningStyleSheets="true">
+    <apex:form id="theForm">
+      <apex:outputPanel rendered="{!showCollaborationLinks}">
+        <apex:commandLink action="https://kone.nido.nim.hpecorp.net/escalate/{!caseNumber}" value="Engineering Escalation" id="EECommanndLink"/>
+        <br/>
+        <apex:commandLink action="https://kone.nido.nim.hpecorp.net/consult/{!caseNumber}" value="Support Consult" id="SCCommandLink"/>
+        <br/>
+        <apex:commandLink action="https://kone.nido.nim.hpecorp.net/exec/{!caseNumber}" value="Executive Escalation" id="ExecEscCommandLink"/>   
+        <br/><br/>
+      </apex:outputPanel>
+      <apex:commandLink action="{!URLFOR($Action.Case.Escalate_to_PN, case.Id)}" value="Engage Pointnext" id="EPCommandLink"/>
+      <br/><br/>
+      <apex:commandLink action="/flow/CaseHandoverProcessAutomation?recordId={!recordId}" value="Handover" id="HandoverCommandLink"/>
+    </apex:form>
+    
+</apex:page>

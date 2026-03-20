@@ -1,0 +1,11 @@
+<apex:page >
+    <div  style="overflow-y:auto;height:150px" >
+        <table border="0" width="100%" cellpadding="0" cellspacing="0">
+            <tr valign="top">
+                <td width="300"><c:IYG_VF_Component region="panel_1" type="panel"/></td>
+                <td width="300"><c:IYG_VF_Component region="panel_2" type="panel"/></td>
+                <td><c:IYG_VF_Component region="panel_3" type="panel"/></td>                
+            </tr>            
+        </table>        
+    </div>
+</apex:page>

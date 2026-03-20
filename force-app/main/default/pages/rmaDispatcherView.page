@@ -1,0 +1,12 @@
+<apex:page standardController="RMAv2__c" action="{!getRedir}" extensions="rmaDispatcherViewController"> 
+    action="{!nullValue(redir.url, urlFor($Action.RMAv2__c.View, RMAv2__c.id, null, true))}">
+ <apex:form id="myform" >
+    <apex:pageblock id="pageBlockId">
+       <apex:outputpanel >
+           <apex:outputField value="{!RMAv2__c.rmaShipmentAddressSelector__c}"/>
+           <apex:outputField value="{!RMAv2__c.Id}"/>
+           <apex:outputField value="{!RMAv2__c.rmaSelection__c}"/>
+       </apex:outputpanel>
+    </apex:pageblock>
+ </apex:form>      
+</apex:page>

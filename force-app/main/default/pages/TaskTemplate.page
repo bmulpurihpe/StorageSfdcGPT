@@ -1,0 +1,254 @@
+<apex:page controller="TaskTemplateController" showHeader="true" sidebar="false" tabStyle="Training__tab" docType="html-5.0">
+    <link rel="stylesheet" type="text/css" href="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/css/taskTemplate.css')}" />
+    <script type="text/javascript">
+        var divisions = '{!JSENCODE(DivisionOptions)}';
+        var messages = '{!JSENCODE(Messages)}';      
+        var templates = '{!JSENCODE(TaskTemplates)}'; 
+    </script>
+    
+    <div id="container">
+        <div id="header">
+            <div class="banner">
+                <img src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/images/book-icon.png')}" />
+                <h1 class="banner-title">Training Material Management</h1>
+                <div class="banner-btn">
+                    <input type="button" class="btn" value="My Training Task" onclick="window.location.href='{!$Page.TrainingTask}'" />
+                </div>
+            </div>
+        </div>
+        <div id="content" ng-app="ttApp" ng-controller="ttController">
+            <div class="panel-control">
+                <label>Division:</label>
+                <select id="divisionSelect" ng-model="selectedDivision" ng-options="option as option.Label for option in divisionOptions" class="select-input"></select>
+            </div>
+            <!-- Message Start -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3>Messages of the Moment</h3>
+                    <div class="btn-group">
+                        <input type="button" class="btn" value="New Message" ng-click="newMessage()" ng-hide="control.showEditMsg" />
+                        <input type="button" class="btn" value="Save" ng-click="saveMessage()" ng-show="control.showEditMsg" />
+                        <input type="button" class="btn" value="Cancel" ng-click="cancelEditMessage()" ng-show="control.showEditMsg" />
+                    </div>                    
+                </div>
+                <div class="error-alert message-error"></div>
+                <div class="panel-body" ng-hide="control.showEditMsg">
+                    <table class="table-striped" width="80%" cellspacing="0" cellpadding="8">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px">Action</th>
+                                <th>Message</th>
+                                <th>Expiry Date</th>
+                                <th>Division</th>
+                                <th>For All Divisions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="message in filteredMsgs = (messages | filter:filterMessage)" ng-class-even="'even'" ng-class-odd="'odd'">                            
+                                <td>
+                                    <a href="" style="cursor: pointer; color: #0275d8;" ng-click="editMessage(message)">Edit</a>
+                                    &nbsp;|&nbsp;
+                                    <a href="" style="cursor: pointer; color: #0275d8;" ng-click="deleteMessage(message)">Del</a>
+                                </td>
+                                <td ng-bind="message.Message"></td>
+                                <td ng-bind="message.ExpiryDate"></td>
+                                <td ng-bind="message.Division"></td>
+                                <td>
+                                    <input type="checkbox" ng-model="message.ForAllDivisions" ng-disabled="true" />
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot ng-show="filteredMsgs.length == 0">
+                            <tr>
+                                <td colspan="3">No message to display.</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="panel-body" ng-show="control.showEditMsg">
+                    <apex:form >
+                        <table class="table-open" width="100%" cellpadding="10" cellspacing="0">
+                            <tr>
+                                <th>Message*</th>
+                                <td>
+                                    <apex:inputField value="{!Message.Message__c}" styleClass="textarea-input" html-ng-model="message.Message" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Expiry Date*</th>
+                                <td>
+                                    <apex:inputField value="{!Message.ExpiryDate__c}" html-ng-model="message.ExpiryDate" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>For All Divisions</th>
+                                <td>
+                                    <apex:inputField value="{!Message.ForAllDivisions__c}" html-ng-model="message.ForAllDivisions" html-ng-click="switchMessageDivision()" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Division</th>
+                                <td>
+                                    <apex:inputField value="{!Message.Division__c}" html-ng-model="message.Division" html-ng-disabled="message.ForAllDivisions" styleClass="select-input" />
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:form>                    
+                </div>
+                <div class="block-overlay message-status">                    
+                </div>
+                <div class="block-message message-status">
+                    <h1>Please wait...</h1>
+                </div>
+            </div>
+            <!-- Message End -->
+            <!-- Task Template Start -->
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3>Task Templates</h3>
+                    <div class="btn-group">
+                        <input type="button" class="btn" value="New Template" ng-click="newTemplate()" ng-hide="control.showEditTemplate" />
+                        <input type="button" class="btn" value="Save" ng-click="saveTemplate()" ng-show="control.showEditTemplate" />
+                        <input type="button" class="btn" value="Cancel" ng-click="cancelEditTemplate()" ng-show="control.showEditTemplate" />
+                    </div>                    
+                </div>
+                <div class="error-alert template-error"></div>
+                <div class="panel-body" ng-hide="control.showEditTemplate">
+                    <table class="table-striped" width="100%" cellspacing="0" cellpadding="8">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">Action</th>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Tab</th>
+                                <th>Sort</th>
+                                <th>Duration</th>
+                                <th>Effective Date</th>
+                                <th>Division</th>
+                                <th>For All Divisions</th>
+                                <th>Attachments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="template in filteredTemplates = (taskTemplates | filter:filterTemplate)" ng-class-even="'even'" ng-class-odd="'odd'">
+                                <td>
+                                    <a href="" style="cursor: pointer; color: #0275d8;" ng-click="editTemplate(template)">Edit</a>
+                                    &nbsp;|&nbsp;
+                                    <a href="" style="cursor: pointer; color: #0275d8;" ng-click="deleteTemplate(template)">Del</a>
+                                </td>
+                                <td ng-bind="template.Subject"></td>
+                                <td ng-bind="template.Category"></td>
+                                <td ng-bind="template.Tab"></td>
+                                <td><input type="text" ng-model="template.SortOrder" style="width: 20px; text-align: center" ng-blur="changeSortOrder(template)" /></td>
+                                <td ng-bind="template.SeatTime"></td>
+                                <td ng-bind="template.EffectiveDate"></td>
+                                <td ng-bind="template.Division"></td>
+                                <td>
+                                    <input type="checkbox" ng-model="template.ForAllDivisions" ng-disabled="true" />
+                                </td>
+                                <td>
+                                    <table border="0" cellpadding="5" cellspacing="0">
+                                        <tr ng-repeat="att in template.Attachments">
+                                            <td><a href="/servlet/servlet.FileDownload?file={{att.RecordId}}" target="_blank">{{ att.RecordName }}</a></td>
+                                            <td><a href="" style="cursor: pointer; color: #0275d8;vertical-align:middle;" ng-click="deleteAttachment(template, att)">Del</a></td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot ng-show="filteredTemplates.length == 0">
+                            <tr>
+                                <td colspan="10">No template to display.</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="panel-body" ng-show="control.showEditTemplate">
+                    <apex:form >                        
+                        <table class="table-open" width="100%" cellpadding="10" cellspacing="0">
+                            <tr>
+                                <th>Tab*
+                                <a class="tooltips" href="#">
+                                    <span class="helpButton" href="#">
+                                        <img src="/s.gif" alt="" class="helpOrb" title="" />
+                                    </span>
+                                    <span class="tooltip-info">{!$ObjectType.TaskTemplate__c.Fields.Tab__c.inlineHelpText}</span>
+                                </a>
+                                </th>
+                                <td>
+                                    <apex:inputField value="{!Template.Tab__c}" styleClass="select-input" html-ng-model="template.Tab" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Category*</th>
+                                <td>
+                                    <apex:inputField value="{!Template.Category__c}" styleClass="select-input" html-ng-model="template.Category" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Subject*</th>
+                                <td>
+                                    <apex:inputField value="{!Template.Subject__c}" styleClass="text-input" html-ng-model="template.Subject" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Duration</th>
+                                <td>
+                                    <apex:inputField value="{!Template.SeatTime__c}" styleClass="text-input" html-ng-model="template.SeatTime" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Effective Date*</th>
+                                <td>
+                                    <apex:inputField value="{!Template.Effective_Date__c}" html-ng-model="template.EffectiveDate" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Description*</th>
+                                <td>
+                                    <apex:inputField value="{!Template.Description__c}" styleClass="textarea-input" html-ng-model="template.Description" />
+                                </td>
+                            </tr>    
+                            <tr>
+                                <th>For All Divisions</th>
+                                <td>
+                                    <apex:inputField value="{!Template.ForAllDivisions__c}" html-ng-model="template.ForAllDivisions" html-ng-click="switchTemplateDivision()" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Division</th>
+                                <td>
+                                    <apex:inputField value="{!Template.Division__c}" html-ng-model="template.Division" html-ng-disabled="template.ForAllDivisions" styleClass="select-input" />
+                                </td>
+                            </tr> 
+                            <tr>
+                                <th>Existing Users Will Receive This Task</th>
+                                <td>
+                                    <apex:inputField value="{!Template.ExistingUsersWillReceiveThisTask__c}" html-ng-model="template.ExistingUsersWillReceiveThisTask" />
+                                </td>
+                            </tr>   
+                            <tr>
+                                <th>Attachment</th>
+                                <td>
+                                    <input type="button" class="btn" value="Choose File" id="chooseFile" />
+                                    <span id="fileName"></span>
+                                    <span class="tip-info">Upload up to 4.3 MB</span>
+                                    <input type="file" id="fileInput" name="file" style="display: none" />
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:form>                    
+                </div>
+                <div class="block-overlay template-status">                    
+                </div>
+                <div class="block-message template-status">
+                    <h1>Please wait...</h1>
+                </div>
+            </div>
+            <!-- Task Template End -->
+        </div>
+    </div>
+    <script type="text/javascript" src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/js/jquery-2.1.4.min.js')}" />
+    <script type="text/javascript" src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/js/angular.min.js')}" />
+    <script type="text/javascript" src="{!URLFOR($Resource.TrainingToolLib, 'TrainingToolLib/js/taskTemplate.js')}" />
+</apex:page>

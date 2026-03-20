@@ -1,0 +1,173 @@
+{
+  "count": 12,
+  "results": [
+    {
+      "category": {
+        "guid": "9RBU7W4JKUDN6P19WHAV"
+      },
+      "creationDateTime": "2013-09-24T22:05:59Z",
+      "guid": "WEYHUJR67H0H0FAD5A3Q",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "PBOM, CS220",
+      "number": "PBOM-CS220",
+      "revisionNumber": "D"
+    },
+    {
+      "category": {
+        "guid": "Q8SBODL01BU4N6IQBSVG"
+      },
+      "creationDateTime": "2013-03-18T19:56:02Z",
+      "guid": "1J3MZOWBCM5M5KBAMB3Q",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "Service Chassis, 3U, SMC",
+      "number": "SR-CHASSIS-3U-SMC",
+      "revisionNumber": "H"
+    },
+    {
+      "category": {
+        "guid": "R9TCPEM12CV5O7JRCTW1"
+      },
+      "creationDateTime": "2012-10-09T14:21:28Z",
+      "guid": "CUEXAZ7MNXGXGVMY16FO",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "Service Single Controller for CS220",
+      "number": "SR-CONT-CS220",
+      "revisionNumber": "G"
+    },
+    {
+      "category": {
+        "guid": "SAUDQFN23DW6P8KSDUX8"
+      },
+      "creationDateTime": "2013-07-22T18:19:33Z",
+      "guid": "M4O7K9HWX7Q7Q5XWA27W",
+      "lifecyclePhase": {
+        "guid": "YGZI1K25O7Q9SZK0",
+        "name": "Deprecated"
+      },
+      "name": "1TB HDD Drive bay Assy-Service",
+      "number": "SR-HDD-1TB",
+      "revisionNumber": "C"
+    },
+    {
+      "category": {
+        "guid": "TBVERGO34EX7Q9LTEVYU"
+      },
+      "creationDateTime": "2012-10-19T19:57:46Z",
+      "guid": "HZJ2F4CRS2L2L0SSIJL9",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "Service Power Supply Unit for CS Arrays, 1200W",
+      "number": "SR-PWR-1200W",
+      "revisionNumber": "E"
+    },
+    {
+      "category": {
+        "guid": "VDXGTIQ56GZ9SBNVGX03"
+      },
+      "creationDateTime": "2012-10-09T16:56:51Z",
+      "guid": "6O8R4T1GHRARAPHH787B",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "Service SSD, 80GB, with carrier",
+      "number": "SR-SSD-80GB",
+      "revisionNumber": "C"
+    },
+    {
+      "category": {
+        "guid": "SAUDQFN23DW6P8KSDUX8"
+      },
+      "creationDateTime": "2013-10-01T21:28:22Z",
+      "guid": "M4O7K9HWX7Q7Q5WSVZPD",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "Service, HDD for 1TB SAS HDD with carrier",
+      "number": "SR-HDD-1TB-SAS",
+      "revisionNumber": "G"
+    },
+    {
+      "category": {
+        "guid": "VDXGTIQ56GZ9SBNVGX03"
+      },
+      "creationDateTime": "2013-10-02T00:02:01Z",
+      "guid": "BTDW9Y6LMWFWFUMMCDD8",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "Service SSD, 3500, 80GB, with carrier",
+      "number": "SR-SSD-3500-80GB",
+      "revisionNumber": "F"
+    },
+    {
+      "category": {
+        "guid": "M4O7K9HWX7Q0J2EMA55K"
+      },
+      "creationDateTime": "2013-12-11T22:08:43Z",
+      "guid": "7P9S5U2HISBSBQJLP49G",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "USB, Flash Drive, 4GB",
+      "number": "SR-USB",
+      "revisionNumber": "D"
+    },
+    {
+      "category": {
+        "guid": "9RBU7W4JKUDN6P19WHAV"
+      },
+      "creationDateTime": "2015-03-09T23:18:52Z",
+      "guid": "6O8R4T1GHRARAPH0SM9Z",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "PBOM, ES1, H90T",
+      "number": "PBOM-ES1-H90T",
+      "revisionNumber": "B"
+    },
+    {
+      "category": {
+        "guid": "TBVERGO34EX7Q9LSA4JY"
+      },
+      "creationDateTime": "2013-03-15T14:22:39Z",
+      "guid": "CUEXAZ7MNXGXGVM1S4ZU",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "Service Dual 1GbaseT NIC for base",
+      "number": "SR-PCI-1GT",
+      "revisionNumber": "F"
+    },
+    {
+      "category": {
+        "guid": "Q8SBODL01BU4N6IQE9AB"
+      },
+      "creationDateTime": "2012-07-06T19:14:08Z",
+      "guid": "CUEXAZ7MNXGXGVQ2PXN9",
+      "lifecyclePhase": {
+        "guid": "0I1K3M47Q9SBU1M8",
+        "name": "In Production"
+      },
+      "name": "PCBA, PCIe 1.1,x4, NIC, GigE, 2 port",
+      "number": "650-0109-001",
+      "revisionNumber": "A"
+    }
+  ]
+}

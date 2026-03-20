@@ -1,0 +1,118 @@
+<apex:page standardcontroller="Case" id="page">
+<apex:messages />
+    <apex:sectionheader id="header" title="{!$ObjectType.Case.label} Edit" subtitle="{!IF(ISNULL(Case.CaseNumber), 'New Case',Case.CaseNumber)}"/>
+    <apex:form id="form">
+        <apex:pageblock id="block" mode="edit" title="{!$ObjectType.Case.label} Edit">
+            <apex:pageblockbuttons >
+                <apex:commandbutton value="Save" action="{!Save}"/>
+                <apex:commandbutton value="Cancel" action="{!Cancel}"/>
+            </apex:pageblockbuttons>
+            <!-- **********   [Record Type : Master ]   **********  -->
+            <apex:outputpanel id="panel" >
+                <!--apex:pageblocksection title="Case Support Information (scroll down to see all messages)" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.Case_Comment__c}" required="false"/>
+                </apex:pageblocksection-->
+                <apex:pageblocksection id="section" title="Case Information" showheader="true" columns="2">
+                    <apex:outputfield value="{!Case.OwnerId}"/>
+                    <apex:inputText id="rt" label="Case Record Type"/>
+                    <apex:inputHidden id="rt1" value="{!Case.RecordTypeId}"/>
+                    <apex:inputfield value="{!Case.Status}" required="true"/>
+                    <apex:inputfield id="acctId" value="{!Case.AccountId}" required="false"/>
+                    
+                    <apex:inputfield value="{!Case.Duplicate_Case__c}" required="false"/>
+                    <apex:inputfield id="contId" value="{!Case.ContactId}" required="false"/>
+                    <apex:inputfield value="{!Case.Auto_Close__c}" required="false"/>
+                    <apex:outputfield value="{!Case.CaseNumber}"/>
+                    <apex:inputfield value="{!Case.Auto_Open__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Priority}" required="false"/>
+                    <apex:inputfield value="{!Case.Closed_By__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Severity__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Notify_Account_Team__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Origin}" required="true"/>
+                    <apex:inputfield value="{!Case.caseToolsUsedToSolve__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Case_Type__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseTSEattRequiredInternal__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Jive_Thread__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseProject__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Support_Provider_Case_ID__c}" required="false"/>
+                    <apex:inputfield value="{!Case.casePachinkoCaseType__c}" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Case Categorization" showheader="true" columns="2">
+                    <apex:inputfield value="{!Case.caseCatImpactToCustomer__c}" required="true"/>
+                    <!--apex:inputfield value="{!Case.Product_Damage_Symptoms__c}" required="false"/>
+                    <apex:inputfield value="{!Case.Technology_Area__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.Sub_Technology_Area__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.caseSpecificDetails__c}" required="false"/-->
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.Type}" required="true"/>
+                   
+                    <apex:pageblocksectionitem />
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Closure information" showheader="true" columns="2">
+                    <apex:inputfield value="{!Case.caseClosureArrayDowntimeMinutes__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseVendorEngaged__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseClosureEnvironmentDowntimeMinutes__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseVendorCaseNumberOptional__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseClosureBusinessImpact__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseIsThisCaseRelatedToANimbleProduct__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.casCatClosureRootCause__c}" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection id="section2" title="Asset Information" showheader="true" columns="2">
+                    <apex:inputfield id="asstId" value="{!Case.AssetId}" required="true"/>
+                    <apex:inputfield value="{!Case.SuppliedEmail}" required="false"/>
+                    <apex:inputfield value="{!Case.Nimble_Version__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseNimbleGroupId__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.caseNimbleGroupName__c}" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Description Information" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.Subject}" style="width: 500px" required="false"/>
+                    <apex:inputfield value="{!Case.Description}" style="width: 500px; height: 80px"  required="false"/>
+                    <apex:inputfield value="{!Case.caseCurrentStatus__c}" style="width: 500px" required="false"/>
+                    <apex:inputfield value="{!Case.casePlanOfAction__c}" style="width: 500px; height: 220px" required="false"/>
+                    <apex:inputfield value="{!Case.caseCaseSummary__c}" style="width: 500px"  required="false"/>
+                    <apex:inputfield value="{!Case.Instructions__c}" style="width: 500px" required="false"/>
+                    <apex:inputfield value="{!Case.Estimated_Effort__c}" required="true"/>
+                    <apex:inputfield value="{!Case.caseClosureEstimatedEffort__c}" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Customer Portal Facing Fields" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.casePortalResolutionNotes__c}" style="width:500px; height: 80px" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Additional Information" showheader="true" columns="2">
+                    <apex:inputfield value="{!Case.caseEscalationType__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseKbNeeded__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.caseKbTopicNeeded__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.caseKbCreated__c}" required="false"/>
+                    <apex:pageblocksectionitem />
+                    <apex:inputfield value="{!Case.caseKbCreatedNumber__c}" required="false"/>
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Attn Req Information" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.caseAttnReq__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseAttnReqDateTime__c}" required="false"/>
+                    <apex:inputfield value="{!Case.caseAttnReqSource__c}" style="width: 500px" required="false"/>
+                    <apex:inputfield value="{!Case.caseAttnReqCreator__c}" style="width: 500px" required="false"/>
+                    </apex:pageblocksection>
+                <apex:pageblocksection title="Web Information" showheader="false" columns="2">
+                </apex:pageblocksection>
+                <apex:pageblocksection title="Nimble Internal Notes" showheader="true" columns="1">
+                    <apex:inputfield value="{!Case.Nimble_Internal_Notes__c}"  style="width: 500px; height: 150px" required="false"/>
+                </apex:pageblocksection>
+            </apex:outputpanel>
+        </apex:pageblock>
+    </apex:form>
+    <script>
+        window.onload = function() {
+            document.getElementById('page:form:block:section:rt').value = "Array Case";
+            document.getElementById('page:form:block:section:rt').readOnly=true;
+            document.getElementById('page:form:block:section:rt1').value = "01234000000BnF4";
+            document.getElementById('page:form:block:section:acctId').value =  "{!$CurrentPage.parameters.acctId}";
+            document.getElementById('page:form:block:section:contId').value =  "{!$CurrentPage.parameters.contId}";
+            document.getElementById('page:form:block:section2:asstId').value =  "{!$CurrentPage.parameters.asstId}";
+        };
+    </script>
+    </apex:page>

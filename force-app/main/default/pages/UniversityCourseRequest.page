@@ -1,0 +1,955 @@
+<apex:page standardcontroller="University_Course_Request__c" extensions="UniversityCourseRequestController" title="University Course Request" id="thePage">
+<!--  <apex:page action="{!checkOverride}" standardcontroller="University_Course_Request__c" extensions="UniversityCourseRequestController" title="University Course Request">-->
+
+    <style type="text/css">
+        .firstLbl,.secondLbl
+        {
+            /*text-align:right;
+            display:block;*/
+        }
+        .bPageBlock .detailList .dataCol
+        {
+            width:25%;
+        }
+        .requestInstructor select, .ddlHidden select
+        {
+            display:none;
+        }
+        
+        .setLookup
+        {
+            float: left;
+        }
+        
+        .stylebtnClear
+        {
+            margin-top: -1px;
+            font-size: 9px;
+            width: 35px;
+            float: left;
+        }
+        
+        .tooltips
+        {       
+            font-weight: normal;
+            font-style: italic;
+            font-size:10px;     
+        }
+        div.reqBlock
+        {
+            background-color: #c00;
+            left:-4px;
+            width:3px;
+            top:1px;
+            bottom:1px;
+            height:30px;
+            float:left;
+        }
+        div.reqBlock2
+        {
+            background-color: #c00;
+            left:-4px;
+            width:3px;
+            top:1px;
+            bottom:1px;
+            height:18px;
+            float:left;
+            margin-right:1px;
+        }
+        div.reqBlock3
+        {
+            background-color: #c00;
+            left:-4px;
+            width:3px;
+            top:1px;
+            bottom:1px;
+            height:50px;
+            float:left;
+            margin-right:1px;
+        }
+        .requestNote, .iptSpecialRequest
+        {
+            width:150%;
+        }
+        .errorMsg
+        {
+            display: block;
+        }
+        .pbError
+        {
+            display: inherit;
+        }
+        
+    </style>
+    <script type="text/javascript">
+        //document.domain = "c.cs40.visual.force.com";
+        function SaveRecord()
+        {
+            //alert("Hello");
+            save();
+            alert("This is save record");
+        }
+        function Test()
+        {
+            var isValidate = document.getElementById("thePage:varFrm:isValidate").value;
+            alert(isValidate);
+            var ucrId = document.getElementById("thePage:varFrm:ucrId").value;
+            alert(ucrId);
+            //window.top.location='/{!ucr.id}';
+        }
+        
+        function ClearText(eId){
+            document.getElementById(eId).value = '';
+            document.getElementById(eId+'_lkid').value = '';
+        }
+        
+        function disableAll(){
+            //document.getElementById("thePage:frm:pb:ciBlock:pbsecRequestInstructor:iptRequestInstructor").disabled=true;
+            //document.getElementById("thePage:frm:pb:ciBlock:pbsecSecondInstructor:iptSecondInstructor").disabled=true;
+            //document.getElementById("thePage:frm:pb:ciBlock:pbsecInstructorTraining:iptInstructorTraining").disabled=true;
+            document.getElementById("thePage:frm:pb:ciBlock:pbsecRequestInstructor:iptReqUniverInstructor").disabled=true;
+            document.getElementById("thePage:frm:pb:ciBlock:pbsecSecondInstructor:ipt2ndUniverInstructor").disabled=true;
+            document.getElementById("thePage:frm:pb:stBlock:pbsecAEName:iptAEName").disabled=true;
+            document.getElementById("thePage:frm:pb:stBlock:pbsecSEName:iptSEName").disabled=true;
+        }
+        window.onload=function(){
+            disableAll();
+        }
+    </script>
+    <apex:form id="varFrm" >
+        <apex:actionFunction name="astVenueSelected" action="{!astVenueSelected}"/>
+        <apex:actionFunction name="save" action="{!doSave}"/>
+        <apex:inputHidden value="{!isValidate}" id="isValidate"/>
+        <apex:inputHidden value="{!ucr.Id}" id="ucrId"/>
+    </apex:form>
+    
+    <apex:form id="frm">
+        <apex:outputPanel rendered="{!refreshPage}">
+           <script>
+                window.top.location='/{!ucr.id}';
+           </script>
+        </apex:outputPanel> 
+        <apex:pageBlock title="University Course Request" rendered="{!isViewRecord==false}" id="pb">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!doSave}" value="Submit" />
+                <!-- <apex:commandButton action="{!Save}" value="Savetest" oncomplete="alert({!isValidate});window.top.location='/{!ucr.id}'; return false"/> -->
+                <!-- <apex:commandButton action="{!Save}" value="Savetest2" oncomplete="if({!isValidate}) {alert('a');return false;} else {alert('b');return false;}"/> -->
+                <!-- <apex:commandButton action="{!doSave}" value="Save" oncomplete="window.top.location='/{!ucr.id}'; return false"/> -->
+                <!-- <apex:commandButton value="SaveRecord" onclick="SaveRecord()" oncomplete="Test()"/> -->
+                <!-- <apex:commandButton action="{!SaveNew}" value="Save & New"/> -->
+                <apex:commandButton action="{!Cancel}" value="Cancel" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:outputPanel styleClass="pbError" rendered="{!isValidate==false}" >
+                <apex:outputText value="Error: Invalid Data." />
+                <br/>
+                <apex:outputText value="Review all error messages below to correct your data." />
+                
+                <apex:pageMessages />
+                <!-- <br/>
+                <apex:outputText value="{!vrErr}" styleClass="errorMsg" rendered="{!LEN(vrErr)>0}"/> -->
+            </apex:outputPanel>
+            
+            <apex:pageBlockSection title="General Information" columns="2" id="giBlock" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel id="pnlDesireCourseStartDate">{!$ObjectType.University_Course_Request__c.fields.Desired_Course_Start_Date__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Desired_Course_Start_Date__c}" id="iptDesiredDate" styleClass="" >
+                            <apex:actionsupport event="onchange" action="{!desiredDateChange}" rerender="giBlock" status="DesiredDateStatus" />
+                            <apex:actionStatus id="DesiredDateStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>&nbsp;<apex:outputLabel value="Validating Date ..."/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus>    
+                        </apex:inputField>
+                        <apex:outputText value="{!errStartDate}" styleClass="errorMsg" rendered="{!LEN(errStartDate)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputField value="{!ucr.ownerID}" id="optOwner" styleClass="secondInput"/>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Course_Request_Response_SLA__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!courseReqRes}" rendered="{!ISNULL(ucr.Course_Request_Response_SLA__c)}"/>
+                        <apex:outputText value="{!ucr.Course_Request_Response_SLA__c}" rendered="{!NOT(ISNULL(ucr.Course_Request_Response_SLA__c))}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel id="pnlDesireCourseStartTime">{!$ObjectType.University_Course_Request__c.fields.Desired_Course_Start_Time_p__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Desired_Course_Start_Time_p__c}" id="iptDesiredTime" styleClass="" />
+                        <apex:outputText value="{!errStartTime}" styleClass="errorMsg" rendered="{!LEN(errStartTime)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                    
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Class Information" columns="2" id="ciBlock" >
+                <apex:pageBlockSectionItem id="pbsecRequestInstructor">
+                    <!-- 
+                    <apex:outputPanel id="pnlRequestInstructor">{!$ObjectType.University_Course_Request__c.fields.Requested_Instructor__c.Label} <div class="tooltips">Please consult with your SE Manager to find an instructor</div></apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField id="iptRequestInstructor" value="{!ucr.Requested_Instructor__c}" styleClass="ddlHidden" />
+                        <apex:outputText value="{!errRequestedInstructor}" styleClass="errorMsg" rendered="{!LEN(errRequestedInstructor)>0}"/>
+                    </apex:outputPanel>
+                     -->
+                     
+                     <apex:outputLabel value="{!$ObjectType.University_Course_Request__c.fields.Requested_University_Instructor1__c.Label}"/>
+                     
+                     <apex:outputPanel >
+                        <div>
+                            <div class="reqBlock2"></div>
+                            <apex:inputField id="iptReqUniverInstructor" value="{!ucr.Requested_University_Instructor1__c}" styleClass="ddlHidden setLookup"/>
+                            
+                            <button type="button" class="stylebtnClear" onclick="ClearText('thePage:frm:pb:ciBlock:pbsecRequestInstructor:iptReqUniverInstructor');">Clear</button>
+                            <apex:outputText value="{!errRequestedInstructor}" styleClass="errorMsg" rendered="{!LEN(errRequestedInstructor)>0}" style="float:left"/>
+                        </div>
+                     </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel id="pnlCourseRequest" value="{!$ObjectType.University_Course_Request__c.fields.Course_Requested__c.Label}"/>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:selectList value="{!ucr.Course_Requested__c}" size="1" styleClass="ddlHidden">
+                            <apex:selectOptions value="{!CourseRequested}"/>
+                        </apex:selectList>
+                        <apex:outputText value="{!errCourseRequested}" styleClass="errorMsg" rendered="{!LEN(errCourseRequested)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <!-- <apex:inputField value="{!ucr.Course_Requested__c}" id="iptCourseRequest" styleClass="secondInput" required="true" />-->
+
+                <!-- <apex:inputField value="{!ucr.Second_Instructor__c}" id="iptSecondInstructor" styleClass="ddlHidden"/> -->
+                <apex:pageBlockSectionItem id="pbsecSecondInstructor">
+                
+                    <!-- 
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Second_Instructor__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div>
+                            <apex:inputField id="iptSecondInstructor" value="{!ucr.Second_Instructor__c}" styleClass="ddlHidden setLookup" />
+                            <button type="button" class="stylebtnClear" onclick="ClearText('thePage:frm:pb:ciBlock:pbsecSecondInstructor:iptSecondInstructor');">Clear</button>
+                        </div><br/><br/>
+                        <apex:outputText value="{!errSecondInstructor}" styleClass="errorMsg" rendered="{!LEN(errSecondInstructor)>0}"/>
+                    </apex:outputPanel>
+                     -->
+                     <apex:outputLabel value="{!$ObjectType.University_Course_Request__c.fields.Second_University_Instructor1__c.Label}"/>
+                     <apex:outputPanel >
+                        <div>
+                            <apex:inputField id="ipt2ndUniverInstructor" value="{!ucr.Second_University_Instructor1__c}" styleClass="ddlHidden setLookup" />
+                            <button type="button" class="stylebtnClear" onclick="ClearText('thePage:frm:pb:ciBlock:pbsecSecondInstructor:ipt2ndUniverInstructor');">Clear</button>
+                        </div><br/><br/>
+                        <apex:outputText value="{!err2ndUniverInstructor}" styleClass="errorMsg" rendered="{!LEN(err2ndUniverInstructor)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel id="pnlClassType">{!$ObjectType.University_Course_Request__c.fields.Class_Type__c.Label} <div class="tooltips">
+                        <p>PUBLIC - open to anyone who wishes to register, will be displayed on Nimble University</p> 
+                        <p>PRIVATE - only available to attendees with private registration link, will not be displayed on Nimble University</p></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock"></div>
+                        <apex:selectRadio value="{!ucr.Class_Type__c}"  id="rdClassType">
+                            <apex:selectoptions value="{!ClassTypes}"></apex:selectoptions>
+                        </apex:selectRadio>
+                        <apex:outputText value="{!errClassType}" styleClass="errorMsg" rendered="{!LEN(errClassType)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                 
+                <!-- <apex:pageBlockSectionItem id="pbsecInstructorTraining">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Instructor_in_Training__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:inputField value="{!ucr.Instructor_in_Training__c}" id="iptInstructorTraining" styleClass="ddlHidden setLookup"/>
+                        <button type="button" class="stylebtnClear" onclick="ClearText('thePage:frm:pb:ciBlock:pbsecInstructorTraining:iptInstructorTraining');">Clear</button>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>-->
+                <apex:outputText value=""/>
+                <!-- <apex:inputField value="{!ucr.Expected_course_size__c}" id="iptCourseSize" styleClass="" required="true" /> -->
+                
+                <apex:pageBlockSectionItem id="expectCourseSizeSection">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Expected_course_size__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputText value="{!expectedSize}">
+                            <apex:actionsupport event="onchange" action="{!expectedCauseSizeChange}" rerender="ciBlock,vcBlock" status="expectedSizetatus" />
+                            <apex:actionStatus id="expectedSizetatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>&nbsp;<apex:outputLabel value="Loading ..."/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:inputText>
+                        <apex:outputText escape="false" value="{!errExpectedCourseSize}" styleClass="errorMsg" rendered="{!LEN(errExpectedCourseSize)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                 
+                <apex:outputText value=""  styleClass="secondLbl"/> 
+                <!-- <apex:outputField value="{!ucr.Large_Course_Warning__c}" id="iptLargeCourseWarning" styleClass="secondInput"/> -->
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Large_Course_Warning__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!largeCourseWarning}" rendered="{!ISNULL(ucr.Large_Course_Warning__c)}"/>
+                        <apex:outputText value="{!ucr.Large_Course_Warning__c}" rendered="{!NOT(ISNULL(ucr.Large_Course_Warning__c))}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Sales Team" columns="2" id="stBlock" >
+                <apex:pageBlockSectionItem id="pbsecAEName">
+                    <apex:outputPanel id="pnlAEName">{!$ObjectType.University_Course_Request__c.fields.AE_Name__c.Label} <div class="tooltips">Please consult with your SE Manager to find an instructor</div></apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.AE_Name__c}" id="iptAEName" styleClass="ddlHidden" />
+                        <apex:outputText value="{!errAEName}" styleClass="errorMsg" rendered="{!LEN(errAEName)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="pbsecSEName">
+                    <apex:outputPanel id="pnlSEName">{!$ObjectType.University_Course_Request__c.fields.SE_Name__c.Label} <div class="tooltips">Please consult with your SE Manager to find an instructor</div></apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.SE_Name__c}" id="iptSEName" styleClass="ddlHidden" />
+                        <apex:outputText value="{!errSEName}" styleClass="errorMsg" rendered="{!LEN(errSEName)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                 
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Venue and Catering" columns="2" id="vcBlock" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel id="pnlAstVenue">{!$ObjectType.University_Course_Request__c.fields.Assistance_with_Venue_Required__c.Label} 
+                        <div class="tooltips">
+                            North America only: A venue location is required before a course can be posted in Nimble University for student registrations. If yes, please provide three preferred locations. If no, please provide the venue name, address and room capacity.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock"></div>
+                        <apex:selectRadio value="{!ucr.Assistance_with_Venue_Required__c}" id="rdAstVenue"  >
+                            <apex:selectoptions value="{!AstVenue}"></apex:selectoptions>
+                            <apex:actionsupport event="onchange" action="{!astVenueSelected}" rerender="vcBlock" status="astVenueStatus" />
+                            <apex:actionStatus id="astVenueStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>&nbsp;<apex:outputLabel value="Loading ..."/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus> 
+                        </apex:selectRadio>
+                        <apex:outputText value="{!errAstVenue}" styleClass="errorMsg" rendered="{!LEN(errAstVenue)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel id="pnlVenueName">{!$ObjectType.University_Course_Request__c.fields.Venue_Name__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Venue_Name__c}" id="iptVenueName" styleClass="" />
+                        <apex:outputText value="{!errVenueName}" styleClass="errorMsg" rendered="{!LEN(errVenueName)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem id="bsiPreferredLocation" rendered="{!renderedVenue == 'T'}">
+                    <apex:outputPanel id="pnlPreferredLocation">{!$ObjectType.University_Course_Request__c.fields.Preferred_Locations__c.Label} 
+                        <div class="tooltips">
+                            If assistance with a venue is required (NA Only) please provide three preferred locations and note the room capacity for each location.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock3"></div>
+                        <apex:inputField value="{!ucr.Preferred_Locations__c}" id="iptPreferredLocation" styleClass=""/>
+                        <apex:outputText value="{!errPreferredLocation}" styleClass="errorMsg" rendered="{!LEN(errPreferredLocation)>0}"/>
+                    </apex:outputPanel> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'T'}"/>
+                <apex:pageBlockSectionItem id="bsiPreferredLocation2" rendered="{!renderedVenue == 'T'}">
+                    <apex:outputPanel id="pnlPreferredLocation2">{!$ObjectType.University_Course_Request__c.fields.Preferred_Location_2__c.Label} 
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock3"></div>
+                        <apex:inputField value="{!ucr.Preferred_Location_2__c}" id="iptPreferredLocation2" styleClass=""/>
+                        <apex:outputText value="{!errPreferredLocation2}" styleClass="errorMsg" rendered="{!LEN(errPreferredLocation2)>0}"/>
+                    </apex:outputPanel> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'T'}"/>
+                <apex:pageBlockSectionItem id="bsiPreferredLocation3" rendered="{!renderedVenue == 'T'}">
+                    <apex:outputPanel id="pnlPreferredLocation3">{!$ObjectType.University_Course_Request__c.fields.Preferred_Location_3__c.Label} 
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock3"></div>
+                        <apex:inputField value="{!ucr.Preferred_Location_3__c}" id="iptPreferredLocation3" styleClass=""/>
+                        <apex:outputText value="{!errPreferredLocation3}" styleClass="errorMsg" rendered="{!LEN(errPreferredLocation3)>0}"/>
+                    </apex:outputPanel> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/>
+                <apex:pageBlockSectionItem id="bsiVenueDetail" rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel id="pnlVenueDetail">{!$ObjectType.University_Course_Request__c.fields.Venue_Detail__c.Label} 
+                        <div class="tooltips">
+                            Please include building, floor, room number, or other location details if required.
+                        </div>
+                    </apex:outputPanel>
+                   <apex:inputField value="{!ucr.Venue_Detail__c}" id="iptVenueDetail" styleClass=""/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Venue_Street__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Venue_Street__c}" id="iptVenueStreet" styleClass="" />
+                        <apex:outputText value="{!errVenueStreet}" styleClass="errorMsg" rendered="{!LEN(errVenueStreet)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}" id="pbVenueCity">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Venue_City__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Venue_City__c}" id="iptVenueCity" styleClass="">
+                            <apex:actionsupport event="onchange" action="{!venueCityChange}" rerender="vcBlock" status="VenueCityStatus" />
+                            <apex:actionStatus id="VenueCityStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>&nbsp;<apex:outputLabel value="Setting City ..."/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus> 
+                        </apex:inputField>
+                        <apex:outputText value="{!errVenueCity}" styleClass="errorMsg" rendered="{!LEN(errVenueCity)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Venue_State__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Venue_State__c}" id="iptVenueState" styleClass="" />
+                        <apex:outputText value="{!errVenueState}" styleClass="errorMsg" rendered="{!LEN(errVenueState)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Venue_Zip__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Venue_Zip__c}" id="iptVenueZip" styleClass="" />
+                        <apex:outputText value="{!errVenueZip}" styleClass="errorMsg" rendered="{!LEN(errVenueZip)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Venue_Country__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Venue_Country__c}" id="iptVenueCountry" styleClass="" >
+                            <apex:actionsupport event="onchange" action="{!venueCountryChange}" rerender="vcBlock,smBlock" status="VenueCountryStatus" />
+                            <apex:actionStatus id="VenueCountryStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus> 
+                        </apex:inputField> 
+                        <apex:outputText value="{!errVenueCountry}" styleClass="errorMsg" rendered="{!LEN(errVenueCountry)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}" id="pbAirport">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Venue_Airport_Code_Manual__c.Label}
+                        <div class="tooltips">
+                            <apex:outputText value="Airport Code must be 3 capital letters."/>
+                            <br/>
+                            <apex:outputLink onclick="window.open('https://www.aa.com/reservation/airportLookup.do?jspEntry=yes','name','height={!height},width={!width}');return false;"><apex:outputText value="Help with Airport Code" /></apex:outputLink>
+                            <br/>
+                            <apex:outputLink onclick="window.open('http://www.travelmath.com/nearest-airport/{!ucr.Venue_City__c}','name','height={!height},width={!width}');return false;"><apex:outputText value="Find Airport Code" /></apex:outputLink>
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Venue_Airport_Code_Manual__c}" id="iptVenueAirport" styleClass="">
+                            <apex:actionsupport event="onchange" action="{!validateAirport3Letters}" rerender="vcBlock" status="airportStatus" />
+                        </apex:inputField>
+                        <apex:actionStatus id="airportStatus">
+                               <apex:facet name="start">
+                                   <apex:outputText >
+                                       <apex:image value="/img/loading.gif"/>
+                                   </apex:outputText>
+                               </apex:facet>
+                           </apex:actionStatus>
+                        <apex:outputText value="{!errVenueAirport}" styleClass="errorMsg" rendered="{!LEN(errVenueAirport)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                
+                <apex:outputText value=""  rendered="{!renderedVenue == 'F'}"/> 
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Room_Capacity__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputText value="{!roomCapacity}" >
+                            <apex:actionsupport event="onchange" action="{!roomCapacityChange}" rerender="vcBlock,ciBlock" status="RoomCapacityStatus" />
+                        </apex:inputText>
+                        <apex:actionStatus id="RoomCapacityStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        <apex:outputText value="{!errRoomCapacity}" styleClass="errorMsg" rendered="{!LEN(errRoomCapacity)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value=""  styleClass="" rendered="{!renderedVenue == null}"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel id="pnlAstCatering">{!$ObjectType.University_Course_Request__c.fields.Assistance_with_Catering_Required__c.Label} 
+                        <div class="tooltips">
+                            North America only: Do you require assistance with catering.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock"></div>
+                        <apex:selectRadio value="{!ucr.Assistance_with_Catering_Required__c}" >
+                            <apex:selectoptions value="{!YesNo}"></apex:selectoptions>
+                            <apex:actionsupport event="onchange" action="{!astCateringSelected}" rerender="vcBlock" status="astCateringStatus"/>
+                            <apex:actionStatus id="astCateringStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>&nbsp;<apex:outputLabel value="Loading ..."/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus>  
+                        </apex:selectRadio>
+                        <apex:outputText value="{!errAstCatering}" styleClass="errorMsg" rendered="{!LEN(errAstCatering)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputText value=""  />
+                
+                <apex:pageBlockSectionItem rendered="{!renderedCatering=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Catering_Notes__c.Label}</apex:outputPanel>
+                    <!-- <apex:outputPanel >
+                        <div class="reqBlock"></div>
+                        <apex:inputField value="{!ucr.Catering_Notes__c}" id="iptCateringNote"   />
+                        <apex:outputText value="{!errCateringNote}" styleClass="errorMsg" rendered="{!LEN(errCateringNote)>0}"/>
+                    </apex:outputPanel>
+                     -->
+                     <apex:inputField value="{!ucr.Catering_Notes__c}" id="iptCateringNote"   />
+                </apex:pageBlockSectionItem>
+                <apex:outputText value=""  styleClass="" rendered="{!renderedCatering=='T'}"/>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel id="pnlProjector">{!$ObjectType.University_Course_Request__c.fields.Projector_Required__c.Label} 
+                        <div class="tooltips">
+                            Do you require a projector rental at the venue for you? (We recommend you bring a projector with you if you have one.)
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock"></div>
+                        <apex:selectRadio value="{!ucr.Projector_Required__c}"  >
+                            <apex:selectoptions value="{!YesNo}"></apex:selectoptions>
+                            <apex:actionsupport event="onchange" action="{!astProjectRquired}" rerender="vcBlock" status="astProjector" />
+                            <apex:actionStatus id="astProjector">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>&nbsp;<apex:outputLabel value="Loading ..."/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:selectRadio>
+                        <apex:outputText value="{!errProjector}" styleClass="errorMsg" rendered="{!LEN(errProjector)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Student Manuals (North America Only)" columns="2" id="smBlock" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel id="pnlStudentManual">{!$ObjectType.University_Course_Request__c.fields.Student_Manuals_Required__c.Label} 
+                        <div class="tooltips">
+                            For courses in North America only: We will be ordering your student manuals for delivery. We typically ship additional manuals for walk-ins.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock"></div>
+                        <apex:selectRadio value="{!ucr.Student_Manuals_Required__c}" >
+                            <apex:selectoptions value="{!YesNo}"></apex:selectoptions>
+                            <apex:actionsupport event="onchange" action="{!astStudentManualSelected}" rerender="smBlock" status="astStudentStatus" />
+                            <apex:actionStatus id="astStudentStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>&nbsp;<apex:outputLabel value="Loading ..."/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus> 
+                        </apex:selectRadio>
+                        <apex:outputText value="{!errStudentManual}" styleClass="errorMsg" rendered="{!LEN(errStudentManual)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Pickup_Location_Name__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Pickup_Location_Name__c}" id="iptLocationName" styleClass="" />
+                        <apex:outputText value="{!errPickupLocation}" styleClass="errorMsg" rendered="{!LEN(errPickupLocation)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Name_of_Person_Picking_Up__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Name_of_Person_Picking_Up__c}" id="iptPickUpPersonName" styleClass="" />
+                        <apex:outputText value="{!errPickupPerson}" styleClass="errorMsg" rendered="{!LEN(errPickupPerson)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel id="pnlPickupStreet">{!$ObjectType.University_Course_Request__c.fields.Pickup_Street__c.Label} 
+                        <div class="tooltips">
+                            Address of where you are located 1-2 business days before the course for manuals delivery.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Pickup_Street__c}" id="iptPickupStreet" styleClass=""/>
+                        <apex:outputText value="{!errPickupStreet}" styleClass="errorMsg" rendered="{!LEN(errPickupStreet)>0}"/>
+                    </apex:outputPanel> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Phone_of_Person_Picking_Up__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Phone_of_Person_Picking_Up__c}" id="iptPickUpPersonPhone" styleClass=""  />
+                        <apex:outputText value="{!errPickupPhone}" styleClass="errorMsg" rendered="{!LEN(errPickupPhone)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Pickup_City__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Pickup_City__c}" id="iptPickupCity" styleClass=""/>
+                        <apex:outputText value="{!errPickupCity}" styleClass="errorMsg" rendered="{!LEN(errPickupCity)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                <apex:outputText value=""  styleClass="secondLbl"  rendered="{!renderedStudentManual=='T'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Pickup_State__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div> 
+                        <apex:inputField value="{!ucr.Pickup_State__c}" id="iptPickupState" styleClass=""/>
+                        <apex:outputText value="{!errPickupState}" styleClass="errorMsg" rendered="{!LEN(errPickupState)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                <apex:outputText value=""  styleClass="secondLbl" rendered="{!renderedStudentManual=='T'}" />
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Pickup_Zip__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Pickup_Zip__c}" id="iptPickupZip" styleClass=""  />
+                        <apex:outputText value="{!errPickupZip}" styleClass="errorMsg" rendered="{!LEN(errPickupZip)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                
+                <apex:outputText value=""  styleClass="" rendered="{!renderedStudentManual=='T'}" />
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual=='T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Pickup_Country__c.Label}</apex:outputPanel>
+                    <apex:outputPanel >
+                        <div class="reqBlock2"></div>
+                        <apex:inputField value="{!ucr.Pickup_Country__c}" id="iptPickupCountry" styleClass="">
+                            <apex:actionsupport event="onchange" action="{!pickupCountryChange}" rerender="smBlock,vcBlock" status="PickupCountryStatus" />
+                            <apex:actionStatus id="PickupCountryStatus">
+                                <apex:facet name="start">
+                                    <apex:outputText >
+                                        <apex:image value="/img/loading.gif"/>
+                                    </apex:outputText>
+                                </apex:facet>
+                            </apex:actionStatus> 
+                        </apex:inputField>
+                        <apex:outputText value="{!errPickupCountry}" styleClass="errorMsg" rendered="{!LEN(errPickupCountry)>0}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Special Requests and Notes" columns="2" id="srnBlock" >
+                
+                <apex:inputField value="{!ucr.Special_Requests_and_notes__c}" id="iptSpecialRequest" styleClass="requestNote"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value=""/>
+                    <apex:outputText value=""/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:inputCheckbox value="{!ucr.Large_Course__c}" label="{!$ObjectType.University_Course_Request__c.fields.Large_Course__c.Label}"/>
+                <apex:outputText value=""  styleClass="firstLbl"/>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputlabel value="{!$ObjectType.University_Course_Request__c.fields.Connectivity_Warning__c.Label}"/>
+                    <apex:outputPanel >
+                        <apex:outputText value="{!conWarning}" rendered="{!ISNULL(ucr.Connectivity_Warning__c)}"/>
+                        <apex:outputText value="{!ucr.Connectivity_Warning__c}" rendered="{!NOT(ISNULL(ucr.Connectivity_Warning__c))}"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+<!--  This block is for viewing record-->
+
+        <apex:pageBlock title="University Course Request" rendered="{!isViewRecord}">
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!doEdit}" value="Edit" rendered="{!isEditable}"/>
+                 <apex:commandButton action="{!DeleteObj}" value="Delete" rendered="{!isDeletable}"/>
+                <!-- <apex:commandButton action="{!CloneObj}" value="Clone" /> -->
+                <!-- <apex:commandButton action="{!Sharing}" value="Sharing" /> -->
+                
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="General Information" columns="2" id="giBlock" >
+            
+                <apex:outputField value="{!ucr.name}" />
+                <apex:outputField value="{!ucr.ownerID}" />
+                
+                <apex:outputField value="{!ucr.Desired_Course_Start_Date__c}"  />
+                <apex:outputField value="{!ucr.Requested_by__c}" />
+                <!-- <apex:outputField value="{!ucr.Request_Status__c}" /> -->
+                
+                <apex:outputField value="{!ucr.Course_Request_Response_SLA__c}"/>
+                <apex:outputText value=""/>
+
+                <apex:outputField value="{!ucr.Desired_Course_Start_Time_p__c}" />
+                <!-- <apex:outputField value="{!ucr.Duplicate_UCR_Record__c}" /> -->
+                 
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Class Information" columns="2" id="ciBlock" >
+            
+                <!--
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Requested_Instructor__c.Label} 
+                        <div class="tooltips">Please consult with your SE Manager to find an instructor</div>
+                    </apex:outputPanel>
+                    <apex:outputField value="{!ucr.Requested_Instructor__c}" />
+                </apex:pageBlockSectionItem>
+                -->
+                <apex:outputField value="{!ucr.Requested_University_Instructor1__c}"/>
+                <apex:outputField value="{!ucr.Course_Requested__c}"  />
+
+                <apex:outputField value="{!ucr.Second_University_Instructor1__c}"/>
+                <!-- <apex:outputField value="{!ucr.Second_Instructor__c}" /> -->
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Class_Type__c.Label} <div class="tooltips">
+                        <p>PUBLIC - open to anyone who wishes to register, will be displayed on Nimble University</p> 
+                        <p>PRIVATE - only available to attendees with private registration link, will not be displayed on Nimble University</p></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!ucr.Class_Type__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                 
+                
+                <!-- <apex:outputField value="{!ucr.Instructor_in_Training__c}" /> -->
+                <apex:outputText value=""/>
+                <apex:outputField value="{!ucr.Expected_course_size__c}"  />
+                 
+                <apex:outputText value=""  />
+                <apex:outputField value="{!ucr.Large_Course_Warning__c}" id="iptLargeCourseWarning" styleClass="secondInput"/>
+                
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Sales Team" columns="2" id="stBlock" >
+                
+                <apex:outputField value="{!ucr.AE_Name__c}" />
+                <apex:outputField value="{!ucr.AE_Phone__c}" />
+                
+                <apex:outputText value=""  />
+                <apex:outputField value="{!ucr.AE_Mobile_Phone__c}" />
+                
+                <apex:outputField value="{!ucr.SE_Name__c}" />
+                <apex:outputField value="{!ucr.SE_Phone__c}" />
+                
+                <apex:outputText value=""  />
+                <apex:outputField value="{!ucr.SE_Mobile_Phone__c}" />
+                 
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Venue and Catering" columns="2" id="vcBlock" >
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Assistance_with_Venue_Required__c.Label} 
+                        <div class="tooltips">
+                            North America only: A venue location is required before a course can be posted in Nimble University for student registrations. If yes, please provide three preferred locations. If no, please provide the venue name, address and room capacity.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!ucr.Assistance_with_Venue_Required__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!ucr.Venue_Name__c}" rendered="{!renderedVenue == 'F'}" />
+                
+                
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Preferred_Locations__c.Label} 
+                        <div class="tooltips">
+                            If assistance with a venue is required (NA Only) please provide three preferred locations and note the room capacity for each location.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputField value="{!ucr.Preferred_Locations__c}" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'F'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Venue_Detail__c.Label} 
+                        <div class="tooltips">
+                            Please include building, floor, room number, or other location details if required.
+                        </div>
+                    </apex:outputPanel>
+                   <apex:outputField value="{!ucr.Venue_Detail__c}" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'T'}" />
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Preferred_Location_2__c.Label} 
+                    </apex:outputPanel>
+                    <apex:outputField value="{!ucr.Preferred_Location_2__c}" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:outputField value="{!ucr.Venue_Street__c}" rendered="{!renderedVenue == 'F'}"/>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'T'}" />
+                <apex:pageBlockSectionItem rendered="{!renderedVenue == 'T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Preferred_Location_3__c.Label} 
+                    </apex:outputPanel>
+                    <apex:outputField value="{!ucr.Preferred_Location_3__c}" /> 
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:outputField value="{!ucr.Venue_City__c}" rendered="{!renderedVenue == 'F'}"/>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:outputField value="{!ucr.Venue_State__c}" rendered="{!renderedVenue == 'F'}"/>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:outputField value="{!ucr.Venue_Zip__c}" rendered="{!renderedVenue == 'F'}"/>
+                        
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:outputField value="{!ucr.Venue_Country__c}" rendered="{!renderedVenue == 'F'}"/>
+                
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:outputField value="{!ucr.Venue_Airport_Code_Manual__c}" rendered="{!renderedVenue == 'F'}"/>
+
+                <apex:outputText value="" rendered="{!renderedVenue == 'F'}" />
+                <apex:outputField value="{!ucr.Room_Capacity__c}" rendered="{!renderedVenue == 'F'}"/>      
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Assistance_with_Catering_Required__c.Label} 
+                        <div class="tooltips">
+                            North America only: Do you require assistance with catering.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!ucr.Assistance_with_Catering_Required__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputText value="" rendered="{!renderedCatering == 'T'}" />
+                <apex:outputField value="{!ucr.Catering_Notes__c}" rendered="{!renderedCatering == 'T'}" />
+                
+                <apex:outputText value=""/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Projector_Required__c.Label} 
+                        <div class="tooltips">
+                            Do you require a projector rental at the venue for you? (We recommend you bring a projector with you if you have one.)
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!ucr.Projector_Required__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Student Manuals (North America Only)" columns="2" id="smBlock" >
+                <apex:pageBlockSectionItem >
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Student_Manuals_Required__c.Label} 
+                        <div class="tooltips">
+                            For courses in North America only: We will be ordering you student manuals for pickup.
+                        </div>
+                    </apex:outputPanel>
+                    <apex:outputPanel >
+                        <apex:outputField value="{!ucr.Student_Manuals_Required__c}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!ucr.Pickup_Location_Name__c}" rendered="{!renderedStudentManual == 'T'}"/>
+                
+                
+                <apex:outputField value="{!ucr.Name_of_Person_Picking_Up__c}" rendered="{!renderedStudentManual == 'T'}"/>
+                <apex:pageBlockSectionItem rendered="{!renderedStudentManual == 'T'}">
+                    <apex:outputPanel >{!$ObjectType.University_Course_Request__c.fields.Pickup_Street__c.Label} 
+                        <div class="tooltips">
+                            Address of where you are located 1-2 business days before the course for manual pickup
+                        </div>
+                    </apex:outputPanel>
+                   <apex:outputField value="{!ucr.Pickup_Street__c}" />
+                </apex:pageBlockSectionItem>
+                
+                <apex:outputField value="{!ucr.Phone_of_Person_Picking_Up__c}" rendered="{!renderedStudentManual == 'T'}" />
+                <apex:outputField value="{!ucr.Pickup_City__c}" rendered="{!renderedStudentManual == 'T'}" />
+                
+                <apex:outputText value=""  />
+                <apex:outputField value="{!ucr.Pickup_State__c}" rendered="{!renderedStudentManual == 'T'}" />
+                
+                <apex:outputText value=""  />
+                <apex:outputField value="{!ucr.Pickup_Zip__c}" rendered="{!renderedStudentManual == 'T'}"/>
+                
+                <apex:outputText value=""   />
+                <apex:outputField value="{!ucr.Pickup_Country__c}" rendered="{!renderedStudentManual == 'T'}" />
+
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Special Requests and Notes" columns="2" id="srnBlock" >
+                
+                <apex:outputField value="{!ucr.Special_Requests_and_notes__c}" styleClass="requestNote" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputText value=""/>
+                    <apex:outputText value=""/>
+                </apex:pageBlockSectionItem>
+                
+                <apex:inputCheckbox value="{!ucr.Large_Course__c}" label="{!$ObjectType.University_Course_Request__c.fields.Large_Course__c.Label}" disabled="true"/>
+                <apex:outputText value=""  styleClass="firstLbl"/>
+                
+                <apex:outputField value="{!ucr.Connectivity_Warning__c}"/>
+                <apex:outputText value=""/>
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

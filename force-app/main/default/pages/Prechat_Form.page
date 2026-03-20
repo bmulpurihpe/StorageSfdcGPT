@@ -1,0 +1,130 @@
+<apex:page showHeader="false" >
+    <style>
+    	.referenceText {
+          width: 50%;
+          padding: 12px 20px;
+          margin: 8px 0;
+          box-sizing: border-box;
+        border: 3px solid #c2d8d6;
+        }
+    </style>
+    <apex:slds />
+   
+    <!-- This script takes the endpoint URL parameter passed from the deployment page and makes it the action for the form -->
+    <script type='text/javascript'>
+    (function() {
+       
+        function handlePageLoad() {            
+            var endpointMatcher = new RegExp("[\\?\\&]endpoint=([^&#]*)");
+            document.getElementById('prechatForm').setAttribute('action',
+                                                                decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+        } if (window.addEventListener) {
+            window.addEventListener('load', handlePageLoad, false);
+        } else { window.attachEvent('onload', handlePageLoad, false);
+               }})();
+    </script>
+    <script type='text/javascript'>
+    function getUrlDetail(){
+       
+        }
+    </script>
+    <!-- Form that gathers information from the chat visitor and sets the values to Live Agent Custom Details used later in the example -->
+    <form method='post' id='prechatForm' style="margin-left:20px;">
+<div id="contactdetails" style="display:block">
+       
+        <input type='hidden' name='liveagent.prechat:CaseSubject' id='subject' value="Chat" /><br />
+        <!-- Hidden fields used to set additional custom details -->
+        <input type="hidden" name="liveagent.prechat:CaseStatus" value="New" /><br />
+       
+        <!-- This example assumes that "Chat" was added as picklist value to the Case Origin field -->
+        <input type="hidden" name="liveagent.prechat:CaseOrigin" value="Web" /><br />
+       
+        <!-- This example will set the Case Record Type to a specific value for the record type configured on the org. Lookup the case record type's id on your org and set it here -->
+        <input type="hidden" name="liveagent.prechat:CaseRecordType" value="0122H000000GJXvQAO" />
+       
+        <!-- Used to set the visitor's name for the agent in the Console -->
+        <input type="hidden" name="liveagent.prechat.name" id="prechat_field_name" />
+       
+        <!-- map: Use the data from prechat form to map it to the Salesforce record's fields -->
+       
+        <input type="hidden" name="liveagent.prechat.findorcreate.map:Case" value="Subject,CaseSubject;Status,CaseStatus;Origin,CaseOrigin;RecordTypeId,CaseRecordType;CaseNumber,referencenumber" />
+       
+
+        <!-- doCreate example for a Case: create a case to attach to the chat, set the Case Subject to the value provided by the customer and set the case's Status and Origin fields -->
+        <input type="hidden" name="liveagent.prechat.findorcreate.map.doFind:Case" value="CaseNumber,true" />
+        <input type="hidden" name="liveagent.prechat.findorcreate.map.isExactMatch:Case" value="CaseNumber,true" />
+<input type="hidden" name="liveagent.prechat.findorcreate.map.doCreate:Case" value="Subject,true;Status,true;Origin,true;RecordTypeId,true" />
+       
+       
+        <input type="hidden" name="liveagent.prechat.findorcreate.showOnCreate:Case" value="true" />
+       
+        <!-- saveToTranscript: Associates the records found / created, i.e. Contact and Case, to the Live Chat Transcript record. -->
+       
+        <input type="hidden" name="liveagent.prechat.findorcreate.saveToTranscript:Case" value="CaseId" />
+       
+        <!-- displayToAgent: Hides the case record type from the agent -->
+        <input type="hidden" name="liveagent.prechat.findorcreate.displayToAgent:CaseRecordType" value="false" />
+       
+        <!-- searchKnowledge: Searches knowledge article based on the text, this assumes that Knowledge is setup -->
+        <input type="hidden" name="liveagent.prechat.knowledgeSearch:CaseSubject" value="true" />
+        <div style="margin-top:-70px;margin-bottom:5px;">
+        <apex:image value="{!$Resource.HPE_Chat_Icon}"/>
+            <br/>
+            <center>
+            <span style="font-weight:bold; font-size:24px;">Hi, User!</span>
+            <br/>
+            How may I help you today?
+                <br/><br/>
+            Reference Number <br/>
+        <input type='text' class="referenceText" name='liveagent.prechat:referencenumber' id='referenceNumber' value="" placeholder="" />
+                </center>
+        </div>        
+        <center>            
+        <input type='submit' value='Chat with Live Agent' id='prechat_submit' class="prechat_submit" onclick="setName()"/>
+            <br/><br/>
+            <input type='submit' value='Share Feedback' id='feedback_submit' class="prechat_submit" onclick="sharefeedback()" />
+        </center>
+</div>
+        <!--
+<div style="margin-top:30px;">
+        <p>For more information to how HPE manages, uses and protects your information please refer to <a href="https://www.hpe.com/us/en/legal/privacy.html" target="_blank" value="HPE privacy Statement">HPE privacy Statement</a> </p>
+<p style="margin-top:30px;">
+            You can always withdraw or modify your content to recieve marketing communications from HPE. This can be done by using the opt-out and preference mechanism at the bottom of our email marketing communication or by following <a href="https://connect.hpe.com/unsubscribe?language=en" target="_blank" value="this link to unsubscribe">this link to unsubscribe</a>
+        </p>
+</div>
+-->
+        <!-- Set the visitor's name for the agent in the Console to first and last name provided by the customer -->
+        <script type="text/javascript">
+        function setName() {
+            document.getElementById("prechat_field_name").value = 'Chat Customer';
+        }
+        function sharefeedback(){
+            //alert('test');
+            window.open('https://nimblestorage--fc1--c.visualforce.com/apex/ShareFeedback','_self');
+            alert('redirecting to feedback form');
+        }
+        </script>
+        <style>
+            .prechat_submit {
+              background-color: white; /* Green */
+              border: none;
+              color: black;
+              padding: 15px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              cursor: pointer;
+              border: 3px solid #c2d8d6;
+            },
+            .tdstyle {
+            padding : 5px;
+            }
+    </style>
+        <style type="text/css">
+            p {font-weight: bolder }
+        </style>
+       
+    </form>
+</apex:page>

@@ -1,0 +1,363 @@
+<apex:page controller="VirtualQueueController" tabStyle="Virtual_Queue__tab" id="VirtualQueue" cache="false"> 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+     
+    
+    <script >
+        setTimeout(function () { location.reload(1); }, 60000); 
+    $(document).ready(function() {
+        updateSelectedValue();
+    });
+    var recordIds = [];
+    
+    // Added by Exafort for TS-10285
+    function handleAcceptClick() {
+        // Call your first JavaScript function
+        updateRecordsJs();
+        
+        // Call your second JavaScript function
+        disableSaveButton();
+    }
+    
+    function disableSaveButton() {
+        var buttonId = document.getElementById('VirtualQueue:theForm:caseDetailList:pbb1:button2');
+		if (buttonId && recordIds.length > 0) {
+            buttonId.disabled = true;
+            buttonId.style.backgroundColor = '#c1bebe'; 
+            buttonId.style.color = '#999999'; 
+            buttonId.style.cursor = 'not-allowed';
+        }
+    }
+    //End of TS-10285
+    
+    function onChangeOwner(){
+        var selectedRecordId = encodeURIComponent(JSON.stringify(recordIds));
+        if(selectedRecordId !== '%5B%5D'){
+            console.log('inside Onchange Owner');
+         changeOwnerRecordId(selectedRecordId);
+            
+        }
+        if(selectedRecordId === '%5B%5D'){
+            alert('Please select one or more case records!');
+        }
+    }
+    function onChangeStatus(){
+        var selectedRecordId = encodeURIComponent(JSON.stringify(recordIds));
+        if(selectedRecordId !== '%5B%5D'){
+            changeStatusRecordId(selectedRecordId);
+            
+        }
+        if(selectedRecordId === '%5B%5D'){
+            alert('Please select one or more case records!');
+        }
+        
+    }
+    function updateCheckboxesback(){
+        var checkboxes = document.querySelectorAll('input[id$="selectedRecord"]');
+        for (var i = 0; i < checkboxes.length; i++) {
+            var isPresent = recordIds.includes(checkboxes[i].getAttribute('title'));
+            if(isPresent){
+                checkboxes[i].checked = true;
+            }
+        }
+        updateSelectedValue();
+    }
+    function updateSelectedValue() {
+        
+        var checkboxes = document.querySelectorAll('input[id$="selectedRecord"]');
+        for (var i = 0; i < checkboxes.length; i++) {
+            
+            if (checkboxes[i].checked) {
+                var isPresent = recordIds.includes(checkboxes[i].getAttribute('title'));
+                if(!isPresent){
+                    recordIds.push(checkboxes[i].getAttribute('title'));
+                }
+            }
+            else{
+                var isPresent = recordIds.includes(checkboxes[i].getAttribute('title'));
+                if(isPresent){
+                    recordIds.splice(recordIds.indexOf(checkboxes[i].getAttribute('title')), 1);
+                }
+            }
+        }         
+        if(recordIds.length > 0){
+            document.getElementById("selectedNumbers").innerHTML = recordIds.length.toString()+' ';
+        }
+        else{
+            document.getElementById("selectedNumbers").innerHTML = '0';
+        }   
+    }
+    
+    function updateRecordsJs() {
+        if(recordIds.length > 0){
+            updateRecords(recordIds.join(','));
+        }
+        else{
+            alert("Please select one or more case records!");
+        }
+    }
+    
+    function clearRecs(){
+        recordIds = [];
+    }
+    function onRefresh(){
+        var caseList = document.getElementById('VirtualQueue:theForm:caseDetailList:caseListTable');
+        caseList.style.display = 'none';
+        var table = document.getElementById('VirtualQueue:theForm:caseDetailList:footerButtonSection');
+        table.style.display = 'none';
+        
+    }
+    
+    </script>
+    <html>
+        <body>
+            <apex:sectionheader title=" {!$ObjectType.Case.label} Virtual Queue" />
+            <apex:form id="theForm">
+                <apex:pageMessages id="thePageMessage" escape="false"/>
+               <!-- <apex:pageblock id="pb" mode="edit" title="Product Support Profiles" rendered="true">
+                    <table width="70%">
+                        <tr>
+                            <td width="17.5%" style="text-align: right" >
+                                <apex:inputCheckbox value="{!AlletraMPBlock}" label="Alletra MP Block" onchange="clearRecs()"> Alletra MP Block &nbsp;
+                                    <apex:actionSupport event="onclick" action="{!checkBoxOnChange}" reRender="caseDetailList" status="loadingViewActionStatus"/>
+                                </apex:inputCheckbox>
+                            </td>
+                            <td width="17.5%" style="text-align: right" >
+                                <apex:inputCheckbox value="{!backupAndRecovery}" label="Backup & Recovery" onchange="clearRecs()"> Backup and Recovery &nbsp;
+                                    <apex:actionSupport event="onclick" action="{!checkBoxOnChange}" reRender="caseDetailList" status="loadingViewActionStatus"/>
+                                </apex:inputCheckbox>
+                            </td>
+                            <td width="17.5%" style="text-align: right" >
+                                <apex:inputCheckbox value="{!LegacyNimble}" label="Legacy Nimble" onchange="clearRecs()"> Legacy Nimble &nbsp;
+                                    <apex:actionSupport event="onclick" action="{!checkBoxOnChange}" reRender="caseDetailList" status="loadingViewActionStatus"/>
+                                </apex:inputCheckbox>
+                            </td>
+                            <td width="17.5%" style="text-align: right" >
+                                <apex:inputCheckbox value="{!AlletraMPFile}" label="Alletra MP File" onchange="clearRecs()"> Alletra MP File &nbsp;
+                                    <apex:actionSupport event="onclick" action="{!checkBoxOnChange}" reRender="caseDetailList" status="loadingViewActionStatus"/>
+                                </apex:inputCheckbox>
+                            </td>     
+                            
+                        </tr>
+                        <tr>
+                            <td width="17.5%" style="text-align: right" >
+                                <apex:inputCheckbox value="{!AlletraMPObject}" label="Alletra MP Object" onchange="clearRecs()"> Alletra MP Object &nbsp;
+                                    <apex:actionSupport event="onclick" action="{!checkBoxOnChange}" reRender="caseDetailList" status="loadingViewActionStatus"/>
+                                </apex:inputCheckbox>
+                            </td> 
+                        </tr>
+                    </table>
+                    
+                </apex:pageblock> -->
+                
+                
+               <!-- <apex:pageBlock title="Product Support Profiles">
+                    
+                        <apex:repeat value="{!globalSupportProfileList}" var="option">
+                            <apex:inputCheckbox value="{!selectedSupportProfiles[option]}" style="width:3%">{!option}
+                                <apex:actionSupport event="onclick" action="{!checkBoxOnChange}" reRender="caseDetailList" status="loadingViewActionStatus"/>
+                            </apex:inputCheckbox>  &nbsp;  &nbsp;
+                        </apex:repeat> 
+                    
+                </apex:pageBlock>
+                -->
+                
+                <apex:pageBlock title="Cases" id="caseDetailList">
+                    <apex:pageBlockButtons id="pbb1" location="top">
+                        
+                        
+                        <apex:commandButton id="button1" value="New Case" action="{!URLFOR($Action.Case.NewCase)}" />
+                        <apex:commandButton id="button2" value="Accept" onclick="handleAcceptClick();" reRender="none">
+                        </apex:commandButton>
+                        <apex:commandButton id="button3" value="Change Owner" onclick="onChangeOwner();" reRender="none" />
+                        <apex:commandButton id="button4" value="Change Status" onclick="onChangeStatus();" reRender="none" />
+                        <apex:commandButton id="button5" value="Refresh" status="loadingViewActionStatus" onclick="onRefresh();" action="{!firstPage}" reRender="caseListTable,footerButtonSection"/>
+                        
+                    </apex:pageBlockButtons>     
+                    <apex:outputPanel >
+                        <apex:actionStatus id="loadingViewActionStatus" >
+                            <apex:facet name="start" >
+                                <img src="/img/loading.gif" /> 
+                                <sub>Loading Cases...</sub>                   
+                            </apex:facet>
+                        </apex:actionStatus>
+                    </apex:outputPanel>
+                    <apex:actionFunction name="updateRecords" action="{!changeOwner}" rerender="caseDetailList" status="loadingViewActionStatus">
+                        <apex:param name="recordIds" value="recordIds" assignTo="{!selectedRecordIds}"/>
+                    </apex:actionFunction>
+                    <apex:actionFunction name="changeOwnerRecordId" action="{!changeOwnerRedirect}" rerender="none">
+                        <apex:param name="recordIds" value="recordIds" assignTo="{!selectedRecordIds}"/>
+                    </apex:actionFunction>
+                     <apex:actionFunction name="changeStatusRecordId" action="{!changeStatusRedirect}" rerender="none">
+                        <apex:param name="recordIds" value="recordIds" assignTo="{!selectedRecordIds}"/>
+                    </apex:actionFunction>
+                    <apex:pageBlockTable value="{!caseList}" var="cas" id="caseListTable"  width="100%">
+                        <apex:column width="2%">
+                            <apex:inputCheckbox id="selectedRecord" title="{!cas.id}" onchange="updateSelectedValue()" />
+                        </apex:column>
+                        <!--    <apex:column headerValue="Case Number" style="width:4%"  >
+                            <apex:outPutLink value="/{!cas.id}" style="color:#03101c" target="_self" >{!cas.CaseNumber}</apex:outPutLink>
+                        </apex:column> -->
+                        <apex:column width="4%" >
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Case Number{!IF(sortExpression=='CaseNumber',IF(sortDirection='ASC','▼','▲'),'')}" id="cmdSort">
+                                    <apex:param value="CaseNumber" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                           <apex:outPutLink value="/{!cas.id}" style="color:#03101c" target="_self" >{!cas.CaseNumber}</apex:outPutLink>
+                        </apex:column>
+                        <!--<apex:column value="{!cas.Case_Handling__c}" headerValue="Handling" width="3%"/> -->
+                          <apex:column value="{!cas.Case_Handling__c}" width="3%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Handling{!IF(sortExpression=='Case_Handling__c',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="Case_Handling__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                        
+                       <!-- <apex:column value="{!cas.Priority}" headerValue="Priority" width="5%"/> -->
+                        <apex:column value="{!cas.Priority}" width="5%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Priority{!IF(sortExpression=='Priority',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="Priority" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                        
+                       <!-- <apex:column headerValue="Asset Name" style="width:6%" >
+                            <apex:outPutLink value="/{!cas.Asset.id}" style="color:#03101c" target="_self" >{!cas.Asset.Name}</apex:outPutLink>
+                        </apex:column> -->
+                        <apex:column width="6%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Asset Name{!IF(sortExpression=='Asset.Name',IF(sortDirection='ASC','▼','▲'),'')}" >
+                                    <apex:param value="Asset.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outPutLink value="/{!cas.Asset.id}" style="color:#03101c" target="_self" >{!cas.Asset.Name}</apex:outPutLink>
+                        </apex:column>
+                        
+                        <!--<apex:column headerValue="Account Name" style="width:10%">
+                            <apex:outPutLink style="color:#03101c" value="/{!cas.Account.id}" target="_self" >{!cas.Account.Name}</apex:outPutLink>
+                        </apex:column> -->
+                        <apex:column width="10%" >
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Account Name{!IF(sortExpression=='Account.Name',IF(sortDirection='ASC','▼','▲'),'')}" >
+                                    <apex:param value="Account.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                           <apex:outPutLink style="color:#03101c" value="/{!cas.Account.id}" target="_self" >{!cas.Account.Name}</apex:outPutLink>
+                        </apex:column>
+                       <!-- <apex:column headerValue="Subject" style="width:38%">
+							<apex:outPutLink value="/{!cas.id}" style="color:#03101c" target="_self" >{!cas.Subject}</apex:outPutLink>
+						</apex:column> -->
+                         <apex:column width="38%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Subject{!IF(sortExpression=='Subject',IF(sortDirection='ASC','▼','▲'),'')}" >
+                                    <apex:param value="Subject" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        <apex:outPutLink value="/{!cas.id}" style="color:#03101c" target="_self" >{!cas.Subject}</apex:outPutLink>
+                        </apex:column>
+                        
+                        <!-- <apex:column value="{!cas.Subject}" headerValue="Subject" style="width:38%"/> -->
+                      <!--  <apex:column value="{!cas.CreatedDate}" headerValue="Created Date" width="7%"/> -->
+                        <apex:column value="{!cas.CreatedDate}" width="7%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Created Date{!IF(sortExpression=='CreatedDate',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="CreatedDate" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                        
+                       <!--  <apex:column value="{!cas.caseSLAExpiryMinutes__c}" headerValue="SLA left" width="3%"/> -->
+                         <apex:column value="{!cas.caseSLAExpiryMinutes__c}" width="3%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="SLA left{!IF(sortExpression=='caseSLAExpiryMinutes__c',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="caseSLAExpiryMinutes__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                        
+                       <!-- <apex:column value="{!cas.Status}" headerValue="Status" width="3%"/> -->
+                        <apex:column value="{!cas.Status}" width="3%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Status{!IF(sortExpression=='Status',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="Status" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                        
+                       <!-- <apex:column value="{!cas.caseAccountCritical__c}" headerValue="Account Critical" width="3%"/> -->
+                         <apex:column value="{!cas.caseAccountCritical__c}" width="3%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Account Critical{!IF(sortExpression=='caseAccountCritical__c',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="caseAccountCritical__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>                      
+                        
+                        <!-- <apex:column value="{!cas.caseIsAssetSla4Hour__c}" headerValue="Is Asset SLA 4-Hour?" width="5%"/> -->
+                          <apex:column value="{!cas.caseIsAssetSla4Hour__c}"  width="5%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Is Asset SLA 4-Hour?{!IF(sortExpression=='caseIsAssetSla4Hour__c',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="caseIsAssetSla4Hour__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                        
+                        <!--<apex:column value="{!cas.US_Support__c}" headerValue="US Support" width="3%"/> -->
+                         <apex:column value="{!cas.US_Support__c}" width="3%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="US Support{!IF(sortExpression=='US_Support__c',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="US_Support__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                        
+                       <!-- <apex:column headerValue="Contact Name" width="3%">
+                            <apex:outPutLink style="color:#03101c" value="/{!cas.Contact.id}" target="_self" >{!cas.Contact.Name}</apex:outPutLink>
+                        </apex:column> -->
+                        <apex:column width="3%">
+                            <apex:facet name="header" >   
+                                <apex:commandLink action="{!displayCases}" value="Contact{!IF(sortExpression=='Contact.Name',IF(sortDirection='ASC','▼','▲'),'')}" >
+                                    <apex:param value="Contact.Name" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        <apex:outPutLink style="color:#03101c" value="/{!cas.Contact.id}" target="_self" >{!cas.Contact.Name}</apex:outPutLink>
+                        </apex:column>
+                        
+                        <!--<apex:column value="{!cas.Support_Profile__c}" headerValue="Support Profile" width="5%" /> -->
+                        <apex:column value="{!cas.Support_Profile__c}" width="5%">
+                            <apex:facet name="header">   
+                                <apex:commandLink action="{!displayCases}" value="Support Profile{!IF(sortExpression=='Support_Profile__c',IF(sortDirection='ASC','▼','▲'),'')}">
+                                    <apex:param value="Support_Profile__c" name="column" assignTo="{!sortExpression}" ></apex:param>
+                                </apex:commandLink>
+                            </apex:facet>
+                        </apex:column>
+                                                
+                    </apex:pageBlockTable> 
+                    <br/>
+                    
+                    <apex:outputPanel id="footerButtonSection">
+                        <table id="myTable" style="width:100%;" >
+                            <tr>
+                                <td style="vertical-align: middle; width:33.33%; padding-left:4%">
+                                    <span id="selectedNumbers">0 </span><span> Selected</span>
+                                </td>
+                                <td>
+                                    <apex:commandButton title="First Page"  value="◄◄" action="{!FirstPage}" oncomplete="updateCheckboxesback()" disabled="{!prev}" reRender="caseListTable,caseDetailList" status="loadingViewActionStatus"/>
+                                    <apex:commandButton title="Previous Page" value="◄ Previous" oncomplete="updateCheckboxesback()" action="{!previous}" disabled="{!prev}" status="loadingViewActionStatus" reRender="caseListTable,caseDetailList"/>
+                                    <apex:commandButton title="Next Page"  value="Next ►" oncomplete="updateCheckboxesback()" action="{!next}" disabled="{!nxt}" status="loadingViewActionStatus" reRender="caseListTable,caseDetailList"/>
+                                    <apex:commandButton title="Last Page"  value="►►" oncomplete="updateCheckboxesback()" action="{!LastPage}" disabled="{!nxt}" status="loadingViewActionStatus" reRender="caseListTable,caseDetailList"/>
+                                    
+                                </td>
+                                <td style="vertical-align: middle;">
+                                    <apex:outputText value="{!PageDetails}"></apex:outputText>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                </apex:pageBlock>   
+            </apex:form>
+        </body>
+    </html>
+</apex:page>

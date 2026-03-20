@@ -1,0 +1,258 @@
+<!--                             <<<< === Visualforce page === >>>>
+    =============================================================================================================
+        Name                    : EACAccountviewpageNewV2
+        Description             : To display the Asset enhanced charcateritics defined in NEC Definition object for Asset.
+        Created Date            : 17th october 2018
+        Author                  : Vishnu R
+        Version                 : 1.0
+        Modification History    : Initial Version
+    ==============================================================================================================   
+** Changed the Queries From EAC Defintion and Records to NEC Defintion and Records. --| By vishnu on 11th April 2019	
+** Chnaged the paramter values in the CheckAll and SelectAll Javascript functions.  --| By vishnu on 11th April 2019
+-->
+<apex:page standardController="Account" extensions="EACControllerNewV2" sidebar="false" id="page" title="{!Account.Name} - Enhanced Asset Characteristics Mass Edit Page" >
+    <head>
+    <script src="/soap/ajax/28.0/connection.js" type="text/javascript">
+    </script>
+    <script src="/soap/ajax/28.0/apex.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+   
+    function checkAll(c,grpname,keyvalue)
+    {
+        var actualID = c.id;  //page:form:PBlock2:repeatone:3:HeaderCheckboxId    //page:form:PBlock2:MainRepeat:0:repeatone:4:HeaderCheckboxId
+        var getRowIndex = actualID.substring(actualID.indexOf("MainRepeat:")+11, actualID.lastIndexOf(":repeatone"));
+        var getcolumnIndex = actualID.substring(actualID.indexOf("repeatone:") + 10, actualID.lastIndexOf(":"));// get the coulumn number
+        var IdConstruction = "page:form:PBlock2:MainRepeat:"+getRowIndex+":repeattwo:2:repeatthree:"+getcolumnIndex+":BodyCheckboxId"; //page:form:PBlock2:repeattwo:2:repeatthree:0:BodyCheckboxId
+        var IdConstructionfirstSubString = IdConstruction.substring(0,41);
+        var IdConstructionLastSubString = IdConstruction.substring(42);
+        var IDformation=keyvalue+grpname;
+        var inputvar = document.getElementsByClassName(IDformation);
+        for(var i=0; i<(inputvar.length); i++)
+        {
+            if(c.checked){
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).checked = true;
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).style.outline = "2px solid red";
+            }
+            else{ 
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).checked = false;
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).style.outline = "1px solid white";
+            }
+        }
+    }
+    </script>
+    <script type="text/javascript">
+    function disablePicklistValue(v)
+    {
+        for(var i=0; i<(v.options.length); i++){
+            if(v.options[i].text == 'None'){
+                v.options[i].disabled = true;
+            }
+        }
+    }
+    </script>
+    <script type="text/javascript">
+    function SelectAll(c,DrpId)
+    {
+        var actualID = c.id; //page:form:PBlock2:repeatone:4:picklistvalues
+        var getcolumnIndex = actualID.substring(actualID.indexOf("repeatone:") + 10, actualID.lastIndexOf(":")); // get the coulumn number
+        var getRowIndex = actualID.substring(actualID.indexOf("MainRepeat:")+11, actualID.lastIndexOf(":repeatone"));
+        var IdConstruction = "page:form:PBlock2:MainRepeat:"+getRowIndex+":repeattwo:2:repeatthree:"+getcolumnIndex+":picklistvalues"; //page:form:PBlock2:repeattwo:0:repeatthree:4:picklistvalues
+        var IdConstructionfirstSubString = IdConstruction.substring(0,41);
+        var IdConstructionLastSubString = IdConstruction.substring(42);
+        // var inputvar = document.getElementsByClassName("BodyPicklistValues");
+        var inputvar = document.getElementsByClassName(DrpId);
+        for(var i=0; i<(inputvar.length); i++)
+        {
+            if(c.value != null){        
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).value  = c.value;
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).style.border = "2px solid red";
+            }
+            else{
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).value = c.value;
+                document.getElementById(IdConstructionfirstSubString+i+IdConstructionLastSubString).style.border = "1px solid darkgrey";
+            }
+        }
+    }
+    </script>
+    <script type="text/javascript">
+    function DirtyCellPicklistValidation(c,recordid)
+    {
+        //alert('firing');
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        soql = "Select Id,necrValue__c,necrGroupName__c From NEC_Record__c where Id='"+recordid+"'";
+        result = sforce.connection.query(soql);
+        //alert('final output ===>'+result.size);
+        if(result.size == 0){
+            //alert('In if');
+            document.getElementById(c.id).style.border = "2px solid red";
+        }else{
+            records = result.records["necrValue__c"];
+            if (records != c.value) {
+                //alert('In else if');
+                document.getElementById(c.id).style.border = "2px solid red";
+            }
+            else{
+                //alert('In else else');
+                document.getElementById(c.id).style.border = "1px solid darkgrey";
+            }
+        }
+    }
+    function DirtyCellCheckboxValidation(c,recordid)
+    {
+        sforce.connection.sessionId = '{!$Api.Session_ID}';
+        soql = "Select Id,necrValue__c,necrGroupName__c From NEC_Record__c where Id='"+recordid+"'";
+        result = sforce.connection.query(soql);
+        if(result.size == 0){
+            if (c.checked) {
+                document.getElementById(c.id).style.outline = "2px solid red";
+            }
+            else{document.getElementById(c.id).style.outline = "1px solid white";
+                }
+        }else{
+            records = result.records["necrValue__c"];
+            if(records == "true"){
+                if (c.checked) {
+                    document.getElementById(c.id).style.outline = "1px solid white";
+                }
+                else{
+                    document.getElementById(c.id).style.outline = "2px solid red";
+                }
+            }else  if(records == "false"){
+                if (c.checked) {
+                    document.getElementById(c.id).style.outline = "2px solid red";
+                }
+                else{
+                    document.getElementById(c.id).style.outline = "1px solid white";
+                }
+            }
+        }  
+    }
+    function updateURLParameter(urll, param, paramVal){
+        var newAdditionalURL = "";
+        var tempArray = urll.split("&");
+        var baseURL = tempArray[0];
+        var additionalURL = tempArray[1];
+        var temp = "=";
+        if (additionalURL) {
+            if(tempArray[1].split('=')[0] == param){
+                newAdditionalURL =  tempArray[1].split('=')[0]+ temp + paramVal;;
+            }
+        }
+        return baseURL + "&" + newAdditionalURL;
+    }
+    function ChangeUrlOnPicklistUpdate(){
+        var GroupValue = document.getElementById("page:form:PBlock2:pBlockS:groupFilter").value;
+        var url = window.location.href;
+        if (url.indexOf('&groupname=') > 0) {
+            var url=updateURLParameter(url,"groupname",GroupValue);  
+        }
+        else{
+            var UrlParameterToAdd = '&groupname='+GroupValue;
+            var encodedparams = encodeURIComponent(GroupValue);
+            url +='&groupname='+encodedparams;   
+        }
+        window.history.replaceState(null,null, url);
+        CallApexMethod();
+    }
+    </script>
+         </head>
+    <style>
+        .pbSubheader.brandTertiaryBgr.first.tertiaryPalette {
+        background-color:#1f63aa;
+        }
+        tr.dataRow {
+        background-color:white;
+        }
+        tr.dataRow:hover {
+        background-color: #e3f3ff;
+        }
+         
+    </style>
+    <apex:form id="form">
+        <apex:actionFunction name="CallApexMethod" action="{!groupSelectionUpdate}" reRender="mainpanel" status="LoadStatusId"/>
+        <apex:pageBlock title="Edit Enhanced Asset Characteristics" id="PBlock2" >
+            <apex:outputPanel ><apex:pageMessages id="ErrorMessages" /></apex:outputPanel>
+            <apex:outputPanel id="timerPanel">
+                <apex:actionPoller reRender="ErrorMessages" interval="10" enabled="{!timer}" action="{!timerOff}"/> 
+            </apex:outputPanel>
+            <apex:actionFunction name="clearMessage" action="{!timerOff}" reRender="ErrorMessages"/>
+            <center>
+                <apex:commandButton action="{!InsertOrUpdateEACRecords}" styleClass="savebtn" value="Save" id="SaveBtn" reRender="form,timerPanel" status="SaveActStatusId"/>
+                <apex:commandButton action="/{!accountRec}" value="Cancel"/>
+            </center><br/>
+            <apex:pageBlockSection title="Choose any EAC Definition group" id="pBlockS" collapsible="false" columns="3">
+                <apex:selectList multiselect="false" size="1" id="groupFilter" value="{!SelectedGroup}" onchange="ChangeUrlOnPicklistUpdate()">
+                    <apex:outputLabel >EAC Definition Group Filter: </apex:outputLabel>&nbsp;
+                    <apex:selectOptions value="{!Groups}" />
+                </apex:selectList>
+                
+                <apex:param name="groupname" value="{!$CurrentPage.parameters.groupname}"/>
+                <apex:actionStatus id="LoadStatusId" >
+                    <apex:facet name="start" >
+                        Loading.... <img src="/img/loading.gif" /> 
+                    </apex:facet>
+                </apex:actionStatus>
+                <apex:actionStatus id="SaveActStatusId" >
+                    <apex:facet name="start" >
+                        Saving....Please Wait..... <img src="/img/loading.gif" /> 
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:pageBlockSection><br/>
+            <apex:outputpanel id="mainpanel">
+                <apex:repeat value="{!AssetsEACDefinitionWrapperMap}" var="EACDefinitionGroups" id="MainRepeat">
+                    <b style="font-size:small">Group Name: {!EACDefinitionGroups}</b><br/><br/>
+                    <table id="tableone" class="list" border="0" cellpadding="0" cellspacing="0">
+                        <tr id="row" StyleClass="rowStyle"  class="headerRow"><th class="headerRow" colspan="100%" >
+                            <center style="font-size:small">                               
+                                <a href="/{!Account.Id}" target="_Blank">Account: {!Account.Name}</a></center></th></tr>                   
+                        <tr id="row1" StyleClass="rowStyle" class="headerRow" >
+                            <!--<apex:outputPanel rendered="{!IF(WrapAssetsWithEACDefinitions.size > 0, true, false)}">-->
+                                <apex:repeat value="{!AssetsEACDefinitionWrapperMap[EACDefinitionGroups][0].lstChildWrapper}" var="cw" id="repeatone" >
+                                    <th id="Column1" class="headerRow" Style="text-align: center;">
+                                        <b><apex:outputText value="{!cw.headerValue}" id="headervalue"/><br/><br/><!--rendered="{!cw.isCheckbox}" -->
+                                            <apex:inputCheckbox value="{!cw.isCheckboxSelected}" id="HeaderCheckboxId" rendered="{!cw.isCheckbox}"
+                                                                onclick="checkAll(this,'{!cw.headerValue}','chk')"> 
+                                            </apex:inputCheckbox>
+                                            <apex:selectList onclick="disablePicklistValue(this);" onchange="SelectAll(this,'{!cw.headerValue}')"
+                                                             value="{!cw.picklistVal}" multiselect="false" size="1" id="picklistvalues" 
+                                                             rendered="{!cw.isPicklist}">
+                                                <apex:selectOptions value="{!cw.picklistValues}"/>
+                                            </apex:selectList></b>
+                                    </th>
+                                </apex:repeat>
+                                <!--</apex:outputPanel>-->
+                        </tr>
+                        <apex:repeat value="{!AssetsEACDefinitionWrapperMap[EACDefinitionGroups]}" var="WrapperValue" id="repeattwo">
+                            <tr id="row2" class="dataRow">
+                                <apex:repeat value="{!WrapperValue.lstChildWrapper}" var="cw1" id="repeatthree">
+                                    <td id="Column2" class="dataCell" Style="text-align: center;">
+                                        <!--<a href="/{!WrapperValue.assetRec.Id}"  id="column2One" target="_blank" onblur="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}').hide();" onfocus="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}', '/{!WrapperValue.assetRec.Id}/m?retURL=%2F{!WrapperValue.assetRec.Id}&isAjaxRequest=1').show();" onmouseout="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}').hide();" onmouseover="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}', '/{!WrapperValue.assetRec.Id}/m?retURL=%2F{!WrapperValue.assetRec.Id}&isAjaxRequest=1').show();">{!cw1.AssetName}</a> -->
+                                        <a href="/{!WrapperValue.assetRec.Id}" id="{!WrapperValue.assetRec.Id}" onblur="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}').hide();" onfocus="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}', '/{!WrapperValue.assetRec.Id}/m?retURL=%2F{!WrapperValue.assetRec.Id}&isAjaxRequest=1').show();" onmouseout="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}').hide();" onmouseover="LookupHoverDetail.getHover('{!WrapperValue.assetRec.Id}', '/{!WrapperValue.assetRec.Id}/m?retURL=%2F{!WrapperValue.assetRec.Id}&isAjaxRequest=1').show();">{!cw1.AssetName}</a>
+                                        <apex:outputText value="{!cw1.Assetstatus}" id="column2Two" />
+                                        <apex:outputText value="{!cw1.AssetGroupName}" id="column2Three" />
+                                        <apex:inputCheckbox value="{!cw1.isCheckboxSelected}" id="BodyCheckboxId" 
+                                                            rendered="{!cw1.isCheckbox}" styleClass="chk{!cw1.headerValue}" 	
+                                                            onclick="DirtyCellCheckboxValidation(this,'{!cw1.EACrecordId}');"/>
+                                        <apex:selectList value="{!cw1.picklistVal}" multiselect="false" size="1" id="picklistvalues"
+                                                         rendered="{!cw1.isPicklist}" styleClass="{!cw1.headerValue}" 
+                                                         onclick="disablePicklistValue(this);" onchange="DirtyCellPicklistValidation(this,'{!cw1.EACrecordId}');">
+                                            <apex:selectOptions value="{!cw1.picklistValues}" />
+                                        </apex:selectList>
+                                        <apex:inputText value="{!cw1.textValue}" rendered="{!cw1.isText}" id="inputTextBox" onchange="DirtyCellValidationSoql(this,'{!cw1.EACrecordId}');" />
+                                    </td>
+                                </apex:repeat>
+                            </tr>
+                        </apex:repeat>
+                    </table>
+                    <br/>
+                       <!--</apex:outputPanel>-->
+                </apex:repeat>
+            </apex:outputpanel>
+            <center>
+                <apex:commandButton action="{!InsertOrUpdateEACRecords}" value="Save" reRender="form,timerPanel" status="SaveActStatusId"/>
+                <apex:commandButton action="/{!accountRec}" value="Cancel"/>
+            </center>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

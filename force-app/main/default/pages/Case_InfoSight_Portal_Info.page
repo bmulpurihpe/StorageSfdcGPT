@@ -1,0 +1,10 @@
+<apex:page standardController="Case">
+
+<!-- JIRA TS-6948 -->
+<apex:outputLink value="https://confluence.eng.nimblestorage.com/display/IOA/InfoSight+Portal+Team"
+                 target="_blank"
+                 style="color: #ff8000; font-weight:bold; font-size:120%;display: block;">
+      This is an InfoSight Portal case. 
+</apex:outputLink>    
+
+</apex:page>

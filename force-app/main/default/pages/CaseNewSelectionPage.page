@@ -1,0 +1,3 @@
+<apex:page tabStyle="Case" standardcontroller="Case" extensions="CaseNewSelectionExtController" action="{!redirect}">
+
+</apex:page>

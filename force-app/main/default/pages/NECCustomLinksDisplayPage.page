@@ -1,0 +1,66 @@
+<!--                             <<<< === Visualforce page === >>>>
+=============================================================================================================
+Name                    : NECCustomLinksDisplayPage
+Description             : Used to display the links for accessing the Nimble Enhanced Characteristics.
+Created Date            : 26th april 2019
+Author                  : Vishnu R
+Version                 : 1.0
+Modification History    : Initial Version
+==============================================================================================================   -->
+<apex:page showHeader="false" sidebar="false" docType="html-5.0" controller="NECCustomLinksDisplayPageController" standardStylesheets="true" showChat="false" >
+    <html>
+        <head>
+            <style>
+                #sidebarDiv .sidebarModuleHeader {
+                padding: 0;
+                color: #fff;
+                background: #1797c0 url(/img/alohaSkin/sidebar_sprite.png) -209px -2px no-repeat;
+                }
+            </style>
+        </head>
+        <body>
+            <apex:outputPanel rendered="{!$Permission.ShouldSeeHomepageLink}">
+                <apex:outputPanel rendered="{!(ShowAssetLinks || ShowCaseLinks)}">
+                    <div class="sidebar fixed" id="sidebarDiv">
+                        <div class="sidebarModule htmlAreaComponentModule">
+                            <div class="sidebarModuleHeader brandPrimaryBgr">
+                                <h2 class="brandPrimaryFgr">Nimble Enhanced Characteristics</h2></div>
+                            <div class="sidebarModuleBody">                             
+                                <apex:outputPanel rendered="{!ShowCaseLinks}" title="Nimble Enhanced Characteristics">
+                                    <apex:outputLink rendered="{!$Permission.ShouldSeeHomepageLink}" value="{!$Page.NECmultiEditViewPage}?id={!RecordId}" 
+                                                     target="_blank" style="color:#1468B6">
+                                        {!$Label.LabelForNECMultiEditPage}</apex:outputLink>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!ShowAssetLinks}" title="Nimble Enhanced Characteristics">
+                                    <apex:outputLink rendered="{!$Permission.ShouldSeeHomepageLink}" value="{!$Page.EACAccountviewpageNewV2}?id={!RecordId}" 
+                                                     target="_blank" style="color:#1468B6">
+                                        {!$Label.LabelForEACAccountviewpageNewV2}</apex:outputLink><br/><br/>
+                                    <!-- Added by Exafort for new record type Account in NEC Definitions and NEC Records-->
+                                    <apex:outputLink rendered="{!$Permission.ShouldSeeHomepageLink}" value="{!$Page.NECmultiEditViewPage}?id={!RecordId}" 
+                                                     target="_blank" style="color:#1468B6">
+                                        {!$Label.LabelForNECMultiEditPage}</apex:outputLink>
+                                    <!--Added end-->
+                                </apex:outputPanel>                            
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </apex:outputPanel>
+        </body>
+    </html>
+</apex:page>
+<!-- <html>
+<body style="background-color:#CFEEF8;">
+<apex:outputPanel rendered="{!ShowCaseLinks}" title="Nimble Enhanced Characteristics">
+<apex:outputLink rendered="{!$Permission.ShouldSeeHomepageLink}" value="{!$Page.NECmultiEditViewPage}?id={!RecordId}" target="_blank" style="color:#1468B6">
+{!$Label.ForNECMultiEditPage}</apex:outputLink>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!ShowAssetLinks}" title="Nimble Enhanced Characteristics">
+<apex:outputLink rendered="{!$Permission.ShouldSeeHomepageLink}" value="{!$Page.EACAccountviewpageNewV2}?id={!RecordId}" target="_blank" style="color:#1468B6">
+{!$Label.LabelForEACAccountviewpageNewV2}</apex:outputLink>
+</apex:outputPanel>
+<apex:outputPanel rendered="{!NOT(ShowAssetLinks || ShowCaseLinks)}">
+<apex:outputText value="Please Open a detatil page...!" style="color:#1468B6"/>
+</apex:outputPanel>
+</body>
+</html>-->

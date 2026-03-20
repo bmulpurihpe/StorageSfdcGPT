@@ -1,0 +1,348 @@
+<template>
+   <div class="slds-grid slds-gutters">
+      <div class="slds-col">
+         <span>
+            <lightning-card >
+               <template if:true={cases.data}>
+                  <div class={categorizationSectionClass}>
+                     <h3 class="slds-section__title">
+                        <button class="slds-button slds-section__title-action" onclick={categorizationHandleClick}>
+                           <lightning-icon
+                              icon-name="utility:switch"
+                              class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
+                              size="x-small"></lightning-icon>
+                           <span class="slds-truncate" title="Categorization">Categorization</span>
+                        </button>
+                     </h3>
+                     <div class="slds-section__content">
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Severity</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Severity__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Impact to Customer</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.caseCatImpactToCustomer__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Technical Area</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Technology_Area__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Technical Sub Area</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Sub_Technology_Area__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Suggested Technical Sub-Area</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.caseSpecificDetails__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Type</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Type}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Is this a Storage issue</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Is_this_a_Storage_issue__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Closure Root Cause</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.casCatClosureRootCause__c}</div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                 
+                  <div class={informationDataSectionClass}>
+                     <h3 class="slds-section__title">
+                        <button class="slds-button slds-section__title-action" onclick={informationDataHandleClick}>
+                           <lightning-icon
+                              icon-name="utility:switch"
+                              class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
+                              size="x-small"
+                              ></lightning-icon>
+                           <span class="slds-truncate" title="Categorization">DU/DL/DI Information</span>
+                        </button>
+                     </h3>
+                     <div class="slds-section__content">
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Data Unavailability</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Data_Unavailability__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Data Loss</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Data_Loss__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Data Inconsistency</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Data_Inconsistency__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Array Downtime (minuites)</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.caseClosureArrayDowntimeMinutes__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Environmental Downtime (minuites)</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.caseClosureEnvironmentDowntimeMinutes__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Business Impact</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.caseClosureBusinessImpact__c}</div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class={outageInformationSectionClass}>
+                     <h3 class="slds-section__title">
+                        <button class="slds-button slds-section__title-action" onclick={outageInfoHandleClick}>
+                           <lightning-icon
+                              icon-name="utility:switch"
+                              class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
+                              size="x-small"
+                              ></lightning-icon>
+                           <span class="slds-truncate" title="Categorization">Outage Information</span>
+                        </button>
+                     </h3>
+                     <div class="slds-section__content">
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Outage</span>
+                           <div class="slds-form-element__control">
+                              <span class="slds-checkbox slds-checkbox_standalone">
+                              <input type="checkbox" name="Outage" id="Outage" disabled="True" checked={cases.data.Outage__c} />
+                              <span class="slds-checkbox_faux"></span>
+                              </span>                  
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Outage Duration Days</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Outage_Duration_Days__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Outage Duration Hours</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Outage_Duration_Hours__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Outage Duration Minutes</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Outage_Duration_Minutes__c}</div>
+                           </div>
+                        </div>
+                        
+                     </div>
+                  </div>
+               </template>
+               <template if:true={cases.error}>
+                  <div class="slds-m-around_medium">{cases.error.message}</div>
+               </template>
+            </lightning-card>
+         </span>
+      </div>
+      <div class="slds-col">
+         <span>
+            <lightning-card >
+               <template if:true={cases.data}>
+                  <div class={metadataSectionClass}>
+                     <h3 class="slds-section__title">
+                        <button class="slds-button slds-section__title-action" onclick={metadataHandleClick}>
+                           <lightning-icon
+                              icon-name="utility:switch"
+                              class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
+                              size="x-small"
+                              ></lightning-icon>
+                           <span class="slds-truncate" title="Metadata">Metadata</span>
+                        </button>
+                     </h3>
+                     <div class="slds-section__content">
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Case Origin</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Origin}</div>
+                           </div>
+                        </div>
+                        <!-- Added by Exafort for TS-10308 to display Asset Product Family -->
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Asset Product Family</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Asset_Product_Family__c}</div>
+                           </div>
+                        </div>
+                        <!-- End of TS-10308 -->
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Support Profile</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Support_Profile__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Automation Case Type</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.casePachinkoCaseType__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Auto Close</span>
+                           <div class="slds-form-element__control">
+                              <!-- <div class="slds-form-element__static">{cases.data.Auto_Close__c}</div> -->
+                              <span class="slds-checkbox slds-checkbox_standalone">
+                              <input type="checkbox" name="Auto Close" id="autoClose"  disabled="True" checked={cases.data.Auto_Close__c} />
+                              <span class="slds-checkbox_faux"></span>
+                              </span>                 
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Auto Open</span>
+                           <div class="slds-form-element__control">
+                              <!-- <div class="slds-form-element__static">{cases.data.Auto_Open__c}</div> -->
+                              <span class="slds-checkbox slds-checkbox_standalone">
+                              <input type="checkbox" name="Auto Open" id="autoOpen" disabled="True" checked={cases.data.Auto_Open__c} />
+                              <span class="slds-checkbox_faux"></span>
+                              </span>                  
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Date Created</span>
+                           <div class="slds-form-element__control">
+                              <!-- <div class="slds-form-element__static">{cases.data.CreatedDate}</div> -->
+                              <lightning-formatted-date-time value={cases.data.CreatedDate} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" hour12="true" time-zone={userTimeZone} ></lightning-formatted-date-time>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Date Closed</span>
+                           <div class="slds-form-element__control">
+                              <!-- <div class="slds-form-element__static">{cases.data.ClosedDate}</div> -->
+                              <lightning-formatted-date-time value={cases.data.ClosedDate} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                 minute="2-digit" hour12="true" time-zone={userTimeZone} ></lightning-formatted-date-time>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Case age</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Age_Days__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Peak Area</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Peak_Area__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Escalation Rotation</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Escalation_Rotation__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Deny List Reason</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.caseBlacklistReason__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Notify Account Team</span>
+                           <div class="slds-form-element__control">
+                              <span class="slds-checkbox slds-checkbox_standalone">
+                              <input type="checkbox" name="notifyAccountTeam" id="notifyAccountTeam" disabled="True" checked={cases.data.Notify_Account_Team__c} />
+                              <span class="slds-checkbox_faux"></span>
+                              </span>                         
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">US Support</span>
+                           <div class="slds-form-element__control">
+                              <span class="slds-checkbox slds-checkbox_standalone">
+                              <input type="checkbox" name="usSupport" id="usSupport" disabled="True" checked={cases.data.US_Support__c} />
+                              <span class="slds-checkbox_faux"></span>
+                              </span>                  
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Created By </span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">
+                                 <a onclick={viewRecord} data-id={cases.data.CreatedById}>{cases.data.CreatedBy.Name} , </a>
+                                 <lightning-formatted-date-time value={cases.data.CreatedDate} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                    minute="2-digit" hour12="true" time-zone={userTimeZone} ></lightning-formatted-date-time>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                 
+                  <div class={timeSpentSectionClass}>
+                     <h3 class="slds-section__title">
+                        <button class="slds-button slds-section__title-action" onclick={timeSpentHandleClick}>
+                           <lightning-icon
+                              icon-name="utility:switch"
+                              class="slds-button__icon slds-button__icon_left slds-section__title-action-icon"
+                              size="x-small"
+                              ></lightning-icon>
+                           <span class="slds-truncate" title="Time Spent">Time Spent</span>
+                        </button>
+                     </h3>
+                     <div class="slds-section__content">
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Estimate effort</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Estimated_Effort__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Case Owner Time min</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Case_Owner_Time_Effort__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Non Case Owner Time min</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Non_Case_Owner_Time_Effort__c}</div>
+                           </div>
+                        </div>
+                        <div class="slds-form-element slds-form-element_readonly">
+                           <span class="slds-form-element__label">Total Time min</span>
+                           <div class="slds-form-element__control">
+                              <div class="slds-form-element__static">{cases.data.Case_Effort_Summary_Total__c}</div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </template>
+               <template if:true={cases.error}>
+                  <div class="slds-m-around_medium">{cases.error.message}</div>
+               </template>
+            </lightning-card>
+         </span>
+      </div>
+   </div>
+</template>

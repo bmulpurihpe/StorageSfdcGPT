@@ -1,0 +1,17 @@
+<template>
+    <template lwc:if={hasInitializationError}>
+      <c-quantic-component-error component-name={template.host.localName}>
+      </c-quantic-component-error>
+    </template>
+    <template lwc:elseif={shouldDisplay}>
+      <a
+        class={tabClass}
+        onclick={select}
+        aria-label={arialLabelText}
+        aria-pressed={isPressed}
+        title={label}
+      >
+        <span class="slds-tabs_default__link">{caption}</span>
+    </a>
+    </template>
+  </template>
